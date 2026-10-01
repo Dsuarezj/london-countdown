@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#03080f"/>
+      <stop offset="0.45" stop-color="#0b1f33"/>
+      <stop offset="0.75" stop-color="#2b1430"/>
+      <stop offset="1" stop-color="#5c1f3c"/>
+    </linearGradient>
+    <linearGradient id="aurora" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5ff2bf" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#5ff2bf" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#2fd4d4" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="tropic" cx="0.5" cy="1" r="0.8">
+      <stop offset="0" stop-color="#ff4f93" stop-opacity="0.9"/>
+      <stop offset="0.6" stop-color="#ffa64d" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#ffa64d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <path d="M-40 140 C 120 60, 300 190, 560 90 L 560 240 C 300 320, 120 190, -40 280 Z" fill="url(#aurora)" opacity="0.7"/>
+  <rect y="256" width="512" height="256" fill="url(#tropic)"/>
+
+  <circle cx="92" cy="74" r="4" fill="#ffffff" opacity="0.8"/>
+  <circle cx="186" cy="48" r="3" fill="#ffffff" opacity="0.6"/>
+  <circle cx="404" cy="96" r="3.5" fill="#ffffff" opacity="0.7"/>
+  <circle cx="330" cy="40" r="2.5" fill="#ffffff" opacity="0.5"/>
+
+  <g transform="translate(150 300) scale(1.9)">
+    <path d="M28 20 C 16 2, 2 -2, -8 4 C 6 14, 14 24, 24 28 Z" fill="#6c5a3c"/>
+    <ellipse cx="34" cy="28" rx="22" ry="14" fill="#b89a5c"/>
+    <path d="M18 34 C 26 42, 44 42, 54 32 C 44 39, 28 39, 18 34 Z" fill="#f6eedd"/>
+    <circle cx="57" cy="17" r="11" fill="#c2a465"/>
+    <path d="M48 17 C 51 9, 62 6, 67 11 C 62 9, 53 12, 48 17 Z" fill="#241d14"/>
+    <circle cx="60" cy="15" r="2" fill="#1a1510"/>
+    <path d="M68 18 L 78 21 L 68 23 Z" fill="#3a3024"/>
+    <path d="M30 26 C 20 8, 6 2, -4 8 C 10 18, 18 30, 28 36 Z" fill="#9c8450"/>
+  </g>
+
+  <g transform="translate(300 330) scale(1.5)">
+    <path d="M40 24 C 52 8, 68 4, 76 12 C 62 19, 52 28, 42 32 Z" fill="#49e0bb" opacity="0.8"/>
+    <ellipse cx="42" cy="34" rx="18" ry="13" fill="#2ec4a0"/>
+    <circle cx="24" cy="26" r="10" fill="#35d6ae"/>
+    <path d="M17 31 C 21 38, 30 40, 34 34 C 28 36, 21 34, 17 31 Z" fill="#ef3d7a"/>
+    <circle cx="21" cy="23" r="2" fill="#13302a"/>
+    <path d="M15 27 L 0 21 L 15 30 Z" fill="#2a241c"/>
+  </g>
+
+  <text x="256" y="452" font-family="Avenir Next, Segoe UI, system-ui, sans-serif" font-size="58" font-weight="300" letter-spacing="4" fill="#f3f7ff" text-anchor="middle">13.11</text>
+</svg>
