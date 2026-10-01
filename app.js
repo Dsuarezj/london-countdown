@@ -10,7 +10,7 @@ const BEAT_DURATION_MS = 2600;
 const TRANSLATIONS = {
   en: {
     locale: "en-GB",
-    kicker: "Halfway point",
+    kicker: "Same sky, same night",
     city: "London",
     north: "Iceland",
     south: "Ecuador",
@@ -28,7 +28,7 @@ const TRANSLATIONS = {
   },
   es: {
     locale: "es-ES",
-    kicker: "Punto medio",
+    kicker: "El mismo cielo, la misma noche",
     city: "Londres",
     north: "Islandia",
     south: "Ecuador",
@@ -46,7 +46,7 @@ const TRANSLATIONS = {
   },
   is: {
     locale: "is-IS",
-    kicker: "Miðpunktur",
+    kicker: "Sami himinn, sama nótt",
     city: "London",
     north: "Ísland",
     south: "Ekvador",
