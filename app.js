@@ -3,8 +3,68 @@ const TARGET_MONTH_INDEX = 10;
 const TARGET_DAY_OF_MONTH = 13;
 const TARGET_HOUR = 22;
 const JOURNEY_SEEN_KEY = "loa-journey-seen";
+const LANGUAGE_KEY = "loa-language";
 const KISS_INTERVAL_MS = 17000;
 const KISS_DURATION_MS = 2600;
+
+const TRANSLATIONS = {
+  en: {
+    locale: "en-GB",
+    kicker: "Halfway point",
+    city: "London",
+    north: "Iceland",
+    south: "Ecuador",
+    days: "days",
+    hours: "hours",
+    minutes: "min",
+    seconds: "sec",
+    localIntro: "In your time zone that is",
+    reunion: "You are both here.",
+    countdownLabel: "Time left until the meeting",
+    offline: "Offline · showing your saved version",
+    language: "Change language",
+    plover: "Lóa, a golden plover flying in from Iceland",
+    hummingbird: "A hummingbird hopping up from Ecuador"
+  },
+  es: {
+    locale: "es-ES",
+    kicker: "Punto medio",
+    city: "Londres",
+    north: "Islandia",
+    south: "Ecuador",
+    days: "días",
+    hours: "horas",
+    minutes: "min",
+    seconds: "seg",
+    localIntro: "En tu zona horaria es",
+    reunion: "Ya están las dos aquí.",
+    countdownLabel: "Tiempo que falta para el encuentro",
+    offline: "Sin conexión · mostrando tu versión guardada",
+    language: "Cambiar idioma",
+    plover: "Lóa, un chorlito dorado que llega volando desde Islandia",
+    hummingbird: "Un colibrí que llega a saltos desde Ecuador"
+  },
+  is: {
+    locale: "is-IS",
+    kicker: "Miðpunktur",
+    city: "London",
+    north: "Ísland",
+    south: "Ekvador",
+    days: "dagar",
+    hours: "klst",
+    minutes: "mín",
+    seconds: "sek",
+    localIntro: "Á þínu tímasvæði er það",
+    reunion: "Þið eruð báðar hér.",
+    countdownLabel: "Tíminn sem er eftir fram að endurfundunum",
+    offline: "Ótengt · sýnir vistaða útgáfu",
+    language: "Breyta tungumáli",
+    plover: "Lóa sem flýgur frá Íslandi",
+    hummingbird: "Kolibrífugl sem hoppar norður frá Ekvador"
+  }
+};
+
+const FALLBACK_LANGUAGE = "en";
 
 function zoneOffsetMinutes(timeZone, instantMs) {
   const wholeSeconds = Math.floor(instantMs / 1000) * 1000;
@@ -84,12 +144,32 @@ const minutesField = document.getElementById("minutes");
 const secondsField = document.getElementById("seconds");
 const reunionMessage = document.getElementById("reunion");
 const countdownSection = document.querySelector(".countdown");
-const zoneSuffix = document.querySelector(".headline__when span");
+const meetingDateField = document.getElementById("meetingDate");
+const londonZoneField = document.getElementById("londonZone");
 const localTimeField = document.getElementById("localTime");
 const localZoneField = document.getElementById("localZone");
-const offlineState = document.getElementById("offlineState");
+const offlineMark = document.getElementById("offlineMark");
+const languageButton = document.getElementById("languageButton");
+const languageCodeField = document.getElementById("languageCode");
 
 const meetingInstant = resolveMeetingInstant(Date.now());
+const languageOrder = Object.keys(TRANSLATIONS);
+let activeLanguage = resolveInitialLanguage();
+
+function resolveInitialLanguage() {
+  const stored = localStorage.getItem(LANGUAGE_KEY);
+  if (stored && TRANSLATIONS[stored]) {
+    return stored;
+  }
+  const deviceLanguages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+  for (const tag of deviceLanguages) {
+    const base = String(tag).toLowerCase().split("-")[0];
+    if (TRANSLATIONS[base]) {
+      return base;
+    }
+  }
+  return FALLBACK_LANGUAGE;
+}
 
 function renderCountdown() {
   const remainingMs = meetingInstant - Date.now();
@@ -107,20 +187,56 @@ function renderCountdown() {
   secondsField.textContent = String(remaining.seconds).padStart(2, "0");
 }
 
-function renderLocalEquivalent() {
-  const localFormatter = new Intl.DateTimeFormat(undefined, {
+function renderLanguage() {
+  const strings = TRANSLATIONS[activeLanguage];
+
+  document.documentElement.lang = activeLanguage;
+  for (const element of document.querySelectorAll("[data-i18n]")) {
+    element.textContent = strings[element.dataset.i18n];
+  }
+  for (const element of document.querySelectorAll("[data-i18n-aria]")) {
+    element.setAttribute("aria-label", strings[element.dataset.i18nAria]);
+  }
+
+  languageCodeField.textContent = activeLanguage.toUpperCase();
+  languageButton.setAttribute("aria-label", strings.language);
+  languageButton.title = strings.language;
+  offlineMark.setAttribute("aria-label", strings.offline);
+  offlineMark.title = strings.offline;
+
+  renderMeetingTimes();
+}
+
+function renderMeetingTimes() {
+  const localeChain = [TRANSLATIONS[activeLanguage].locale, TRANSLATIONS[FALLBACK_LANGUAGE].locale];
+  const meetingDate = new Date(meetingInstant);
+  const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const localOffset = -meetingDate.getTimezoneOffset();
+
+  meetingDateField.textContent = new Intl.DateTimeFormat(localeChain, {
+    timeZone: LONDON_TIME_ZONE,
+    day: "numeric",
+    month: "long"
+  }).format(meetingDate);
+
+  londonZoneField.textContent = londonZoneAbbreviation(meetingInstant);
+
+  localTimeField.textContent = new Intl.DateTimeFormat(localeChain, {
     weekday: "short",
     day: "numeric",
     month: "short",
     hour: "2-digit",
     minute: "2-digit"
-  });
-  const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const localOffset = -new Date(meetingInstant).getTimezoneOffset();
+  }).format(meetingDate);
 
-  zoneSuffix.textContent = londonZoneAbbreviation(meetingInstant);
-  localTimeField.textContent = localFormatter.format(new Date(meetingInstant));
   localZoneField.textContent = `${localZone} · ${formatUtcOffset(localOffset)}`;
+}
+
+function cycleLanguage() {
+  const nextIndex = (languageOrder.indexOf(activeLanguage) + 1) % languageOrder.length;
+  activeLanguage = languageOrder[nextIndex];
+  localStorage.setItem(LANGUAGE_KEY, activeLanguage);
+  renderLanguage();
 }
 
 function startKisses() {
@@ -161,14 +277,15 @@ async function isOriginReachable() {
 }
 
 async function renderConnectionState() {
-  offlineState.hidden = await isOriginReachable();
+  offlineMark.hidden = await isOriginReachable();
 }
 
+renderLanguage();
 renderCountdown();
-renderLocalEquivalent();
 renderConnectionState();
 playArrival();
 
+languageButton.addEventListener("click", cycleLanguage);
 setInterval(renderCountdown, 1000);
 window.addEventListener("online", renderConnectionState);
 window.addEventListener("offline", renderConnectionState);
