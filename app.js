@@ -3,8 +3,8 @@ const TARGET_MONTH_INDEX = 10;
 const TARGET_DAY_OF_MONTH = 13;
 const TARGET_HOUR = 22;
 const LANGUAGE_KEY = "loa-language";
-const AFFECTION_BEATS = ["kissing", "nestling", "circling", "swaying"];
-const BEAT_INTERVAL_MS = 17000;
+const AFFECTION_BEATS = ["kissing", "nestling", "circling", "swaying", "perching", "nuzzling"];
+const BEAT_INTERVAL_MS = 11000;
 const BEAT_DURATION_MS = 2600;
 
 const TRANSLATIONS = {
@@ -151,10 +151,12 @@ const localZoneField = document.getElementById("localZone");
 const offlineMark = document.getElementById("offlineMark");
 const languageButton = document.getElementById("languageButton");
 const languageCodeField = document.getElementById("languageCode");
+const meeting = document.getElementById("meeting");
 
 const meetingInstant = resolveMeetingInstant(Date.now());
 const languageOrder = Object.keys(TRANSLATIONS);
 let activeLanguage = resolveInitialLanguage();
+let affectionBusy = false;
 
 function resolveInitialLanguage() {
   const stored = localStorage.getItem(LANGUAGE_KEY);
@@ -239,14 +241,33 @@ function cycleLanguage() {
   renderLanguage();
 }
 
+function clearAffectionClasses() {
+  for (const beatName of AFFECTION_BEATS) {
+    document.body.classList.remove(beatName);
+  }
+}
+
 function playRandomAffection() {
+  if (affectionBusy || !document.body.classList.contains("arrived")) {
+    return;
+  }
+
+  affectionBusy = true;
+  clearAffectionClasses();
+  void meeting.offsetWidth;
+
   const beatName = AFFECTION_BEATS[Math.floor(Math.random() * AFFECTION_BEATS.length)];
   document.body.classList.add(beatName);
-  setTimeout(() => document.body.classList.remove(beatName), BEAT_DURATION_MS);
+
+  setTimeout(() => {
+    document.body.classList.remove(beatName);
+    affectionBusy = false;
+  }, BEAT_DURATION_MS);
 }
 
 function startAffectionBeats() {
   setInterval(playRandomAffection, BEAT_INTERVAL_MS);
+  meeting.addEventListener("click", playRandomAffection);
 }
 
 function settleTogether() {
