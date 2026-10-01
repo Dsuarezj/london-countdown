@@ -13,7 +13,7 @@ writes inline styles or coordinates.
 | --- | --- | --- |
 | `journey` | The birds are travelling towards the countdown | `playArrival()` on a first visit |
 | `arrived` | The birds are perched together, wings touching | `settleTogether()` |
-| `kissing` | Short affectionate beat, added on top of `arrived` | `startKisses()` every 17 s |
+| `kissing` / `nestling` / `circling` / `swaying` | Short affectionate beat on top of `arrived` | `playRandomAffection()` every 17 s |
 
 `journey` is replaced by `arrived` after `--journey-duration`. `playArrival()` skips straight to
 `arrived` when `localStorage` holds `loa-journey-seen`, or when the user prefers reduced motion,
@@ -171,14 +171,21 @@ Two constraints learned here, worth keeping:
 - `mix-blend-mode: screen` is what makes the aurora and tropical colours glow where they meet. It
   only brightens, so it needs a dark base underneath.
 
-## 8. The kiss beat
+## 8. Affection beats
 
-`kissing` is added for 2.6 s and removed, which restarts the animation each time because the class
-toggles. Three keyframes fire together: `kiss` leans the plover towards its partner, `blush` tilts
-the hummingbird away, and `heart-rise` floats the `.heart` glyph up and fades it out.
+Every 17 s, `playRandomAffection()` picks one class from
+`["kissing", "nestling", "circling", "swaying"]`, adds it for 2.6 s, then removes it.
+Removing the class is what lets the next beat restart cleanly.
 
-To add another periodic beat, follow the same shape: a class added and removed by `setInterval`,
-with every element's reaction expressed as its own keyframe.
+| Class | What happens |
+| --- | --- |
+| `kissing` | Lóa leans in, hummingbird tilts back, heart rises |
+| `nestling` | Hummingbird tucks under Lóa; her reach wing covers further |
+| `circling` | Hummingbird hops a small arc around Lóa's head; Lóa watches |
+| `swaying` | Both lean left then right together |
+
+To add another beat: put the name in `AFFECTION_BEATS`, write CSS under `body.<name>`, and keep
+the duration at `BEAT_DURATION_MS` (or read a custom property if it needs to differ).
 
 ## 9. Accessibility and size rules
 
@@ -207,7 +214,7 @@ Two more things to respect when adding elements:
 ## 10. Checklist for a new animation
 
 1. Place the element in the layout at its final resting position.
-2. Decide which body state(s) it reacts to: `journey`, `arrived`, `kissing`, or a new one.
+2. Decide which body state(s) it reacts to: `journey`, `arrived`, an affection beat, or a new one.
 3. Wrap it if it needs two simultaneous motions (path on the outside, personality inside).
 4. Write keyframes that end at `translate(0, 0)` and start at a `vw`/`vh` offset.
 5. Use repeated keyframes for pauses, `linear` for hops, a cubic-bezier for flight.
