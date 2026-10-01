@@ -391,7 +391,8 @@ body.arrived .meeting {
 
 .bird--plover .wing--near { animation: flap 1.1s ease-in-out infinite; }
 .bird--plover .wing--far { animation: flap 1.1s ease-in-out infinite reverse; }
-.bird--hummingbird .wing { animation: buzz .14s linear infinite; }
+.bird--hummingbird .wing--near,
+.bird--hummingbird .wing--far { animation: buzz .14s linear infinite; }
 
 @keyframes flap {
   0%, 100% { transform: rotate(-16deg) scaleY(.9); }

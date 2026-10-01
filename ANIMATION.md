@@ -106,7 +106,8 @@ right edge of its `viewBox` and the hummingbird's extends past its left edge, wh
 wings read as touching. `overflow: visible` on the SVGs is required for this to work.
 
 Flap speed is the main character cue: `flap` runs at `1.1s` for the plover, `buzz` at `.14s` for
-the hummingbird.
+the hummingbird. Both animations are scoped to `.wing--far` / `.wing--near` only — never to
+`.wing--rest` / `.wing--reach`, or they keep buzzing after arrival.
 
 ## 5. Travel rhythm: flight vs hops
 
