@@ -13,7 +13,7 @@ writes inline styles or coordinates.
 | --- | --- | --- |
 | `journey` | The birds are travelling towards the countdown | `playArrival()` on every page load |
 | `arrived` | The birds are perched together, wings touching | `settleTogether()` |
-| `kissing` / `nestling` / `circling` / `swaying` | Short affectionate beat on top of `arrived` | `playRandomAffection()` every 17 s |
+| `kissing` / `nestling` / `circling` / `swaying` / `perching` / `nuzzling` | Short affectionate beat on top of `arrived` | timer every 11 s, or tap on `.meeting` |
 
 `journey` is replaced by `arrived` after `--journey-duration`. `playArrival()` runs the travel
 sequence on every load (first visit and refresh). It only skips straight to `arrived` when the
@@ -173,9 +173,10 @@ Two constraints learned here, worth keeping:
 
 ## 8. Affection beats
 
-Every 17 s, `playRandomAffection()` picks one class from
-`["kissing", "nestling", "circling", "swaying"]`, adds it for 2.6 s, then removes it.
-Removing the class is what lets the next beat restart cleanly.
+Every 11 s, `playRandomAffection()` picks one class from
+`["kissing", "nestling", "circling", "swaying", "perching", "nuzzling"]`, adds it for 2.6 s,
+then removes it. The same function runs on a tap/click of `.meeting` once `arrived` is set.
+An `affectionBusy` flag blocks overlapping beats.
 
 | Class | What happens |
 | --- | --- |
@@ -183,6 +184,8 @@ Removing the class is what lets the next beat restart cleanly.
 | `nestling` | Hummingbird tucks under Lóa; her reach wing covers further |
 | `circling` | Hummingbird hops a small arc around Lóa's head; Lóa watches |
 | `swaying` | Both lean left then right together |
+| `perching` | Hummingbird lands briefly on Lóa's back |
+| `nuzzling` | Both lean in until beaks meet; heart rises |
 
 To add another beat: put the name in `AFFECTION_BEATS`, write CSS under `body.<name>`, and keep
 the duration at `BEAT_DURATION_MS` (or read a custom property if it needs to differ).

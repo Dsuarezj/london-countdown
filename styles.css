@@ -366,6 +366,12 @@ body.arrived .meeting {
   visibility: visible;
 }
 
+body.arrived .meeting {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .bird {
   position: relative;
   will-change: transform;
@@ -560,6 +566,26 @@ body.swaying .bird--hummingbird .bird__body {
   animation: sway-together 2.6s ease-in-out;
 }
 
+body.perching .bird--hummingbird .bird__body {
+  animation: perch-on 2.6s ease-in-out;
+}
+
+body.perching .bird--plover .bird__body {
+  animation: carry 2.6s ease-in-out;
+}
+
+body.nuzzling .bird--plover .bird__body {
+  animation: nuzzle-left 2.6s ease-in-out;
+}
+
+body.nuzzling .bird--hummingbird .bird__body {
+  animation: nuzzle-right 2.6s ease-in-out;
+}
+
+body.nuzzling .heart {
+  animation: heart-rise 2.6s ease-out .2s;
+}
+
 @keyframes kiss {
   0%, 100% { transform: translate(0, 0) rotate(0); }
   35%      { transform: translate(9px, -5px) rotate(11deg); }
@@ -614,6 +640,31 @@ body.swaying .bird--hummingbird .bird__body {
   0%, 100% { transform: translate(0, 0) rotate(0); }
   25%      { transform: translate(-6px, 1px) rotate(-5deg); }
   75%      { transform: translate(6px, 1px) rotate(5deg); }
+}
+
+@keyframes perch-on {
+  0%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
+  25%      { transform: translate(-18px, -22px) rotate(-20deg) scale(.95); }
+  50%      { transform: translate(-28px, -8px) rotate(-8deg) scale(.9); }
+  70%      { transform: translate(-28px, -6px) rotate(-6deg) scale(.9); }
+}
+
+@keyframes carry {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  50%      { transform: translate(0, 3px) rotate(2deg); }
+  70%      { transform: translate(0, 4px) rotate(3deg); }
+}
+
+@keyframes nuzzle-left {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(8px, -2px) rotate(8deg); }
+  60%      { transform: translate(10px, -1px) rotate(10deg); }
+}
+
+@keyframes nuzzle-right {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(-8px, -2px) rotate(-10deg); }
+  60%      { transform: translate(-10px, -1px) rotate(-12deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
