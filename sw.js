@@ -1,4 +1,4 @@
-const CACHE_NAME = "london-countdown-v1";
+const CACHE_NAME = "london-countdown-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -29,7 +29,7 @@ async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
 
   try {
-    const freshResponse = await fetch(request);
+    const freshResponse = await fetch(request, { cache: "no-store" });
     if (freshResponse && freshResponse.ok) {
       cache.put(request, freshResponse.clone());
     }
