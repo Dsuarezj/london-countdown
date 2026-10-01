@@ -506,7 +506,7 @@ body.arrived .bird--hummingbird .bird__body {
   50%      { transform: translateY(-2px); }
 }
 
-/* --- kiss --- */
+/* --- affection beats --- */
 
 .heart {
   position: absolute;
@@ -532,6 +532,34 @@ body.kissing .heart {
   animation: heart-rise 2.6s ease-out;
 }
 
+body.nestling .bird--plover .bird__body {
+  animation: shelter 2.6s ease-in-out;
+}
+
+body.nestling .bird--hummingbird .bird__body {
+  animation: nestle-in 2.6s ease-in-out;
+}
+
+body.nestling .bird--plover .wing--reach {
+  animation: wing-cover 2.6s ease-in-out;
+}
+
+body.circling .bird--hummingbird .bird__body {
+  animation: circle-hop 2.6s ease-in-out;
+}
+
+body.circling .bird--plover .bird__body {
+  animation: watch 2.6s ease-in-out;
+}
+
+body.swaying .bird--plover .bird__body {
+  animation: sway-together 2.6s ease-in-out;
+}
+
+body.swaying .bird--hummingbird .bird__body {
+  animation: sway-together 2.6s ease-in-out;
+}
+
 @keyframes kiss {
   0%, 100% { transform: translate(0, 0) rotate(0); }
   35%      { transform: translate(9px, -5px) rotate(11deg); }
@@ -547,6 +575,45 @@ body.kissing .heart {
   0%   { opacity: 0; transform: translateY(0) scale(.5); }
   30%  { opacity: 1; transform: translateY(-14px) scale(1.1); }
   100% { opacity: 0; transform: translateY(-34px) scale(.8); }
+}
+
+@keyframes shelter {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(4px, 2px) rotate(4deg); }
+  70%      { transform: translate(5px, 3px) rotate(5deg); }
+}
+
+@keyframes nestle-in {
+  0%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
+  35%      { transform: translate(-14px, 6px) rotate(-12deg) scale(.92); }
+  65%      { transform: translate(-16px, 8px) rotate(-14deg) scale(.9); }
+}
+
+@keyframes wing-cover {
+  0%, 100% { transform: rotate(0); }
+  40%      { transform: rotate(-18deg) scaleX(1.15); }
+  70%      { transform: rotate(-22deg) scaleX(1.2); }
+}
+
+@keyframes circle-hop {
+  0%   { transform: translate(0, 0) rotate(0); }
+  20%  { transform: translate(10px, -16px) rotate(-12deg); }
+  45%  { transform: translate(-6px, -22px) rotate(8deg); }
+  70%  { transform: translate(-14px, -6px) rotate(16deg); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+
+@keyframes watch {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25%      { transform: rotate(-4deg); }
+  55%      { transform: rotate(6deg); }
+  80%      { transform: rotate(-2deg); }
+}
+
+@keyframes sway-together {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25%      { transform: translate(-6px, 1px) rotate(-5deg); }
+  75%      { transform: translate(6px, 1px) rotate(5deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

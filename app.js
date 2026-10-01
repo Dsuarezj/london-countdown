@@ -4,8 +4,9 @@ const TARGET_DAY_OF_MONTH = 13;
 const TARGET_HOUR = 22;
 const JOURNEY_SEEN_KEY = "loa-journey-seen";
 const LANGUAGE_KEY = "loa-language";
-const KISS_INTERVAL_MS = 17000;
-const KISS_DURATION_MS = 2600;
+const AFFECTION_BEATS = ["kissing", "nestling", "circling", "swaying"];
+const BEAT_INTERVAL_MS = 17000;
+const BEAT_DURATION_MS = 2600;
 
 const TRANSLATIONS = {
   en: {
@@ -239,17 +240,20 @@ function cycleLanguage() {
   renderLanguage();
 }
 
-function startKisses() {
-  setInterval(() => {
-    document.body.classList.add("kissing");
-    setTimeout(() => document.body.classList.remove("kissing"), KISS_DURATION_MS);
-  }, KISS_INTERVAL_MS);
+function playRandomAffection() {
+  const beatName = AFFECTION_BEATS[Math.floor(Math.random() * AFFECTION_BEATS.length)];
+  document.body.classList.add(beatName);
+  setTimeout(() => document.body.classList.remove(beatName), BEAT_DURATION_MS);
+}
+
+function startAffectionBeats() {
+  setInterval(playRandomAffection, BEAT_INTERVAL_MS);
 }
 
 function settleTogether() {
   document.body.classList.remove("journey");
   document.body.classList.add("arrived");
-  startKisses();
+  startAffectionBeats();
 }
 
 function playArrival() {
