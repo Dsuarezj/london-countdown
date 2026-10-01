@@ -11,13 +11,13 @@ writes inline styles or coordinates.
 
 | Body class | Meaning | Set by |
 | --- | --- | --- |
-| `journey` | The birds are travelling towards the countdown | `playArrival()` on a first visit |
+| `journey` | The birds are travelling towards the countdown | `playArrival()` on every page load |
 | `arrived` | The birds are perched together, wings touching | `settleTogether()` |
 | `kissing` / `nestling` / `circling` / `swaying` | Short affectionate beat on top of `arrived` | `playRandomAffection()` every 17 s |
 
-`journey` is replaced by `arrived` after `--journey-duration`. `playArrival()` skips straight to
-`arrived` when `localStorage` holds `loa-journey-seen`, or when the user prefers reduced motion,
-so the travel sequence only ever plays once per device.
+`journey` is replaced by `arrived` after `--journey-duration`. `playArrival()` runs the travel
+sequence on every load (first visit and refresh). It only skips straight to `arrived` when the
+user prefers reduced motion.
 
 The single source of truth for the travel length is the CSS custom property:
 

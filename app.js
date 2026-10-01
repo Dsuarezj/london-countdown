@@ -2,7 +2,6 @@ const LONDON_TIME_ZONE = "Europe/London";
 const TARGET_MONTH_INDEX = 10;
 const TARGET_DAY_OF_MONTH = 13;
 const TARGET_HOUR = 22;
-const JOURNEY_SEEN_KEY = "loa-journey-seen";
 const LANGUAGE_KEY = "loa-language";
 const AFFECTION_BEATS = ["kissing", "nestling", "circling", "swaying"];
 const BEAT_INTERVAL_MS = 17000;
@@ -258,16 +257,14 @@ function settleTogether() {
 
 function playArrival() {
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const alreadySeen = localStorage.getItem(JOURNEY_SEEN_KEY) === "true";
 
-  if (prefersReducedMotion || alreadySeen) {
+  if (prefersReducedMotion) {
     settleTogether();
     return;
   }
 
   const journeySeconds = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--journey-duration"));
   document.body.classList.add("journey");
-  localStorage.setItem(JOURNEY_SEEN_KEY, "true");
   setTimeout(settleTogether, journeySeconds * 1000);
 }
 
