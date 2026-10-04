@@ -69,8 +69,13 @@
   background: linear-gradient(180deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 100%);
 }
 
+.sky--meeting-city[data-condition="partly"] .overcast {
+  background: linear-gradient(180deg, var(--partly-zenith) 0%, var(--partly-horizon) 100%);
+}
+
 .sky--meeting-city .stars,
 .sky--meeting-city .city-lights {
+  filter: opacity(0);
   transition: filter 2.4s ease;
 }
 
@@ -115,12 +120,29 @@
 }
 
 .sky--meeting-city[data-phase="day"] .daylight { opacity: 1; }
-.sky--meeting-city[data-phase="day"] .stars,
-.sky--meeting-city[data-phase="day"] .city-lights { filter: opacity(0); }
+.sky--meeting-city[data-phase="day"][data-condition="partly"] .overcast { opacity: .52; }
+.sky--meeting-city[data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .96; }
 
-.sky--meeting-city:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .85; }
-.sky--meeting-city:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .stars { filter: opacity(0); }
-.sky--meeting-city[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .92; }
+.sky--meeting-city[data-phase="night"] .stars,
+.sky--meeting-city[data-phase="night"] .city-lights {
+  filter: opacity(1);
+}
+
+.sky--meeting-city[data-phase="night"][data-condition="partly"] .stars,
+.sky--meeting-city[data-phase="night"][data-condition="partly"] .city-lights {
+  filter: opacity(.55);
+}
+
+.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .stars,
+.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .city-lights {
+  filter: opacity(.28);
+}
+
+.sky--meeting-city[data-phase="night"][data-condition="partly"] .overcast { opacity: .28; }
+.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .48; }
+
+.sky--meeting-city[data-condition="partly"] .veil { opacity: .42; }
+.sky--meeting-city:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .72; }
 
 .sky--meeting-city[data-condition="rain"] .precipitation {
   opacity: .75;

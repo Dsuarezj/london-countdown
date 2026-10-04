@@ -71,7 +71,7 @@ const backgroundId = selectBackgroundId(config.backgrounds, {
 });
 
 await Promise.all([
-  mountBackground(skyElement, backgroundId, { origins: config.origins, meeting }),
+  mountBackground(skyElement, backgroundId, { origins: config.origins, meeting, weather: config.backgrounds.weather }),
   mountCharacters(meetingElement, config),
   loadStylesheet(config.affection.stylesheet)
 ]);

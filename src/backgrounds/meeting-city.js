@@ -1,4 +1,4 @@
-import { cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
+import { CLEAR_NIGHT_SKY, cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
 
 function applySky(skyElement, { phase, condition }) {
   skyElement.dataset.phase = phase;
@@ -20,7 +20,11 @@ export const meetingCity = {
     <div class="city-glow"></div>
     <div class="city-lights"></div>
   `,
-  async decorate(skyElement, { meeting }) {
+  async decorate(skyElement, { meeting, weather }) {
+    if (!weather) {
+      applySky(skyElement, CLEAR_NIGHT_SKY);
+      return;
+    }
     applySky(skyElement, cachedPlaceSky(meeting));
     applySky(skyElement, await fetchPlaceSky(meeting));
   }

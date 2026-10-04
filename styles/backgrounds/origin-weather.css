@@ -5,8 +5,18 @@
   height: 60%;
 }
 
-.sky--origin-weather .hemisphere--north { top: 0; }
-.sky--origin-weather .hemisphere--south { bottom: 0; }
+.sky--origin-weather .hemisphere--north {
+  top: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, #03080f 0%, var(--deep) 100%);
+  mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
+}
+
+.sky--origin-weather .hemisphere--south {
+  bottom: 0;
+  background: linear-gradient(0deg, #5c1f3c 0%, #2b1430 50%, var(--deep) 100%);
+}
 
 .sky--origin-weather .daylight,
 .sky--origin-weather .overcast,
@@ -21,21 +31,29 @@
 .sky--origin-weather .hemisphere--north .daylight {
   background:
     radial-gradient(60% 50% at 84% 0%, var(--sun-glare), transparent 70%),
-    linear-gradient(180deg, var(--sunny-zenith) 0%, var(--sunny-horizon) 82%, transparent 100%);
+    linear-gradient(180deg, var(--sunny-zenith) 0%, var(--sunny-horizon) 100%);
 }
 
 .sky--origin-weather .hemisphere--south .daylight {
   background:
     radial-gradient(60% 50% at 16% 100%, var(--sun-glare), transparent 70%),
-    linear-gradient(0deg, var(--sunny-zenith) 0%, var(--sunny-horizon) 82%, transparent 100%);
+    linear-gradient(0deg, var(--sunny-zenith) 0%, var(--sunny-horizon) 100%);
 }
 
 .sky--origin-weather .hemisphere--north .overcast {
-  background: linear-gradient(180deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 82%, transparent 100%);
+  background: linear-gradient(180deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 100%);
 }
 
 .sky--origin-weather .hemisphere--south .overcast {
-  background: linear-gradient(0deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 82%, transparent 100%);
+  background: linear-gradient(0deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 100%);
+}
+
+.sky--origin-weather .hemisphere--north[data-condition="partly"] .overcast {
+  background: linear-gradient(180deg, var(--partly-zenith) 0%, var(--partly-horizon) 100%);
+}
+
+.sky--origin-weather .hemisphere--south[data-condition="partly"] .overcast {
+  background: linear-gradient(0deg, var(--partly-zenith) 0%, var(--partly-horizon) 100%);
 }
 
 .sky--origin-weather .aurora-field {
@@ -43,10 +61,12 @@
   left: 0;
   right: 0;
   height: calc(100% / .6);
+  opacity: 0;
   transition: opacity 2.4s ease;
 }
 
 .sky--origin-weather .stars {
+  filter: opacity(0);
   transition: filter 2.4s ease;
 }
 
@@ -81,18 +101,38 @@
 }
 
 .sky--origin-weather [data-phase="day"] .daylight { opacity: 1; }
-.sky--origin-weather [data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .92; }
+.sky--origin-weather [data-phase="day"][data-condition="partly"] .overcast { opacity: .52; }
+.sky--origin-weather [data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .96; }
 
-.sky--origin-weather [data-night-sky="stars"] .aurora-field,
-.sky--origin-weather [data-phase="day"] .aurora-field {
-  opacity: 0;
+.sky--origin-weather [data-phase="night"][data-night-sky="aurora"] .aurora-field {
+  opacity: .92;
 }
 
-.sky--origin-weather [data-phase="day"] .stars {
-  filter: opacity(0);
+.sky--origin-weather [data-phase="night"][data-night-sky="aurora"][data-condition="partly"] .aurora-field {
+  opacity: .62;
 }
 
-.sky--origin-weather :is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .88; }
+.sky--origin-weather [data-phase="night"][data-night-sky="aurora"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .aurora-field {
+  opacity: .34;
+}
+
+.sky--origin-weather [data-phase="night"] .stars {
+  filter: opacity(1);
+}
+
+.sky--origin-weather [data-phase="night"][data-condition="partly"] .stars {
+  filter: opacity(.55);
+}
+
+.sky--origin-weather [data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .stars {
+  filter: opacity(.28);
+}
+
+.sky--origin-weather [data-phase="night"][data-condition="partly"] .overcast { opacity: .28; }
+.sky--origin-weather [data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .48; }
+
+.sky--origin-weather [data-condition="partly"] .veil { opacity: .42; }
+.sky--origin-weather :is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .72; }
 
 .sky--origin-weather [data-condition="rain"] .precipitation {
   opacity: .75;
