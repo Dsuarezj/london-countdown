@@ -1,22 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 70" aria-hidden="true">
+  <defs>
+    <clipPath id="hummingbird-silhouette">
+      <path d="M21 27 C 21 20, 27 17, 33 19 C 39 21, 43 27, 51 29 C 61 31, 70 35, 73 41 C 66 47, 52 49, 42 47 C 34 45, 28 41, 25 36 C 22 32, 21 30, 21 27 Z"/>
+    </clipPath>
+    <linearGradient id="hummingbird-back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#45d6a4"/>
+      <stop offset=".55" stop-color="#1e9673"/>
+      <stop offset="1" stop-color="#16664f"/>
+    </linearGradient>
+    <linearGradient id="hummingbird-gorget" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6aa3"/>
+      <stop offset=".5" stop-color="#e81e63"/>
+      <stop offset="1" stop-color="#9c0f45"/>
+    </linearGradient>
+  </defs>
   <g class="wing wing--far">
-    <path d="M46 26 C 58 8, 76 4, 86 12 C 72 20, 60 30, 48 34 Z" fill="#2f8f7a" opacity=".55"/>
+    <path d="M50 30 C 57 15, 70 5, 88 2 C 79 12, 67 24, 54 35 Z" fill="#2f8f7a" opacity=".5"/>
   </g>
   <g class="wing wing--reach">
-    <path d="M38 42 C 23 43, 8 48, -8 56 C 7 61, 26 54, 40 48 Z" fill="#3fd4ad"/>
+    <path d="M40 40 C 26 42, 10 46, -10 52 C 6 57, 24 53, 42 46 Z" fill="#3a5f56"/>
+    <path d="M30 44 C 18 47, 6 50, -6 53" fill="none" stroke="#6f958b" stroke-width=".8" stroke-linecap="round"/>
   </g>
-  <path class="tail" d="M62 38 C 74 34, 84 38, 88 46 C 76 48, 68 46, 60 44 Z" fill="#1f7a68"/>
-  <ellipse cx="48" cy="38" rx="21" ry="15" fill="#2ec4a0"/>
-  <path d="M32 44 C 42 52, 58 50, 66 42 C 56 48, 42 50, 32 44 Z" fill="#dff7ef"/>
-  <circle cx="28" cy="29" r="11" fill="#35d6ae"/>
-  <path d="M20 34 C 24 42, 34 44, 38 38 C 32 40, 24 38, 20 34 Z" fill="#ef3d7a"/>
-  <path d="M22 26 C 26 20, 34 20, 37 24 C 32 22, 26 22, 22 26 Z" fill="#1b4f45" opacity=".6"/>
-  <circle cx="25" cy="26" r="2.2" fill="#13302a"/>
-  <path d="M18 30 L 2 24 L 18 33 Z" fill="#2a241c"/>
+  <path class="tail" d="M64 39 L 87 34 L 78 41.5 L 89 47 L 64 46 Z" fill="#1d3b33"/>
+  <path d="M72 38 L 84 36 M73 45 L 85 46" fill="none" stroke="#3f6e60" stroke-width=".8" stroke-linecap="round"/>
+  <g clip-path="url(#hummingbird-silhouette)">
+    <rect x="18" y="14" width="60" height="40" fill="url(#hummingbird-back)"/>
+    <path d="M20 33 C 32 40, 50 43, 76 40 L 76 56 L 20 56 Z" fill="#e8efe9"/>
+    <path d="M40 41 C 50 44, 62 43, 72 40" fill="none" stroke="#8fb8a6" stroke-width="2.4" opacity=".55"/>
+    <path d="M22 30 C 24 38, 31 43, 39 41 C 36 36, 32 32, 28 30 Z" fill="url(#hummingbird-gorget)"/>
+    <path d="M25 33 C 28 37, 31 39, 34 39" fill="none" stroke="#ffd0e1" stroke-width=".9" stroke-linecap="round" opacity=".8"/>
+    <path d="M21 25 C 24 18, 34 17, 40 23 C 33 21, 27 21, 21 25 Z" fill="#167a5c"/>
+  </g>
+  <circle cx="28.5" cy="25" r="1.9" fill="#0b0d0c"/>
+  <circle cx="29" cy="24.4" r=".55" fill="#f4fbf8"/>
+  <ellipse cx="32.6" cy="25.4" rx="1" ry=".7" fill="#f4fbf8"/>
+  <path d="M22.5 26.6 L 0 27.8 L 22.5 29.2 Z" fill="#1b1712"/>
   <g class="wing wing--near">
-    <path d="M44 32 C 56 12, 74 6, 84 16 C 70 24, 56 34, 46 40 Z" fill="#49e0bb" opacity=".8"/>
+    <path d="M48 32 C 56 14, 70 4, 86 4 C 76 14, 64 26, 52 38 Z" fill="#7fe3c4" opacity=".75"/>
+    <path d="M52 30 C 60 20, 70 12, 82 7" fill="none" stroke="#c6f5e6" stroke-width=".8" stroke-linecap="round" opacity=".8"/>
   </g>
   <g class="wing wing--rest">
-    <path d="M40 29 C 54 25, 69 31, 73 40 C 58 45, 45 38, 38 33 Z" fill="#2fb894"/>
+    <path d="M44 32 C 54 30, 66 33, 78 40 C 65 42, 53 40, 42 37 Z" fill="#2d4a43"/>
+    <path d="M47 34 C 56 34, 66 36, 75 40" fill="none" stroke="#5d8379" stroke-width=".8" stroke-linecap="round"/>
   </g>
 </svg>
