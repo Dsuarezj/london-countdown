@@ -2,6 +2,17 @@ function readDurationMs(propertyName) {
   return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(propertyName)) * 1000;
 }
 
+function pickRandomItem(items) {
+  const randomValues = new Uint32Array(1);
+  const limit = Math.floor(0x100000000 / items.length) * items.length;
+  let randomValue;
+  do {
+    crypto.getRandomValues(randomValues);
+    randomValue = randomValues[0];
+  } while (randomValue >= limit);
+  return items[randomValue % items.length];
+}
+
 function startAffection(meetingElement, { beats, intervalMs }) {
   const beatDurationMs = readDurationMs("--beat-duration");
   let affectionBusy = false;
@@ -11,7 +22,7 @@ function startAffection(meetingElement, { beats, intervalMs }) {
       return;
     }
     affectionBusy = true;
-    const beatName = beats[Math.floor(Math.random() * beats.length)];
+    const beatName = pickRandomItem(beats);
     document.body.classList.add(beatName);
     setTimeout(() => {
       document.body.classList.remove(beatName);

@@ -175,8 +175,9 @@ Constraints worth keeping:
 
 ## 8. Affection beats
 
-Every `affection.intervalMs`, `src/ui/meeting.js` picks one class from `config.affection.beats`,
-adds it for `--beat-duration`, then removes it. The same function runs on a tap of `.meeting`. An
+Every `affection.intervalMs`, `src/ui/meeting.js` picks one class from `config.affection.beats`
+with `crypto.getRandomValues` (uniform, no consecutive-repeat memory), adds it for
+`--beat-duration`, then removes it. The same function runs on a tap of `.meeting`. An
 `affectionBusy` flag blocks overlapping beats.
 
 | Class | What happens |
@@ -187,6 +188,10 @@ adds it for `--beat-duration`, then removes it. The same function runs on a tap 
 | `swaying` | Both lean left then right together |
 | `perching` | South lands briefly on north's back |
 | `nuzzling` | Both lean in until beaks meet; heart rises |
+| `preening` | North pecks the south's crown; south ducks; heart rises |
+| `bowing` | Both dip their heads in a greeting and rise |
+| `chasing` | South darts behind north and back; north turns to follow |
+| `dozing` | Both sink and dip their beaks, slow and quiet |
 
 Selectors start with `body.arrived.<beat>` so they always outrank the character's arrived
 animation regardless of stylesheet load order:
