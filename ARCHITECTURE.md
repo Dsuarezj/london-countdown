@@ -53,7 +53,7 @@ src/
     meeting-city.js   meeting day: meeting city time and weather, both skies swirling together
 styles/
   base.css            tokens, layout, topbar, pins, headline, countdown
-  sky-layers.css      aurora / tropics / stars / horizon primitives
+  sky-layers.css      shared weather opacities plus aurora / tropics / stars / horizon
   meeting.css         bird rig contract, wing sets, heart
   affection.css       affection beats (configurable stylesheet)
   info-card.css       bottom sheet / anchored card
