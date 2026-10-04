@@ -30,6 +30,7 @@ function startAffection(meetingElement, { beats, intervalMs }) {
     }, beatDurationMs);
   }
 
+  setTimeout(playRandomBeat, 1000);
   setInterval(playRandomBeat, intervalMs);
   meetingElement.addEventListener("click", playRandomBeat);
 }

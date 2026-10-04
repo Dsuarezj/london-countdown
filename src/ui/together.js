@@ -1,6 +1,7 @@
 import { loadStylesheet } from "@/utils/stylesheet.js";
 
 const HEART_RAIN_COUNT = 10;
+const OPENING_DELAY_MS = 1000;
 
 function playHeartRain(hostElement) {
   const rainElement = document.createElement("div");
@@ -23,13 +24,26 @@ const TOGETHER_ANIMATIONS = {
   }
 };
 
+function wait(durationMs) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, durationMs);
+  });
+}
+
+function readBeatDurationMs() {
+  const durationSeconds = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue("--beat-duration")
+  );
+  return Number.isFinite(durationSeconds) ? durationSeconds * 1000 : 2600;
+}
+
 export function createTogetherPlayer(togetherId) {
-  let hasArrived = false;
+  let arrivedAtMs = 0;
   let hasPlayed = false;
   const togetherAnimation = TOGETHER_ANIMATIONS[togetherId];
 
-  async function playIfReady(remainingMs) {
-    if (hasPlayed || !hasArrived || remainingMs > 0 || !togetherAnimation) {
+  async function playWhenReady(remainingMs) {
+    if (hasPlayed || !arrivedAtMs || remainingMs > 0 || !togetherAnimation) {
       return;
     }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -37,14 +51,19 @@ export function createTogetherPlayer(togetherId) {
       return;
     }
     hasPlayed = true;
+    const openingMs = OPENING_DELAY_MS + readBeatDurationMs();
+    const remainingOpeningMs = openingMs - (Date.now() - arrivedAtMs);
+    if (remainingOpeningMs > 0) {
+      await wait(remainingOpeningMs);
+    }
     await loadStylesheet(togetherAnimation.stylesheet);
     togetherAnimation.play(document.body);
   }
 
   return {
     markArrived() {
-      hasArrived = true;
+      arrivedAtMs = Date.now();
     },
-    playIfReady
+    playWhenReady
   };
 }

@@ -45,7 +45,7 @@ function renderTick() {
   renderCountdown(remaining);
   renderKicker(config, translator, todayNumber());
   renderThreshold(config, translator, remaining);
-  togetherPlayer.playIfReady(remaining);
+  togetherPlayer.playWhenReady(remaining);
 }
 
 function renderLanguage() {
@@ -83,6 +83,6 @@ await Promise.all([
 renderCharacterLabels(meetingElement, config.characters, translator);
 playMeeting(meetingElement, config.affection, () => {
   togetherPlayer.markArrived();
-  togetherPlayer.playIfReady(remainingMs());
+  togetherPlayer.playWhenReady(remainingMs());
   offerInstall();
 });

@@ -39,7 +39,7 @@ src/
     info-card.js      <dialog> content for an origin and its character
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
     meeting.js        journey -> arrived -> affection beats
-    together.js       one-shot reunion animation (heart rain) after countdown zero
+    together.js       one-shot reunion overlay (heart rain) after countdown zero
     install-prompt.js install prompt (7-day window, dismiss until tomorrow)
   utils/
     enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase, SkyCondition
