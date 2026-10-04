@@ -2,6 +2,9 @@
   <g class="wing wing--far">
     <path d="M46 26 C 58 8, 76 4, 86 12 C 72 20, 60 30, 48 34 Z" fill="#2f8f7a" opacity=".55"/>
   </g>
+  <g class="wing wing--reach">
+    <path d="M38 42 C 23 43, 8 48, -8 56 C 7 61, 26 54, 40 48 Z" fill="#3fd4ad"/>
+  </g>
   <path class="tail" d="M62 38 C 74 34, 84 38, 88 46 C 76 48, 68 46, 60 44 Z" fill="#1f7a68"/>
   <ellipse cx="48" cy="38" rx="21" ry="15" fill="#2ec4a0"/>
   <path d="M32 44 C 42 52, 58 50, 66 42 C 56 48, 42 50, 32 44 Z" fill="#dff7ef"/>
@@ -15,8 +18,5 @@
   </g>
   <g class="wing wing--rest">
     <path d="M40 29 C 54 25, 69 31, 73 40 C 58 45, 45 38, 38 33 Z" fill="#2fb894"/>
-  </g>
-  <g class="wing wing--reach">
-    <path d="M38 42 C 23 43, 8 48, -8 56 C 7 61, 26 54, 40 48 Z" fill="#3fd4ad"/>
   </g>
 </svg>

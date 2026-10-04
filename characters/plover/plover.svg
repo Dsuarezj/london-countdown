@@ -8,6 +8,15 @@
   <g class="wing wing--far">
     <path d="M48 32 C 34 10, 16 4, 4 12 C 18 22, 28 34, 44 40 Z" fill="#7a5c24"/>
   </g>
+  <g class="wing wing--reach">
+    <path d="M62 46 C 82 47, 99 52, 114 60 C 99 65, 78 59, 60 52 Z" fill="#c8983a"/>
+    <g fill="#1a1410">
+      <ellipse cx="74" cy="51" rx="1.8" ry="1.1" transform="rotate(10 74 51)"/>
+      <ellipse cx="84" cy="54" rx="1.7" ry="1.1" transform="rotate(14 84 54)"/>
+      <ellipse cx="94" cy="57" rx="1.6" ry="1" transform="rotate(16 94 57)"/>
+      <ellipse cx="104" cy="60" rx="1.4" ry=".9" transform="rotate(18 104 60)"/>
+    </g>
+  </g>
   <path class="tail" d="M28 40 C 14 36, 6 42, 2 50 C 14 52, 22 50, 32 46 Z" fill="#8c6a2a"/>
   <path d="M10 46 C 16 48, 22 48, 30 46" fill="none" stroke="#1a1410" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
   <g clip-path="url(#plover-silhouette)">
@@ -70,15 +79,6 @@
       <ellipse cx="40" cy="35.5" rx="1.7" ry="1.1"/>
       <ellipse cx="60" cy="37" rx="1.7" ry="1.1"/>
       <ellipse cx="51" cy="37.5" rx="1.7" ry="1.1"/>
-    </g>
-  </g>
-  <g class="wing wing--reach">
-    <path d="M62 46 C 82 47, 99 52, 114 60 C 99 65, 78 59, 60 52 Z" fill="#c8983a"/>
-    <g fill="#1a1410">
-      <ellipse cx="74" cy="51" rx="1.8" ry="1.1" transform="rotate(10 74 51)"/>
-      <ellipse cx="84" cy="54" rx="1.7" ry="1.1" transform="rotate(14 84 54)"/>
-      <ellipse cx="94" cy="57" rx="1.6" ry="1" transform="rotate(16 94 57)"/>
-      <ellipse cx="104" cy="60" rx="1.4" ry=".9" transform="rotate(18 104 60)"/>
     </g>
   </g>
 </svg>

@@ -91,8 +91,8 @@ A character is `characters/<id>/<id>.svg` + `characters/<id>/<id>.css`, referenc
 `config.characters`. To be swappable it must respect:
 
 1. **Wing groups.** The SVG has four groups: `.wing--far`, `.wing--near` (flapping, visible during
-   `journey`), `.wing--rest` (folded) and `.wing--reach` (stretched to the partner), visible when
-   `arrived`. `styles/meeting.css` swaps them.
+   `journey`), `.wing--rest` (folded, in front of the body) and `.wing--reach` (stretched to the
+   partner, drawn behind the body), visible when `arrived`. `styles/meeting.css` swaps them.
 2. **Facing.** A north character faces right and comes from the top-left; a south character faces
    left and comes from the bottom-right. Its `.wing--reach` path extends past the `viewBox` edge
    towards the partner; `overflow: visible` on the SVG makes the wings overlap.
