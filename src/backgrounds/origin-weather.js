@@ -25,7 +25,6 @@ function applySky(hemisphere, { phase, condition, raining, snowing }) {
 }
 
 export const originWeather = {
-  stylesheet: "styles/backgrounds/origin-weather.css",
   markup: `${hemisphereMarkup("north")}${hemisphereMarkup("south")}`,
   async decorate(skyElement, { origins, weather }) {
     await Promise.all(Object.entries(origins).map(async ([slot, origin]) => {

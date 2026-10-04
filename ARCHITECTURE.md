@@ -10,7 +10,7 @@ render them.
 | --- | --- |
 | Native ES modules, no framework | The UI is one screen with a handful of text nodes and CSS-driven animations. React (or Preact) adds a runtime, and without a build step JSX needs Babel in the browser (~3 MB, slow first paint, fragile offline). Plain modules give the same separation for zero bytes. |
 | Import map with `@/` | `<script type="importmap">` maps `@/` to `./src/`, so imports read `@/utils/meeting-time.js` without a bundler. Requires Safari 16.4+ / Chrome 89+. |
-| `config.json` as the control panel | One file edits date, theme tokens, backgrounds, origins, characters, affection beats, kickers and thresholds. It is fetched at start (network-first, cached for offline). |
+| `config.json` as the control panel | One file edits date, theme tokens, backgrounds, origins, characters, affection beats, kickers and thresholds. It is fetched at start (network-first, cached for offline); only the sky reads the cached copy first (see Offline). |
 | Translations apart from config | Every visible text lives in `translations/<language>.json`. Config never holds words, only translation keys (`"kickers.sameSky"`, `"characters.plover"`), so adding a language is one new file plus its code in `config.languages`. |
 | Registry for code, config for choice | Backgrounds need behaviour (the weather one fetches data), so they are JS modules registered in `src/backgrounds/index.js`. Config only picks ids. Characters need no behaviour, so they are pure files (SVG + CSS) referenced by path from config. |
 | Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It maps every WMO `weather_code` to `SkyCondition` (`clear`, `partly`, `overcast`, `rain`, `snow`) and uses `is_day` for `SkyPhase`. On top of that, `rain > 0` sets `raining` and `snowfall > 0` sets `snowing`, which only switch on the precipitation animation when the code does not already do it. Daylight is shared; aurora/stars only paint when the phase is night. |
@@ -47,7 +47,7 @@ src/
     meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
     thresholds.js     findActiveThreshold(entries, remainingMs), shared by the threshold line and backgrounds
   backgrounds/
-    index.js          registry, selectBackgroundId, mountBackground
+    index.js          registry and createSky: picks the background from config and mounts it once per plan
     aurora-tropics.js the original sky (shared layers)
     origin-weather.js time and weather of each origin city
     converging.js     last days: both skies drift towards the centre
@@ -60,7 +60,7 @@ styles/
   together/<id>.css   one-shot reunion overlay; path lives with the player in together.js
   info-card.css       bottom sheet / anchored card
   install-prompt.css  install prompt
-  backgrounds/*.css   one file per background, loaded only when selected
+  backgrounds/*.css   one file per background, linked in index.html so the first paint never waits
 characters/<id>/      <id>.svg + <id>.css per character
 ```
 
@@ -92,8 +92,8 @@ Background priority: `meetingDay` → `countdown` window → `mode`.
 
 ## 4. Extending
 
-**New background**: add `src/backgrounds/<id>.js` exporting `{ markup, stylesheet?, decorate? }`,
-add `styles/backgrounds/<id>.css` scoped under `.sky--<id>`, register it in
+**New background**: add `src/backgrounds/<id>.js` exporting `{ markup, decorate? }`,
+add `styles/backgrounds/<id>.css` scoped under `.sky--<id>` and link it in `index.html`, register it in
 `src/backgrounds/index.js`, list the files in `sw.js`, then reference the id from config.
 Reuse `AURORA_TROPICS_LAYERS` to keep the visual family. `decorate(skyElement, context)` may set
 `data-*` attributes; CSS reacts to them.
@@ -178,7 +178,14 @@ the network response is used and stored in `localStorage` (`trip-json:<url>`); t
 only read when the request fails. City, date and time zone are not hard-coded in the shell: they
 come from `config.json` and `translations/*/places`.
 
+The sky is the one piece that is cache-first. Before any request, `main.js` reads the stored config
+(`readCachedConfig`) and mounts the sky from it with no animation, so a returning visit opens on the
+sky it last showed. The fresh config then goes through the same `showSky`, which builds a plan
+(background id plus the context it needs) and only remounts when that plan changed. On the first
+visit (no stored config) and on a remount, the weather is applied one frame after the markup, so the
+default night sky fades into it through the layers' own `transition` instead of jumping.
+
 The last fetched sky of each place is stored in `localStorage` (`place-sky:<lat>,<lon>`). Weather
-backgrounds paint it instantly and then fade to the fresh response; the request never blocks the
-countdown. When the request fails the gateway keeps the stored condition and estimates day/night
+backgrounds paint it instantly and fade only if the fresh response differs; the request never
+blocks the countdown. When the request fails the gateway keeps the stored condition and estimates day/night
 from the place's time zone.

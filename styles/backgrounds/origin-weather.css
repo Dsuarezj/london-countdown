@@ -9,13 +9,15 @@
   top: 0;
   z-index: 1;
   background: linear-gradient(180deg, #03080f 0%, var(--deep) 100%);
-  mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, #000 66%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 50%, rgba(0, 0, 0, .9) 60%, rgba(0, 0, 0, .6) 75%, rgba(0, 0, 0, .25) 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, rgba(0, 0, 0, .9) 60%, rgba(0, 0, 0, .6) 75%, rgba(0, 0, 0, .25) 88%, transparent 100%);
 }
 
 .sky--origin-weather .hemisphere--south {
   bottom: 0;
   background: linear-gradient(0deg, #5c1f3c 0%, #2b1430 50%, var(--deep) 100%);
+  mask-image: linear-gradient(0deg, #000 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(0deg, #000 85%, transparent 100%);
 }
 
 .sky--origin-weather .hemisphere--north .daylight {

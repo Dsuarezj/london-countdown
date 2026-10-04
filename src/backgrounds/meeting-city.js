@@ -8,7 +8,6 @@ function applySky(skyElement, { phase, condition, raining, snowing }) {
 }
 
 export const meetingCity = {
-  stylesheet: "styles/backgrounds/meeting-city.css",
   markup: `
     <div class="daylight"></div>
     <div class="overcast"></div>
