@@ -2,14 +2,15 @@ import { auroraTropics } from "@/backgrounds/aurora-tropics.js";
 import { converging } from "@/backgrounds/converging.js";
 import { meetingCity } from "@/backgrounds/meeting-city.js";
 import { originWeather } from "@/backgrounds/origin-weather.js";
+import { BackgroundId, BackgroundMode } from "@/utils/enums.js";
 import { loadStylesheet } from "@/utils/stylesheet.js";
 import { findActiveThreshold } from "@/utils/thresholds.js";
 
 const BACKGROUNDS = {
-  "aurora-tropics": auroraTropics,
-  "origin-weather": originWeather,
-  converging,
-  "meeting-city": meetingCity
+  [BackgroundId.AURORA_TROPICS]: auroraTropics,
+  [BackgroundId.ORIGIN_WEATHER]: originWeather,
+  [BackgroundId.CONVERGING]: converging,
+  [BackgroundId.MEETING_CITY]: meetingCity
 };
 
 function seededIndex(seed, length) {
@@ -25,7 +26,7 @@ export function selectBackgroundId(backgroundsConfig, { remainingMs, isMeetingDa
   if (countdownBackground) {
     return countdownBackground.background;
   }
-  if (backgroundsConfig.mode === "random") {
+  if (backgroundsConfig.mode === BackgroundMode.RANDOM) {
     const { pool, everyDays } = backgroundsConfig.random;
     return pool[seededIndex(Math.floor(dayNumber / everyDays), pool.length)];
   }

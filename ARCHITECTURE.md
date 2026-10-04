@@ -13,7 +13,8 @@ render them.
 | `config.json` as the control panel | One file edits date, theme tokens, backgrounds, origins, characters, affection beats, kickers and thresholds. It is fetched at start (network-first, cached for offline). |
 | Translations apart from config | Every visible text lives in `translations/<language>.json`. Config never holds words, only translation keys (`"kickers.sameSky"`, `"characters.plover"`), so adding a language is one new file plus its code in `config.languages`. |
 | Registry for code, config for choice | Backgrounds need behaviour (the weather one fetches data), so they are JS modules registered in `src/backgrounds/index.js`. Config only picks ids. Characters need no behaviour, so they are pure files (SVG + CSS) referenced by path from config. |
-| Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It returns a domain shape `{ phase: "day" \| "night", condition: "clear" \| "cloudy" \| "rain" \| "snow" }`. Swapping provider or moving it behind a server (e.g. a Cloudflare Worker) only changes this file. Open-Meteo needs no API key, so a client-side gateway is enough for now. |
+| Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It returns `{ phase, condition }` using `SkyPhase` and `SkyCondition` from `src/utils/enums.js`. Swapping provider or moving it behind a server (e.g. a Cloudflare Worker) only changes this file. Open-Meteo needs no API key, so a client-side gateway is enough for now. |
+| Closed options as enums | Fixed string sets live in `Object.freeze` maps (`BackgroundMode`, `BackgroundId`, `NightSky`, `SkyPhase`, `SkyCondition`, plus install phases in `install-prompt.js`). Config still stores the string values; JS compares against the enum. |
 | Install prompt as a state machine | Phases are an enum (`introducing`, `resting`, `last-call`, `retired`, `installed`), not booleans. Only terminal phases are stored; the rest are derived from the first visit date. |
 
 ## 2. Module map
@@ -39,6 +40,7 @@ src/
     meeting.js        journey -> arrived -> affection beats
     install-prompt.js install prompt state machine
   utils/
+    enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase, SkyCondition
     stylesheet.js     loadStylesheet(href) -> Promise
     meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
     thresholds.js     findActiveThreshold(entries, remainingMs), shared by kickers and backgrounds
@@ -71,10 +73,11 @@ the only place that knows about all of them.
 | `languages` | Language codes with a file in `translations/`. The first one is the fallback for missing keys. |
 | `meeting.city` | Translation key of the headline city. |
 | `theme.tokens` | Overrides for the CSS custom properties defined in `styles/base.css` `:root` (`--night`, `--deep`, `--aurora-mint`, `--aurora-teal`, `--aurora-violet`, `--tropic-magenta`, `--tropic-orange`, `--tropic-turquoise`, `--ink`, `--surface`). Defaults stay in CSS so the first paint is right before config loads. |
-| `backgrounds.mode` | `"fixed"` uses `backgrounds.fixed`; `"random"` picks from `backgrounds.random.pool`, stable for `everyDays` days. |
+| `backgrounds.mode` | `BackgroundMode`: `"fixed"` uses `backgrounds.fixed`; `"random"` picks from `backgrounds.random.pool`, stable for `everyDays` days. See `src/utils/enums.js`. |
+| `backgrounds.fixed` / `random.pool` / `countdown[].background` / `meetingDay` | `BackgroundId` values: `"aurora-tropics"`, `"origin-weather"`, `"converging"`, `"meeting-city"`. |
 | `backgrounds.countdown` | `[{ withinHours, background }]`. When the remaining time is inside a window, that background wins over the mode. The smallest matching window wins. |
 | `backgrounds.meetingDay` | Background for the calendar day of the meeting (in the meeting zone). Highest priority. Empty string disables it. |
-| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city`, `label` (translation key of the country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`aurora` or `stars`: what its half of the sky shows at night; days are shared). |
+| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city`, `label` (translation key of the country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). |
 | `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName` and `text`: translation key of an object with `name`, `ariaLabel` and `facts`, shown in the info card. |
 | `affection` | `stylesheet`, `beats` (body classes defined in that stylesheet) and `intervalMs`. Beat length comes from `--beat-duration` in the stylesheet. |
 | `kickers` | Up to ten translation keys. One per day: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |

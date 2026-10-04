@@ -41,21 +41,21 @@
   },
   "kickers": {
     "sameSky": "El mismo cielo, la misma noche",
-    "twoRoutes": "Dos rutas, una calle",
-    "twoTimeZones": "Dos husos horarios, un reloj",
-    "twoMaps": "Dos mapas, un punto",
-    "differentWeather": "Distinto clima, el mismo plan",
+    "twoRoutes": "Dos rutas, un mismo sitio",
+    "openTicket": "Hay un boleto con ganas de usarse",
+    "twoMaps": "Dos pines, una ciudad",
+    "bothCalendars": "Está en los dos calendarios",
     "sameMoon": "La misma luna, distintas ventanas",
-    "twoFlights": "Dos vuelos, una llegada",
-    "sameStars": "Las mismas estrellas, otras latitudes",
-    "oneDayLess": "Cada día, un día menos",
-    "sameCity": "La misma ciudad, la misma hora"
+    "cityWalk": "Perdernos a propósito. Encontrarnos también",
+    "passportReady": "El pasaporte ya lo sabe",
+    "firstCoffee": "El primer café juntas ya tiene mesa",
+    "spareKey": "Hay una llave con nuestro nombre"
   },
   "thresholds": {
-    "countingDays": "Ya contamos en días",
-    "lastWeek": "Una semana. Fuera las maletas",
-    "lastNights": "Solo quedan unas noches",
-    "lastDay": "Menos de un día. Ya es real",
-    "lastHour": "Ya casi. Respira"
+    "countingDays": "Ya medimos en días",
+    "lastWeek": "Una semana. La aventura ya hace ruido",
+    "lastNights": "Quedan pocas noches para la compostura",
+    "lastDay": "Menos de un día. Se acabó el casi",
+    "lastHour": "La última hora. El encuentro ya se acerca"
   }
 }

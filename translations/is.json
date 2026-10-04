@@ -41,21 +41,21 @@
   },
   "kickers": {
     "sameSky": "Sami himinn, sama nótt",
-    "twoRoutes": "Tvær leiðir, ein gata",
-    "twoTimeZones": "Tvö tímabelti, ein klukka",
-    "twoMaps": "Tvö kort, einn punktur",
-    "differentWeather": "Ólíkt veður, sama áætlun",
-    "sameMoon": "Sama tunglið, ólíkir gluggar",
-    "twoFlights": "Tvö flug, ein lending",
-    "sameStars": "Sömu stjörnur, aðrar breiddargráður",
-    "oneDayLess": "Hver dagur, einum degi færra",
-    "sameCity": "Sama borg, sama stund"
+    "twoRoutes": "Tvær leiðir, sami staður",
+    "openTicket": "Það er miði sem langar að vera notaður",
+    "twoMaps": "Tveir pinna, ein borg",
+    "bothCalendars": "Þetta er í báðum dagatölum",
+    "sameMoon": "Sama tungl, ólíkir gluggar",
+    "cityWalk": "Að villast viljandi. Finna hvor aðra líka",
+    "passportReady": "Vegabréfið veit þetta nú þegar",
+    "firstCoffee": "Fyrsta kaffið þeirra á nú þegar borð",
+    "spareKey": "Það er lykill með nafninu okkar"
   },
   "thresholds": {
-    "countingDays": "Nú teljum við í dögum",
-    "lastWeek": "Ein vika. Töskurnar fram",
-    "lastNights": "Bara nokkrar nætur eftir",
-    "lastDay": "Minna en dagur. Þetta er að gerast",
-    "lastHour": "Næstum komnar. Andaðu"
+    "countingDays": "Nú mælum við í dögum",
+    "lastWeek": "Ein vika. Ævintýrið er farið að heyrast",
+    "lastNights": "Nokkrar nætur eftir til að halda jafnvægi",
+    "lastDay": "Minna en dagur. Næstum er búið",
+    "lastHour": "Síðasta klukkustundin. Fundurinn nálgast"
   }
 }

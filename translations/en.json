@@ -41,21 +41,21 @@
   },
   "kickers": {
     "sameSky": "Same sky, same night",
-    "twoRoutes": "Two routes, one street",
-    "twoTimeZones": "Two time zones, one clock",
-    "twoMaps": "Two maps, one point",
-    "differentWeather": "Different weather, same plan",
+    "twoRoutes": "Two routes, same place",
+    "openTicket": "There's a ticket itching to be used",
+    "twoMaps": "Two pins, one city",
+    "bothCalendars": "It's in both calendars",
     "sameMoon": "Same moon, different windows",
-    "twoFlights": "Two flights, one arrival",
-    "sameStars": "Same stars, other latitudes",
-    "oneDayLess": "Every day, one day less",
-    "sameCity": "Same city, same hour"
+    "cityWalk": "Get lost on purpose. Find each other too",
+    "passportReady": "The passport already knows",
+    "firstCoffee": "The first coffee together already has a table",
+    "spareKey": "There's a key with our name on it"
   },
   "thresholds": {
-    "countingDays": "Now we count in days",
-    "lastWeek": "One week. Suitcases out",
-    "lastNights": "Only a few nights left",
-    "lastDay": "Less than a day. It's real now",
-    "lastHour": "Almost there. Breathe"
+    "countingDays": "We have begun to measure in days",
+    "lastWeek": "One week. The adventure is getting loud",
+    "lastNights": "A few nights left to keep composure",
+    "lastDay": "Less than a day. Almost is over",
+    "lastHour": "The last hour. The meeting draws near"
   }
 }
