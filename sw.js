@@ -1,4 +1,5 @@
-const CACHE_NAME = "london-countdown-v10";
+const CACHE_NAME = "london-countdown-v11";
+const NETWORK_TIMEOUT_MS = 1000;
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -21,6 +22,7 @@ const APP_SHELL = [
   "./characters/hummingbird/hummingbird.svg",
   "./characters/hummingbird/hummingbird.css",
   "./src/main.js",
+  "./src/services/cached-json.js",
   "./src/services/config.js",
   "./src/utils/enums.js",
   "./src/utils/stylesheet.js",
@@ -61,27 +63,32 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-async function networkFirst(request) {
+function rejectAfter(timeoutMs) {
+  return new Promise((resolve, reject) => setTimeout(() => reject(new Error("Network timeout")), timeoutMs));
+}
+
+async function matchCached(cache, request) {
+  const cachedResponse = await cache.match(request, { ignoreSearch: request.mode === "navigate" });
+  if (cachedResponse || request.mode !== "navigate") {
+    return cachedResponse;
+  }
+  return cache.match("./index.html");
+}
+
+async function networkFirst(request, event) {
   const cache = await caches.open(CACHE_NAME);
+  const freshResponse = fetch(request, { cache: "no-store" }).then((response) => {
+    if (response.ok) {
+      cache.put(request, response.clone());
+    }
+    return response;
+  });
+  event.waitUntil(freshResponse.catch(() => {}));
 
   try {
-    const freshResponse = await fetch(request, { cache: "no-store" });
-    if (freshResponse && freshResponse.ok) {
-      cache.put(request, freshResponse.clone());
-    }
-    return freshResponse;
+    return await Promise.race([freshResponse, rejectAfter(NETWORK_TIMEOUT_MS)]);
   } catch (networkError) {
-    const cachedResponse = await cache.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    if (request.mode === "navigate") {
-      const cachedShell = await cache.match("./index.html");
-      if (cachedShell) {
-        return cachedShell;
-      }
-    }
-    throw networkError;
+    return (await matchCached(cache, request)) ?? freshResponse;
   }
 }
 
@@ -91,5 +98,5 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET" || url.origin !== self.location.origin || url.searchParams.has("ping")) {
     return;
   }
-  event.respondWith(networkFirst(request));
+  event.respondWith(networkFirst(request, event));
 });

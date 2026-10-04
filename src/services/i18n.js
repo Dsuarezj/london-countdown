@@ -1,8 +1,9 @@
+import { loadCachedJson } from "@/services/cached-json.js";
+
 const LANGUAGE_KEY = "loa-language";
 
 async function loadDictionary(language) {
-  const response = await fetch(`translations/${language}.json`);
-  return [language, await response.json()];
+  return [language, await loadCachedJson(`translations/${language}.json`)];
 }
 
 function readPath(dictionary, key) {
