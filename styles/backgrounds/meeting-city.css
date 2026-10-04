@@ -50,6 +50,7 @@
 }
 
 .sky--meeting-city .daylight,
+.sky--meeting-city .overcast,
 .sky--meeting-city .veil,
 .sky--meeting-city .precipitation {
   position: absolute;
@@ -64,8 +65,13 @@
     linear-gradient(180deg, var(--sunny-zenith) 0%, var(--sunny-horizon) 100%);
 }
 
-.sky--meeting-city[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .daylight {
+.sky--meeting-city .overcast {
   background: linear-gradient(180deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 100%);
+}
+
+.sky--meeting-city .stars,
+.sky--meeting-city .city-lights {
+  transition: filter 2.4s ease;
 }
 
 .sky--meeting-city .veil {
@@ -110,11 +116,11 @@
 
 .sky--meeting-city[data-phase="day"] .daylight { opacity: 1; }
 .sky--meeting-city[data-phase="day"] .stars,
-.sky--meeting-city[data-phase="day"] .city-lights { visibility: hidden; }
+.sky--meeting-city[data-phase="day"] .city-lights { filter: opacity(0); }
 
 .sky--meeting-city:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .85; }
-.sky--meeting-city:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .stars { visibility: hidden; }
-.sky--meeting-city[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .daylight { opacity: .92; }
+.sky--meeting-city:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .stars { filter: opacity(0); }
+.sky--meeting-city[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .92; }
 
 .sky--meeting-city[data-condition="rain"] .precipitation {
   opacity: .75;

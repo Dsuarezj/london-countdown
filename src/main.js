@@ -1,27 +1,30 @@
 import { mountBackground, selectBackgroundId } from "@/backgrounds/index.js";
-import { mountCharacters, renderCharacterLabels } from "@/characters.js";
-import { applyThemeTokens, loadConfig } from "@/config.js";
-import { watchConnection } from "@/connection.js";
-import { renderCountdown } from "@/countdown.js";
-import { renderKicker, renderMeetingLabel } from "@/headline.js";
-import { createTranslator } from "@/i18n.js";
-import { createInfoCard } from "@/info-card.js";
-import { prepareInstallPrompt } from "@/install-prompt.js";
-import { playMeeting } from "@/meeting.js";
-import { calendarDayNumber, wallClockToInstant } from "@/meeting-time.js";
-import { mountOriginPins, renderOriginPins } from "@/origin-pins.js";
-import { loadStylesheet } from "@/stylesheet.js";
+import { applyThemeTokens, loadConfig } from "@/services/config.js";
+import { watchConnection } from "@/services/connection.js";
+import { createTranslator } from "@/services/i18n.js";
+import { mountCharacters, renderCharacterLabels } from "@/ui/characters.js";
+import { rememberMeetingInstant, renderCachedCountdown, renderCountdown } from "@/ui/countdown.js";
+import { renderKicker, renderMeetingLabel } from "@/ui/headline.js";
+import { createInfoCard } from "@/ui/info-card.js";
+import { prepareInstallPrompt } from "@/ui/install-prompt.js";
+import { playMeeting } from "@/ui/meeting.js";
+import { mountOriginPins, renderOriginPins } from "@/ui/origin-pins.js";
+import { calendarDayNumber, wallClockToInstant } from "@/utils/meeting-time.js";
+import { loadStylesheet } from "@/utils/stylesheet.js";
 
 const skyElement = document.getElementById("sky");
 const meetingElement = document.getElementById("meeting");
 const languageButton = document.getElementById("languageButton");
 const languageCodeField = document.getElementById("languageCode");
 
+renderCachedCountdown();
 const offerInstall = prepareInstallPrompt();
 const config = await loadConfig();
-const translator = await createTranslator(config.languages);
 const { meeting } = config;
 const meetingInstant = wallClockToInstant(meeting.date, meeting.time, meeting.timeZone);
+rememberMeetingInstant(meetingInstant);
+renderCountdown(meetingInstant - Date.now());
+const translator = await createTranslator(config.languages);
 const infoCard = createInfoCard(config, translator);
 
 function remainingMs() {

@@ -9,6 +9,7 @@
 .sky--origin-weather .hemisphere--south { bottom: 0; }
 
 .sky--origin-weather .daylight,
+.sky--origin-weather .overcast,
 .sky--origin-weather .veil,
 .sky--origin-weather .precipitation {
   position: absolute;
@@ -29,11 +30,11 @@
     linear-gradient(0deg, var(--sunny-zenith) 0%, var(--sunny-horizon) 82%, transparent 100%);
 }
 
-.sky--origin-weather .hemisphere--north[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .daylight {
+.sky--origin-weather .hemisphere--north .overcast {
   background: linear-gradient(180deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 82%, transparent 100%);
 }
 
-.sky--origin-weather .hemisphere--south[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .daylight {
+.sky--origin-weather .hemisphere--south .overcast {
   background: linear-gradient(0deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 82%, transparent 100%);
 }
 
@@ -42,6 +43,11 @@
   left: 0;
   right: 0;
   height: calc(100% / .6);
+  transition: opacity 2.4s ease;
+}
+
+.sky--origin-weather .stars {
+  transition: filter 2.4s ease;
 }
 
 .sky--origin-weather .hemisphere--north .aurora-field { top: 0; }
@@ -75,12 +81,15 @@
 }
 
 .sky--origin-weather [data-phase="day"] .daylight { opacity: 1; }
-.sky--origin-weather [data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .daylight { opacity: .92; }
+.sky--origin-weather [data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .92; }
 
 .sky--origin-weather [data-night-sky="stars"] .aurora-field,
-.sky--origin-weather [data-phase="day"] .aurora-field,
+.sky--origin-weather [data-phase="day"] .aurora-field {
+  opacity: 0;
+}
+
 .sky--origin-weather [data-phase="day"] .stars {
-  visibility: hidden;
+  filter: opacity(0);
 }
 
 .sky--origin-weather :is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .88; }

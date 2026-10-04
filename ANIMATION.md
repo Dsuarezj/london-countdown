@@ -14,7 +14,7 @@ JavaScript only toggles classes on `<body>` and never writes inline styles or co
 
 ## 1. State machine
 
-`src/meeting.js` drives the whole scene with body classes:
+`src/ui/meeting.js` drives the whole scene with body classes:
 
 | Body class | Meaning | Set by |
 | --- | --- | --- |
@@ -47,7 +47,7 @@ The birds' **final** position is decided by normal flex layout, and every animat
 </div>
 ```
 
-`src/characters.js` creates one `.bird` per origin in `config.origins` order. Two classes are
+`src/ui/characters.js` creates one `.bird` per origin in `config.origins` order. Two classes are
 always present:
 
 - `bird--<slot>` (`north` / `south`) — the place in the story. Affection beats target this.
@@ -167,14 +167,15 @@ Constraints worth keeping:
 - Radial gradient centres must stay **inside** the element box, or the brightest part ends up
   off-screen.
 - `mix-blend-mode: screen` only brightens, so it needs a dark base underneath.
-- Layers that animate `opacity` (`.tropics`, `.stars`) can't be dimmed with `opacity`; use
-  `filter` or `visibility` instead.
-- Weather reactions use `transition`, not `animation`, so the change from the default night look
-  to the fetched state is a slow fade.
+- Layers that animate `opacity` (`.tropics`, `.stars`, `.city-lights`) can't be dimmed with
+  `opacity`; use `filter: opacity()` so the change can still fade.
+- Weather backgrounds paint the last cached sky on mount (no transition, so no flash), then fade
+  to the fresh state with `transition`. Never toggle `visibility` or swap a gradient for a weather
+  change: add a layer (e.g. `.overcast`) and fade its `opacity`.
 
 ## 8. Affection beats
 
-Every `affection.intervalMs`, `src/meeting.js` picks one class from `config.affection.beats`,
+Every `affection.intervalMs`, `src/ui/meeting.js` picks one class from `config.affection.beats`,
 adds it for `--beat-duration`, then removes it. The same function runs on a tap of `.meeting`. An
 `affectionBusy` flag blocks overlapping beats.
 

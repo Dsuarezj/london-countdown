@@ -2,8 +2,8 @@ import { auroraTropics } from "@/backgrounds/aurora-tropics.js";
 import { converging } from "@/backgrounds/converging.js";
 import { meetingCity } from "@/backgrounds/meeting-city.js";
 import { originWeather } from "@/backgrounds/origin-weather.js";
-import { loadStylesheet } from "@/stylesheet.js";
-import { findActiveThreshold } from "@/thresholds.js";
+import { loadStylesheet } from "@/utils/stylesheet.js";
+import { findActiveThreshold } from "@/utils/thresholds.js";
 
 const BACKGROUNDS = {
   "aurora-tropics": auroraTropics,
@@ -34,10 +34,10 @@ export function selectBackgroundId(backgroundsConfig, { remainingMs, isMeetingDa
 
 export async function mountBackground(skyElement, backgroundId, context) {
   const background = BACKGROUNDS[backgroundId];
-  skyElement.className = `sky sky--${backgroundId}`;
-  skyElement.innerHTML = background.markup;
   if (background.stylesheet) {
     await loadStylesheet(background.stylesheet);
   }
+  skyElement.className = `sky sky--${backgroundId}`;
+  skyElement.innerHTML = background.markup;
   background.decorate?.(skyElement, context);
 }

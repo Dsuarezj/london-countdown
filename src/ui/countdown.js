@@ -1,4 +1,6 @@
-import { splitRemaining } from "@/meeting-time.js";
+import { splitRemaining } from "@/utils/meeting-time.js";
+
+const MEETING_INSTANT_KEY = "loa-meeting-instant";
 
 const countdownSection = document.getElementById("countdown");
 const reunionMessage = document.getElementById("reunion");
@@ -19,4 +21,16 @@ export function renderCountdown(remainingMs) {
   hoursField.textContent = String(remaining.hours).padStart(2, "0");
   minutesField.textContent = String(remaining.minutes).padStart(2, "0");
   secondsField.textContent = String(remaining.seconds).padStart(2, "0");
+  countdownSection.dataset.ready = "true";
+}
+
+export function renderCachedCountdown() {
+  const cachedMeetingInstant = Number(localStorage.getItem(MEETING_INSTANT_KEY));
+  if (cachedMeetingInstant) {
+    renderCountdown(cachedMeetingInstant - Date.now());
+  }
+}
+
+export function rememberMeetingInstant(meetingInstant) {
+  localStorage.setItem(MEETING_INSTANT_KEY, String(meetingInstant));
 }

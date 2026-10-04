@@ -1,4 +1,4 @@
-import { HOUR_MS } from "@/meeting-time.js";
+import { HOUR_MS } from "@/utils/meeting-time.js";
 
 export function findActiveThreshold(thresholds, remainingMs) {
   if (remainingMs <= 0) {

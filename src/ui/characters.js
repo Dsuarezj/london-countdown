@@ -1,4 +1,4 @@
-import { loadStylesheet } from "@/stylesheet.js";
+import { loadStylesheet } from "@/utils/stylesheet.js";
 
 async function createBird(slot, characterId, character) {
   const [markupResponse] = await Promise.all([fetch(character.markup), loadStylesheet(character.stylesheet)]);

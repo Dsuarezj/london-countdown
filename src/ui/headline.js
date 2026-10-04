@@ -1,5 +1,5 @@
-import { zoneAbbreviation } from "@/meeting-time.js";
-import { findActiveThreshold } from "@/thresholds.js";
+import { zoneAbbreviation } from "@/utils/meeting-time.js";
+import { findActiveThreshold } from "@/utils/thresholds.js";
 
 const kickerField = document.getElementById("kicker");
 const cityField = document.getElementById("city");
