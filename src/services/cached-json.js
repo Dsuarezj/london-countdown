@@ -1,4 +1,4 @@
-const JSON_CACHE_PREFIX = "loa-json:";
+const JSON_CACHE_PREFIX = "trip-json:";
 
 export async function loadCachedJson(url) {
   const cacheKey = `${JSON_CACHE_PREFIX}${url}`;
