@@ -1,6 +1,6 @@
 import { loadCachedJson } from "@/services/cached-json.js";
 
-const LANGUAGE_KEY = "loa-language";
+const LANGUAGE_KEY = "trip-language";
 
 async function loadDictionary(language) {
   return [language, await loadCachedJson(`translations/${language}.json`)];

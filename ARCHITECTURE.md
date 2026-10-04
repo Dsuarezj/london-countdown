@@ -166,8 +166,9 @@ Cross-origin requests (the weather API) skip the service worker.
 requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.
 
 `config.json` and `translations/*.json` go through `loadCachedJson` (`src/services/cached-json.js`):
-the network response is used and stored in `localStorage` (`loa-json:<url>`); the stored copy is
-only read when the request fails.
+the network response is used and stored in `localStorage` (`trip-json:<url>`); the stored copy is
+only read when the request fails. City, date and time zone are not hard-coded in the shell: they
+come from `config.json` and `translations/*/places`.
 
 The last fetched sky of each place is stored in `localStorage` (`place-sky:<lat>,<lon>`). Weather
 backgrounds paint it instantly and then fade to the fresh response; the request never blocks the

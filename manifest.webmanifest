@@ -1,7 +1,7 @@
 {
-  "name": "London · 13 November",
-  "short_name": "London",
-  "description": "Countdown to 13 November, 22:00 London time.",
+  "name": "Trip countdown",
+  "short_name": "Countdown",
+  "description": "A countdown to your next trip.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
