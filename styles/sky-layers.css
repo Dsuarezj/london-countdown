@@ -191,7 +191,7 @@
 :is(.sky, .sky *)[data-phase="day"]:is([data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--day-rain-veil); }
 :is(.sky, .sky *)[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--night-heavy-veil); }
 
-:is(.sky, .sky *)[data-condition="rain"] .precipitation {
+:is(.sky, .sky *):is([data-condition="rain"], [data-raining="true"]) .precipitation {
   opacity: var(--rain-cover);
   background-image: var(--rain-image);
   background-size: var(--rain-size);
@@ -200,7 +200,7 @@
   animation: rainfall 2.4s linear infinite;
 }
 
-:is(.sky, .sky *)[data-condition="snow"] .precipitation {
+:is(.sky, .sky *):is([data-condition="snow"], [data-snowing="true"]) .precipitation {
   opacity: var(--snow-cover);
   background-image: var(--snow-image);
   background-size: var(--snow-size);

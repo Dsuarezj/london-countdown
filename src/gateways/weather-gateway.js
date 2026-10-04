@@ -6,7 +6,12 @@ const SKY_CACHE_PREFIX = "place-sky:";
 const DAYLIGHT_START_HOUR = 7;
 const DAYLIGHT_END_HOUR = 19;
 
-export const CLEAR_NIGHT_SKY = Object.freeze({ phase: SkyPhase.NIGHT, condition: SkyCondition.CLEAR });
+export const CLEAR_NIGHT_SKY = Object.freeze({
+  phase: SkyPhase.NIGHT,
+  condition: SkyCondition.CLEAR,
+  raining: false,
+  snowing: false
+});
 
 const CONDITIONS_BY_WEATHER_CODE = [
   { condition: SkyCondition.SNOW, weatherCodes: [71, 73, 75, 77, 85, 86] },
@@ -27,14 +32,16 @@ function estimatePhase(timeZone) {
 }
 
 async function requestPlaceSky({ latitude, longitude }) {
-  const response = await fetch(`${FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&current=weather_code,is_day`);
+  const response = await fetch(`${FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&current=weather_code,rain,snowfall,is_day`);
   if (!response.ok) {
     throw new Error(`Weather request failed with status ${response.status}`);
   }
   const { current } = await response.json();
   return {
     phase: current.is_day ? SkyPhase.DAY : SkyPhase.NIGHT,
-    condition: conditionFromWeatherCode(current.weather_code)
+    condition: conditionFromWeatherCode(current.weather_code),
+    raining: current.rain > 0,
+    snowing: current.snowfall > 0
   };
 }
 
