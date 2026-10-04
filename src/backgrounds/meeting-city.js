@@ -1,11 +1,4 @@
-import { CLEAR_NIGHT_SKY, cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
-
-function applySky(skyElement, { phase, condition, raining, snowing }) {
-  skyElement.dataset.phase = phase;
-  skyElement.dataset.condition = condition;
-  skyElement.dataset.raining = raining;
-  skyElement.dataset.snowing = snowing;
-}
+import { CLEAR_NIGHT_SKY, applyPlaceSky, followPlaceSky } from "@/gateways/weather-gateway.js";
 
 export const meetingCity = {
   markup: `
@@ -21,12 +14,11 @@ export const meetingCity = {
     <div class="city-glow"></div>
     <div class="city-lights"></div>
   `,
-  async decorate(skyElement, { meeting, weather }) {
+  async decorate(skyElement, { meeting, weather, fadeIn }) {
     if (!weather) {
-      applySky(skyElement, CLEAR_NIGHT_SKY);
+      applyPlaceSky(skyElement, CLEAR_NIGHT_SKY);
       return;
     }
-    applySky(skyElement, cachedPlaceSky(meeting));
-    applySky(skyElement, await fetchPlaceSky(meeting));
+    await followPlaceSky(skyElement, meeting, fadeIn);
   }
 };
