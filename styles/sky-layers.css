@@ -1,8 +1,9 @@
 .sky {
+  --rain-strength: 0;
   --rain-image:
-    repeating-linear-gradient(110deg, transparent 0 30px, rgba(215, 232, 255, .16) 30px 31.2px, transparent 31.2px 58px),
-    repeating-linear-gradient(114deg, transparent 0 44px, rgba(195, 218, 248, .09) 44px 45px, transparent 45px 84px);
-  --rain-size: 56px 64px, 84px 96px;
+    repeating-linear-gradient(110deg, transparent 0 30px, rgba(215, 232, 255, .22) 30px 31.4px, transparent 31.4px 58px),
+    repeating-linear-gradient(114deg, transparent 0 44px, rgba(195, 218, 248, .14) 44px 45.2px, transparent 45.2px 84px),
+    repeating-linear-gradient(107deg, transparent 0 36px, rgba(210, 228, 252, .12) 36px 37.1px, transparent 37.1px 72px);
   --snow-image:
     radial-gradient(2px 2px at 20% 30%, #fff 50%, transparent),
     radial-gradient(1.6px 1.6px at 70% 10%, #fff 50%, transparent),
@@ -25,7 +26,6 @@
   --day-overcast-veil: .60;
   --day-rain-veil: .70;
   --night-heavy-veil: .69;
-  --rain-cover: .75;
   --snow-cover: .55;
   --night-sky-clear: 1;
   --night-sky-partly: .55;
@@ -39,8 +39,8 @@
 }
 
 @keyframes rainfall {
-  from { background-position: 0 0, 0 0; }
-  to   { background-position: 0 64px, 0 96px; }
+  from { background-position: 0 0, 0 0, 0 0; }
+  to   { background-position: 0 var(--rain-tile-primary), 0 var(--rain-tile-secondary), 0 var(--rain-tile-tertiary); }
 }
 
 @keyframes snowfall {
@@ -191,16 +191,22 @@
 :is(.sky, .sky *)[data-phase="day"]:is([data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--day-rain-veil); }
 :is(.sky, .sky *)[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--night-heavy-veil); }
 
-:is(.sky, .sky *):is([data-condition="rain"], [data-raining="true"]) .precipitation {
-  opacity: var(--rain-cover);
+:is(.sky, .sky *):is([data-condition="rain"], [data-rain]:not([data-rain="0"])) .precipitation {
+  --rain-tile-primary: calc(220px - 188px * var(--rain-strength));
+  --rain-tile-secondary: calc(280px - 232px * var(--rain-strength));
+  --rain-tile-tertiary: calc(248px - 208px * var(--rain-strength));
+  opacity: calc(.28 + .6 * var(--rain-strength));
   background-image: var(--rain-image);
-  background-size: var(--rain-size);
+  background-size:
+    var(--rain-tile-primary) var(--rain-tile-primary),
+    var(--rain-tile-secondary) var(--rain-tile-secondary),
+    var(--rain-tile-tertiary) var(--rain-tile-tertiary);
   mix-blend-mode: screen;
-  filter: blur(.7px);
-  animation: rainfall 2.4s linear infinite;
+  filter: blur(calc(3.4px - 3.25px * var(--rain-strength)));
+  animation: rainfall calc(2.8s - 1.2s * var(--rain-strength)) linear infinite;
 }
 
-:is(.sky, .sky *):is([data-condition="snow"], [data-snowing="true"]) .precipitation {
+:is(.sky, .sky *):is([data-condition="snow"], [data-snowfall]:not([data-snowfall="0"])) .precipitation {
   opacity: var(--snow-cover);
   background-image: var(--snow-image);
   background-size: var(--snow-size);

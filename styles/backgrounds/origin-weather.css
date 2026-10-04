@@ -98,7 +98,7 @@
   filter: blur(14px);
 }
 
-.sky--origin-weather :is([data-condition="rain"], [data-raining="true"]) .precipitation {
+.sky--origin-weather :is([data-condition="rain"], [data-rain]:not([data-rain="0"])) .precipitation {
   mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 72%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 72%, transparent 100%);
 }

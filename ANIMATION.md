@@ -159,9 +159,9 @@ Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared p
 | Background | Idea |
 | --- | --- |
 | `aurora-tropics` | The original: aurora north, tropical glow south |
-| `origin-weather` | One `.hemisphere` per origin (north on top, south at the bottom). Each gets `data-phase`, `data-condition`, `data-raining`, `data-snowing` and `data-night-sky`. `data-raining` / `data-snowing` only add the falling layer; the cloud cover still follows `data-condition`. Day uses the shared daylight sky. Night keeps aurora and/or stars as a base layer; partly/overcast/rain/snow fade in on top and only dim that night sky |
+| `origin-weather` | One `.hemisphere` per origin (north on top, south at the bottom). Each gets `data-phase`, `data-condition`, `data-rain`, `data-snowfall` and `data-night-sky`. Millimetres greater than 0 add the falling layer; `--rain-strength` (0 at 0.2 mm, 1 above 3 mm) densifies and sharpens the drops. The cloud cover still follows `data-condition`. Day uses the shared daylight sky. Night keeps aurora and/or stars as a base layer; partly/overcast/rain/snow fade in on top and only dim that night sky |
 | `converging` | Last days: aurora reaches lower, tropics rise higher, a warm glow where they meet |
-| `meeting-city` | Meeting day: one sky that follows the meeting city's time and weather (`data-phase`, `data-condition`, `data-raining`, `data-snowing`). No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
+| `meeting-city` | Meeting day: one sky that follows the meeting city's time and weather (`data-phase`, `data-condition`, `data-rain`, `data-snowfall`). No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
 
 Constraints worth keeping:
 

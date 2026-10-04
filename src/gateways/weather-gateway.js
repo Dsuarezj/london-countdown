@@ -6,11 +6,14 @@ const SKY_CACHE_PREFIX = "place-sky:";
 const DAYLIGHT_START_HOUR = 7;
 const DAYLIGHT_END_HOUR = 19;
 
+const LIGHT_RAIN_MM = 0.2;
+const HEAVY_RAIN_MM = 3;
+
 export const CLEAR_NIGHT_SKY = Object.freeze({
   phase: SkyPhase.NIGHT,
   condition: SkyCondition.CLEAR,
-  raining: false,
-  snowing: false
+  rain: 0,
+  snowfall: 0
 });
 
 const CONDITIONS_BY_WEATHER_CODE = [
@@ -40,9 +43,13 @@ async function requestPlaceSky({ latitude, longitude }) {
   return {
     phase: current.is_day ? SkyPhase.DAY : SkyPhase.NIGHT,
     condition: conditionFromWeatherCode(current.weather_code),
-    raining: current.rain > 0,
-    snowing: current.snowfall > 0
+    rain: current.rain,
+    snowfall: current.snowfall
   };
+}
+
+function rainStrength(rainMm) {
+  return Math.min(1, Math.max(0, (rainMm - LIGHT_RAIN_MM) / (HEAVY_RAIN_MM - LIGHT_RAIN_MM)));
 }
 
 function skyCacheKey({ latitude, longitude }) {
@@ -58,27 +65,28 @@ function readStoredPlaceSky(place) {
   return {
     phase: parsedSky.phase,
     condition: parsedSky.condition,
-    raining: Boolean(parsedSky.raining),
-    snowing: Boolean(parsedSky.snowing)
+    rain: Number(parsedSky.rain) || 0,
+    snowfall: Number(parsedSky.snowfall) || 0
   };
 }
 
 function samePlaceSky(leftSky, rightSky) {
   return leftSky.phase === rightSky.phase
     && leftSky.condition === rightSky.condition
-    && leftSky.raining === rightSky.raining
-    && leftSky.snowing === rightSky.snowing;
+    && leftSky.rain === rightSky.rain
+    && leftSky.snowfall === rightSky.snowfall;
 }
 
 function afterNextPaint(callback) {
   requestAnimationFrame(() => requestAnimationFrame(callback));
 }
 
-export function applyPlaceSky(element, { phase, condition, raining, snowing }) {
-  element.dataset.phase = phase;
-  element.dataset.condition = condition;
-  element.dataset.raining = raining;
-  element.dataset.snowing = snowing;
+export function applyPlaceSky(element, placeSky) {
+  element.dataset.phase = placeSky.phase;
+  element.dataset.condition = placeSky.condition;
+  element.dataset.rain = placeSky.rain;
+  element.dataset.snowfall = placeSky.snowfall;
+  element.style.setProperty("--rain-strength", String(rainStrength(placeSky.rain)));
 }
 
 export async function fetchPlaceSky(place) {
@@ -90,8 +98,8 @@ export async function fetchPlaceSky(place) {
     return readStoredPlaceSky(place) ?? {
       phase: estimatePhase(place.timeZone),
       condition: SkyCondition.CLEAR,
-      raining: false,
-      snowing: false
+      rain: 0,
+      snowfall: 0
     };
   }
 }
