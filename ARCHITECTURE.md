@@ -9,11 +9,11 @@ render them.
 | Decision | Why |
 | --- | --- |
 | Native ES modules, no framework | The UI is one screen with a handful of text nodes and CSS-driven animations. React (or Preact) adds a runtime, and without a build step JSX needs Babel in the browser (~3 MB, slow first paint, fragile offline). Plain modules give the same separation for zero bytes. |
-| Import map with `@/` | `<script type="importmap">` maps `@/` to `./src/`, so imports read `@/meeting-time.js` without a bundler. Requires Safari 16.4+ / Chrome 89+. |
+| Import map with `@/` | `<script type="importmap">` maps `@/` to `./src/`, so imports read `@/utils/meeting-time.js` without a bundler. Requires Safari 16.4+ / Chrome 89+. |
 | `config.json` as the control panel | One file edits date, theme tokens, backgrounds, origins, characters, affection beats, kickers and thresholds. It is fetched at start (network-first, cached for offline). |
 | Translations apart from config | Every visible text lives in `translations/<language>.json`. Config never holds words, only translation keys (`"kickers.sameSky"`, `"characters.plover"`), so adding a language is one new file plus its code in `config.languages`. |
 | Registry for code, config for choice | Backgrounds need behaviour (the weather one fetches data), so they are JS modules registered in `src/backgrounds/index.js`. Config only picks ids. Characters need no behaviour, so they are pure files (SVG + CSS) referenced by path from config. |
-| Weather behind a gateway | `src/weather-gateway.js` is the only module that knows Open-Meteo. It returns a domain shape `{ phase: "day" \| "night", condition: "clear" \| "cloudy" \| "rain" \| "snow" }`. Swapping provider or moving it behind a server (e.g. a Cloudflare Worker) only changes this file. Open-Meteo needs no API key, so a client-side gateway is enough for now. |
+| Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It returns a domain shape `{ phase: "day" \| "night", condition: "clear" \| "cloudy" \| "rain" \| "snow" }`. Swapping provider or moving it behind a server (e.g. a Cloudflare Worker) only changes this file. Open-Meteo needs no API key, so a client-side gateway is enough for now. |
 | Install prompt as a state machine | Phases are an enum (`introducing`, `resting`, `last-call`, `retired`, `installed`), not booleans. Only terminal phases are stored; the rest are derived from the first visit date. |
 
 ## 2. Module map
@@ -24,20 +24,24 @@ config.json           the control panel
 translations/         en.json, es.json, is.json: ui, places, characters, kickers, thresholds
 src/
   main.js             composition root: loads config, wires modules, owns the language
-  config.js           loadConfig, applyThemeTokens
-  stylesheet.js       loadStylesheet(href) -> Promise
-  meeting-time.js     time zone math (wall clock -> instant, day numbers, remaining split)
-  thresholds.js       findActiveThreshold(entries, remainingMs), shared by kickers and backgrounds
-  i18n.js             createTranslator: loads translations, resolves dotted keys, language cycle
-  headline.js         kicker (daily or threshold) + city/date/time label
-  countdown.js        days/hours/minutes/seconds or the reunion message
-  connection.js       offline mark
-  origin-pins.js      pin labels + click -> info card
-  info-card.js        <dialog> content for an origin and its character
-  characters.js       mounts each origin's character (SVG + CSS) into the meeting row
-  meeting.js          journey -> arrived -> affection beats
-  install-prompt.js   install prompt state machine
-  weather-gateway.js  Open-Meteo adapter with offline fallback
+  gateways/
+    weather-gateway.js  Open-Meteo adapter with last-sky cache and offline fallback
+  services/
+    config.js         loadConfig, applyThemeTokens
+    i18n.js           createTranslator: loads translations, resolves dotted keys, language cycle
+    connection.js     offline mark
+  ui/
+    headline.js       kicker (daily or threshold) + city/date/time label
+    countdown.js      days/hours/minutes/seconds or the reunion message, cached meeting instant
+    origin-pins.js    pin labels + click -> info card
+    info-card.js      <dialog> content for an origin and its character
+    characters.js     mounts each origin's character (SVG + CSS) into the meeting row
+    meeting.js        journey -> arrived -> affection beats
+    install-prompt.js install prompt state machine
+  utils/
+    stylesheet.js     loadStylesheet(href) -> Promise
+    meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
+    thresholds.js     findActiveThreshold(entries, remainingMs), shared by kickers and backgrounds
   backgrounds/
     index.js          registry, selectBackgroundId, mountBackground
     aurora-tropics.js the original sky (shared layers)
@@ -55,8 +59,9 @@ styles/
 characters/<id>/      <id>.svg + <id>.css per character
 ```
 
-Rule of thumb: modules that touch the DOM look up their own elements and expose render functions.
-`main.js` is the only place that knows about all of them.
+Rule of thumb: `gateways/` talk to external APIs, `services/` load or watch app state, `ui/` modules
+look up their own elements and expose render functions, `utils/` are DOM-free helpers. `main.js` is
+the only place that knows about all of them.
 
 ## 3. Configuration reference
 
@@ -148,5 +153,9 @@ show a hint ("Share → Add to Home Screen") instead of a button.
 
 `sw.js` is network-first for same-origin GET requests and precaches every file listed in
 `APP_SHELL`; bump `CACHE_NAME` when that list changes. Cross-origin requests (the weather API)
-skip the service worker. When the weather request fails the gateway estimates day/night from the
-origin's time zone and reuses the last stored condition.
+skip the service worker.
+
+The last fetched sky of each place is stored in `localStorage` (`place-sky:<lat>,<lon>`). Weather
+backgrounds paint it instantly and then fade to the fresh response. When the request fails the
+gateway keeps the stored condition and estimates day/night from the place's time zone. The meeting
+instant is stored too (`loa-meeting-instant`), so the countdown renders before `config.json` loads.

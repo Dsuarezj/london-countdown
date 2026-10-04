@@ -1,9 +1,15 @@
-import { fetchPlaceSky } from "@/weather-gateway.js";
+import { cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
+
+function applySky(skyElement, { phase, condition }) {
+  skyElement.dataset.phase = phase;
+  skyElement.dataset.condition = condition;
+}
 
 export const meetingCity = {
   stylesheet: "styles/backgrounds/meeting-city.css",
   markup: `
     <div class="daylight"></div>
+    <div class="overcast"></div>
     <div class="stars"></div>
     <div class="confluence">
       <div class="confluence__current confluence__current--north"></div>
@@ -15,8 +21,7 @@ export const meetingCity = {
     <div class="city-lights"></div>
   `,
   async decorate(skyElement, { meeting }) {
-    const meetingSky = await fetchPlaceSky(meeting);
-    skyElement.dataset.phase = meetingSky.phase;
-    skyElement.dataset.condition = meetingSky.condition;
+    applySky(skyElement, cachedPlaceSky(meeting));
+    applySky(skyElement, await fetchPlaceSky(meeting));
   }
 };

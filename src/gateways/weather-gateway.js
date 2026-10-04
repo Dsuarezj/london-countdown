@@ -1,7 +1,7 @@
-import { zonedHour } from "@/meeting-time.js";
+import { zonedHour } from "@/utils/meeting-time.js";
 
 const FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
-const CONDITION_CACHE_PREFIX = "place-condition:";
+const SKY_CACHE_PREFIX = "place-sky:";
 const DAYLIGHT_START_HOUR = 7;
 const DAYLIGHT_END_HOUR = 19;
 
@@ -33,16 +33,21 @@ async function requestPlaceSky({ latitude, longitude }) {
   };
 }
 
+function skyCacheKey({ latitude, longitude }) {
+  return `${SKY_CACHE_PREFIX}${latitude},${longitude}`;
+}
+
+export function cachedPlaceSky(place) {
+  const cachedSky = localStorage.getItem(skyCacheKey(place));
+  return cachedSky ? JSON.parse(cachedSky) : { phase: estimatePhase(place.timeZone), condition: "clear" };
+}
+
 export async function fetchPlaceSky(place) {
-  const cacheKey = `${CONDITION_CACHE_PREFIX}${place.latitude},${place.longitude}`;
   try {
     const placeSky = await requestPlaceSky(place);
-    localStorage.setItem(cacheKey, placeSky.condition);
+    localStorage.setItem(skyCacheKey(place), JSON.stringify(placeSky));
     return placeSky;
   } catch (requestError) {
-    return {
-      phase: estimatePhase(place.timeZone),
-      condition: localStorage.getItem(cacheKey) ?? "clear"
-    };
+    return { ...cachedPlaceSky(place), phase: estimatePhase(place.timeZone) };
   }
 }
