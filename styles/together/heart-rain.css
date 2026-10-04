@@ -1,0 +1,40 @@
+.together--heart-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.together__heart {
+  position: absolute;
+  top: -8%;
+  color: var(--tropic-magenta);
+  text-shadow: 0 0 12px rgba(255, 79, 147, .55);
+  line-height: 1;
+  opacity: 0;
+  animation: together-heart-fall var(--together-duration) var(--together-delay) ease-in forwards;
+}
+
+.together__heart:nth-child(1)  { left: 8%;  font-size: 1.05rem; --together-delay: .0s;  --together-duration: 5.4s; }
+.together__heart:nth-child(2)  { left: 18%; font-size: 1.4rem;  --together-delay: .45s; --together-duration: 6.2s; }
+.together__heart:nth-child(3)  { left: 28%; font-size: .95rem;  --together-delay: .18s; --together-duration: 5.1s; }
+.together__heart:nth-child(4)  { left: 38%; font-size: 1.25rem; --together-delay: .72s; --together-duration: 6.6s; }
+.together__heart:nth-child(5)  { left: 48%; font-size: 1.1rem;  --together-delay: .32s; --together-duration: 5.8s; }
+.together__heart:nth-child(6)  { left: 58%; font-size: 1.5rem;  --together-delay: .88s; --together-duration: 6.8s; }
+.together__heart:nth-child(7)  { left: 67%; font-size: 1rem;    --together-delay: .55s; --together-duration: 5.5s; }
+.together__heart:nth-child(8)  { left: 76%; font-size: 1.35rem; --together-delay: .24s; --together-duration: 6.1s; }
+.together__heart:nth-child(9)  { left: 85%; font-size: .9rem;   --together-delay: .64s; --together-duration: 5.3s; }
+.together__heart:nth-child(10) { left: 93%; font-size: 1.2rem;  --together-delay: .4s;  --together-duration: 6.4s; }
+
+@keyframes together-heart-fall {
+  0%   { transform: translateY(0) rotate(-12deg); opacity: 0; }
+  8%   { opacity: 1; }
+  100% { transform: translateY(112vh) rotate(28deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .together--heart-rain {
+    display: none;
+  }
+}

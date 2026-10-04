@@ -21,6 +21,7 @@ JavaScript only toggles classes on `<body>` and never writes inline styles or co
 | `journey` | The birds are travelling towards the countdown | `playMeeting()` on every page load |
 | `arrived` | The birds are perched together, wings touching | `settleTogether()` |
 | one of `config.affection.beats` | Short affectionate beat on top of `arrived` | timer every `affection.intervalMs`, or tap on `.meeting` |
+| `config.together` | One-shot overlay after countdown zero and `arrived` | `togetherPlayer.playIfReady` |
 
 `journey` is replaced by `arrived` after `--journey-duration`. The travel sequence runs on every
 load; it only skips straight to `arrived` when the user prefers reduced motion.
