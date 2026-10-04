@@ -2,15 +2,25 @@ import { zoneAbbreviation } from "@/utils/meeting-time.js";
 import { findActiveThreshold } from "@/utils/thresholds.js";
 
 const kickerField = document.getElementById("kicker");
+const thresholdField = document.getElementById("threshold");
 const cityField = document.getElementById("city");
 const meetingDateField = document.getElementById("meetingDate");
 const meetingTimeField = document.getElementById("meetingTime");
 const meetingZoneField = document.getElementById("meetingZone");
 
-export function renderKicker({ kickers, thresholds }, translator, remainingMs, dayNumber) {
+export function renderKicker({ kickers }, translator, dayNumber) {
+  kickerField.textContent = translator.translate(kickers[dayNumber % kickers.length]);
+}
+
+export function renderThreshold({ thresholds }, translator, remainingMs) {
   const activeThreshold = findActiveThreshold(thresholds, remainingMs);
-  const kickerKey = activeThreshold ? activeThreshold.text : kickers[dayNumber % kickers.length];
-  kickerField.textContent = translator.translate(kickerKey);
+  if (!activeThreshold) {
+    thresholdField.hidden = true;
+    thresholdField.textContent = "";
+    return;
+  }
+  thresholdField.textContent = translator.translate(activeThreshold.text);
+  thresholdField.hidden = false;
 }
 
 export function renderMeetingLabel({ meeting }, translator, meetingInstant) {

@@ -1,6 +1,7 @@
 import { splitRemaining } from "@/utils/meeting-time.js";
 
 const countdownSection = document.getElementById("countdown");
+const thresholdMessage = document.getElementById("threshold");
 const reunionMessage = document.getElementById("reunion");
 const daysField = document.getElementById("days");
 const hoursField = document.getElementById("hours");
@@ -10,6 +11,7 @@ const secondsField = document.getElementById("seconds");
 export function renderCountdown(remainingMs) {
   if (remainingMs <= 0) {
     countdownSection.hidden = true;
+    thresholdMessage.hidden = true;
     reunionMessage.hidden = false;
     return;
   }
@@ -20,4 +22,5 @@ export function renderCountdown(remainingMs) {
   minutesField.textContent = String(remaining.minutes).padStart(2, "0");
   secondsField.textContent = String(remaining.seconds).padStart(2, "0");
   countdownSection.dataset.ready = "true";
+  reunionMessage.hidden = true;
 }

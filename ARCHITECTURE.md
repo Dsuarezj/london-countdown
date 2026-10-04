@@ -33,7 +33,7 @@ src/
     i18n.js           createTranslator: loads translations, resolves dotted keys, language cycle
     connection.js     offline mark
   ui/
-    headline.js       kicker (daily or threshold) + city/date/time label
+    headline.js       daily kicker, threshold line under the countdown, city/date/time label
     countdown.js      days/hours/minutes/seconds or the reunion message
     origin-pins.js    pin labels + click -> info card
     info-card.js      <dialog> content for an origin and its character
@@ -44,7 +44,7 @@ src/
     enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase, SkyCondition
     stylesheet.js     loadStylesheet(href) -> Promise
     meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
-    thresholds.js     findActiveThreshold(entries, remainingMs), shared by kickers and backgrounds
+    thresholds.js     findActiveThreshold(entries, remainingMs), shared by the threshold line and backgrounds
   backgrounds/
     index.js          registry, selectBackgroundId, mountBackground
     aurora-tropics.js the original sky (shared layers)
@@ -81,8 +81,8 @@ the only place that knows about all of them.
 | `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city`, `label` (translation key of the country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). |
 | `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName` and `text`: translation key of an object with `name`, `ariaLabel` and `facts`, shown in the info card. |
 | `affection` | `stylesheet`, `beats` (body classes defined in that stylesheet) and `intervalMs`. Beat length comes from `--beat-duration` in the stylesheet. |
-| `kickers` | Up to ten translation keys. One per day: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
-| `thresholds` | `[{ withinHours, text }]` with `text` as a translation key. Inside a window the threshold text replaces the daily kicker (15, 7, 3, 1 days and the last hour). |
+| `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
+| `thresholds` | `[{ withinHours, text }]` with `text` as a translation key. Inside a window a small line appears under the countdown (15, 7, 3, 1 days and the last hour). |
 
 Background priority: `meetingDay` → `countdown` window → `mode`.
 

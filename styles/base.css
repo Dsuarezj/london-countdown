@@ -336,9 +336,21 @@ body {
   line-height: 1;
 }
 
+.threshold,
+.reunion {
+  max-width: 22rem;
+  letter-spacing: .06em;
+}
+
+.threshold {
+  font-size: clamp(.85rem, min(4vw, 2.4vh), 1.05rem);
+  line-height: 1.45;
+  color: var(--tropic-turquoise);
+  opacity: .9;
+}
+
 .reunion {
   font-size: clamp(1rem, 5vw, 1.4rem);
-  letter-spacing: .06em;
   color: var(--tropic-turquoise);
 }
 

@@ -4,7 +4,7 @@ import { watchConnection } from "@/services/connection.js";
 import { createTranslator } from "@/services/i18n.js";
 import { mountCharacters, renderCharacterLabels } from "@/ui/characters.js";
 import { renderCountdown } from "@/ui/countdown.js";
-import { renderKicker, renderMeetingLabel } from "@/ui/headline.js";
+import { renderKicker, renderMeetingLabel, renderThreshold } from "@/ui/headline.js";
 import { createInfoCard } from "@/ui/info-card.js";
 import { prepareInstallPrompt } from "@/ui/install-prompt.js";
 import { playMeeting } from "@/ui/meeting.js";
@@ -40,7 +40,8 @@ function todayNumber() {
 
 function renderTick() {
   renderCountdown(remainingMs());
-  renderKicker(config, translator, remainingMs(), todayNumber());
+  renderKicker(config, translator, todayNumber());
+  renderThreshold(config, translator, remainingMs());
 }
 
 function renderLanguage() {
