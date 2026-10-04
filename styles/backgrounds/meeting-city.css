@@ -72,11 +72,14 @@
 .sky--meeting-city .veil {
   bottom: 30%;
   background:
-    radial-gradient(60% 40% at 18% 20%, rgba(185, 195, 212, .7) 0%, transparent 72%),
-    radial-gradient(70% 44% at 55% 8%, rgba(165, 178, 198, .58) 0%, transparent 70%),
-    radial-gradient(62% 40% at 88% 26%, rgba(152, 166, 188, .5) 0%, transparent 68%),
-    linear-gradient(180deg, rgba(118, 130, 150, .45), transparent 90%);
-  filter: blur(22px);
+    radial-gradient(58% 28% at 16% 18%, rgba(236, 241, 248, .85) 0%, transparent 70%),
+    radial-gradient(62% 24% at 18% 29%, rgba(78, 90, 108, .42) 0%, transparent 72%),
+    radial-gradient(68% 30% at 54% 8%, rgba(226, 233, 243, .8) 0%, transparent 70%),
+    radial-gradient(72% 24% at 56% 19%, rgba(84, 96, 114, .38) 0%, transparent 72%),
+    radial-gradient(56% 28% at 88% 30%, rgba(214, 223, 236, .72) 0%, transparent 70%),
+    radial-gradient(60% 22% at 88% 41%, rgba(80, 92, 110, .36) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(118, 130, 150, .4), transparent 90%);
+  filter: blur(14px);
 }
 
 .sky--meeting-city .precipitation {

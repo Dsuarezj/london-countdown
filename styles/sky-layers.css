@@ -139,6 +139,18 @@
   transition: opacity 2.4s ease;
 }
 
+.sky .veil {
+  left: -22%;
+  right: -22%;
+  will-change: transform;
+  animation: cloud-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes cloud-drift {
+  from { transform: translate3d(-14%, 1.2%, 0); }
+  to   { transform: translate3d(14%, -1.2%, 0); }
+}
+
 :is(.sky, .sky *)[data-phase="day"] .daylight { opacity: 1; }
 :is(.sky, .sky *)[data-phase="day"][data-condition="partly"] .overcast { opacity: var(--day-partly-overcast); }
 :is(.sky, .sky *)[data-phase="day"][data-condition="overcast"] .overcast { opacity: var(--day-overcast-cover); }
