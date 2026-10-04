@@ -13,7 +13,7 @@ render them.
 | `config.json` as the control panel | One file edits date, theme tokens, backgrounds, origins, characters, affection beats, kickers and thresholds. It is fetched at start (network-first, cached for offline); only the sky reads the cached copy first (see Offline). |
 | Translations apart from config | Every visible text lives in `translations/<language>.json`. Config never holds words, only translation keys (`"kickers.sameSky"`, `"characters.plover"`), so adding a language is one new file plus its code in `config.languages`. |
 | Registry for code, config for choice | Backgrounds need behaviour (the weather one fetches data), so they are JS modules registered in `src/backgrounds/index.js`. Config only picks ids. Characters need no behaviour, so they are pure files (SVG + CSS) referenced by path from config. |
-| Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It maps every WMO `weather_code` to `SkyCondition` (`clear`, `partly`, `overcast`, `rain`, `snow`) and uses `is_day` for `SkyPhase`. On top of that, `rain > 0` sets `raining` and `snowfall > 0` sets `snowing`, which only switch on the precipitation animation when the code does not already do it. Daylight is shared; aurora/stars only paint when the phase is night. |
+| Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It maps every WMO `weather_code` to `SkyCondition` (`clear`, `partly`, `overcast`, `rain`, `snow`) and uses `is_day` for `SkyPhase`. Precipitation is stored as millimetres (`rain`, `snowfall`); the falling layer is on when the value is greater than 0, even if the weather code is not rain or snow. `rain` also sets `--rain-strength` (0 at 0.2 mm, 1 above 3 mm) so drizzle is sparse and blurred and heavy rain is denser and sharper. Daylight is shared; aurora/stars only paint when the phase is night. |
 | Closed options as enums | Fixed string sets live in `Object.freeze` maps (`BackgroundMode`, `BackgroundId`, `NightSky`, `SkyPhase`, `SkyCondition`, plus install routes in `install-prompt.js`). Config still stores the string values; JS compares against the enum. |
 | Install prompt kept small | For 7 days after the first visit it can show on every load. Cancel stores `dismissedOn` for today and hides it until the next calendar day. Install (or already standalone) stops it for good. |
 
@@ -183,7 +183,7 @@ The sky is the one piece that is cache-first. Before any request, `main.js` read
 showed. The fresh config then goes through the same `showSky`, which builds a plan (background id
 plus the context it needs) and only remounts when that plan changed.
 
-Each place's last sky (`phase`, `condition`, `raining`, `snowing`) is stored in `localStorage`
+Each place's last sky (`phase`, `condition`, `rain`, `snowfall`) is stored in `localStorage`
 (`place-sky:<lat>,<lon>`). Weather backgrounds paint that stored sky with the markup. The forecast
 request runs in the background and only writes the dataset again when the fresh sky differs, so the
 layers' `transition` plays for day/night (or weather) changes and a revisit during the same sky
