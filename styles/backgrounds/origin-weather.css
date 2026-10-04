@@ -74,20 +74,26 @@
 
 .sky--origin-weather .hemisphere--north .veil {
   background:
-    radial-gradient(58% 36% at 14% 12%, rgba(188, 200, 218, .72) 0%, transparent 72%),
-    radial-gradient(70% 40% at 48% 4%, rgba(168, 182, 202, .58) 0%, transparent 70%),
-    radial-gradient(62% 38% at 86% 16%, rgba(156, 172, 192, .5) 0%, transparent 68%),
-    linear-gradient(180deg, rgba(118, 132, 152, .45), transparent 88%);
-  filter: blur(22px);
+    radial-gradient(58% 28% at 16% 14%, rgba(236, 241, 248, .85) 0%, transparent 70%),
+    radial-gradient(62% 24% at 18% 24%, rgba(78, 90, 108, .42) 0%, transparent 72%),
+    radial-gradient(68% 30% at 56% 8%, rgba(226, 233, 243, .8) 0%, transparent 70%),
+    radial-gradient(72% 24% at 58% 18%, rgba(84, 96, 114, .38) 0%, transparent 72%),
+    radial-gradient(56% 28% at 88% 26%, rgba(214, 223, 236, .72) 0%, transparent 70%),
+    radial-gradient(60% 22% at 88% 36%, rgba(80, 92, 110, .36) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(118, 132, 152, .4), transparent 88%);
+  filter: blur(14px);
 }
 
 .sky--origin-weather .hemisphere--south .veil {
   background:
-    radial-gradient(60% 38% at 18% 86%, rgba(188, 200, 218, .68) 0%, transparent 72%),
-    radial-gradient(72% 42% at 52% 96%, rgba(168, 182, 202, .55) 0%, transparent 70%),
-    radial-gradient(64% 40% at 88% 80%, rgba(156, 172, 192, .48) 0%, transparent 68%),
-    linear-gradient(0deg, rgba(118, 132, 152, .42), transparent 88%);
-  filter: blur(22px);
+    radial-gradient(58% 28% at 18% 86%, rgba(236, 241, 248, .8) 0%, transparent 70%),
+    radial-gradient(62% 24% at 20% 76%, rgba(78, 90, 108, .4) 0%, transparent 72%),
+    radial-gradient(68% 30% at 54% 92%, rgba(226, 233, 243, .76) 0%, transparent 70%),
+    radial-gradient(72% 24% at 56% 82%, rgba(84, 96, 114, .36) 0%, transparent 72%),
+    radial-gradient(56% 28% at 86% 74%, rgba(214, 223, 236, .7) 0%, transparent 70%),
+    radial-gradient(60% 22% at 86% 64%, rgba(80, 92, 110, .34) 0%, transparent 72%),
+    linear-gradient(0deg, rgba(118, 132, 152, .38), transparent 88%);
+  filter: blur(14px);
 }
 
 .sky--origin-weather [data-condition="rain"] .precipitation {
