@@ -1,4 +1,4 @@
-const CACHE_NAME = "london-countdown-v8";
+const CACHE_NAME = "london-countdown-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -22,6 +22,7 @@ const APP_SHELL = [
   "./characters/hummingbird/hummingbird.css",
   "./src/main.js",
   "./src/services/config.js",
+  "./src/utils/enums.js",
   "./src/utils/stylesheet.js",
   "./src/utils/meeting-time.js",
   "./src/utils/thresholds.js",

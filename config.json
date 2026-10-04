@@ -65,14 +65,14 @@
   "kickers": [
     "kickers.sameSky",
     "kickers.twoRoutes",
-    "kickers.twoTimeZones",
+    "kickers.openTicket",
     "kickers.twoMaps",
-    "kickers.differentWeather",
+    "kickers.bothCalendars",
     "kickers.sameMoon",
-    "kickers.twoFlights",
-    "kickers.sameStars",
-    "kickers.oneDayLess",
-    "kickers.sameCity"
+    "kickers.cityWalk",
+    "kickers.passportReady",
+    "kickers.firstCoffee",
+    "kickers.spareKey"
   ],
   "thresholds": [
     { "withinHours": 360, "text": "thresholds.countingDays" },
