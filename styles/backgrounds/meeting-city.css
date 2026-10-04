@@ -49,16 +49,6 @@
   50%      { opacity: .54; }
 }
 
-.sky--meeting-city .daylight,
-.sky--meeting-city .overcast,
-.sky--meeting-city .veil,
-.sky--meeting-city .precipitation {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 2.4s ease;
-}
-
 .sky--meeting-city .daylight {
   background:
     radial-gradient(60% 40% at 84% 0%, var(--sun-glare), transparent 70%),
@@ -119,43 +109,3 @@
   animation: twinkle 7s ease-in-out infinite;
 }
 
-.sky--meeting-city[data-phase="day"] .daylight { opacity: 1; }
-.sky--meeting-city[data-phase="day"][data-condition="partly"] .overcast { opacity: .52; }
-.sky--meeting-city[data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .68; }
-
-.sky--meeting-city[data-phase="night"] .stars,
-.sky--meeting-city[data-phase="night"] .city-lights {
-  filter: opacity(1);
-}
-
-.sky--meeting-city[data-phase="night"][data-condition="partly"] .stars,
-.sky--meeting-city[data-phase="night"][data-condition="partly"] .city-lights {
-  filter: opacity(.55);
-}
-
-.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .stars,
-.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .city-lights {
-  filter: opacity(.28);
-}
-
-.sky--meeting-city[data-phase="night"][data-condition="partly"] .overcast { opacity: .28; }
-.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .48; }
-
-.sky--meeting-city[data-condition="partly"] .veil { opacity: .42; }
-.sky--meeting-city[data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .5; }
-.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .72; }
-
-.sky--meeting-city[data-condition="rain"] .precipitation {
-  opacity: .75;
-  background-image: var(--rain-image);
-  background-size: var(--rain-size);
-  filter: blur(.7px);
-  animation: rainfall 2.4s linear infinite;
-}
-
-.sky--meeting-city[data-condition="snow"] .precipitation {
-  opacity: .55;
-  background-image: var(--snow-image);
-  background-size: var(--snow-size);
-  animation: snowfall 9s linear infinite;
-}
