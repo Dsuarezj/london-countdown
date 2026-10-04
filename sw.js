@@ -1,5 +1,4 @@
-const CACHE_NAME = "london-countdown-v11";
-const NETWORK_TIMEOUT_MS = 1000;
+const CACHE_NAME = "london-countdown-v12";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -51,7 +50,9 @@ const APP_SHELL = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(APP_SHELL.map((path) => new Request(path, { cache: "reload" }))))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -63,10 +64,6 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-function rejectAfter(timeoutMs) {
-  return new Promise((resolve, reject) => setTimeout(() => reject(new Error("Network timeout")), timeoutMs));
-}
-
 async function matchCached(cache, request) {
   const cachedResponse = await cache.match(request, { ignoreSearch: request.mode === "navigate" });
   if (cachedResponse || request.mode !== "navigate") {
@@ -77,18 +74,18 @@ async function matchCached(cache, request) {
 
 async function networkFirst(request, event) {
   const cache = await caches.open(CACHE_NAME);
-  const freshResponse = fetch(request, { cache: "no-store" }).then((response) => {
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
-    return response;
-  });
-  event.waitUntil(freshResponse.catch(() => {}));
-
   try {
-    return await Promise.race([freshResponse, rejectAfter(NETWORK_TIMEOUT_MS)]);
+    const freshResponse = await fetch(request, { cache: "no-store" });
+    if (freshResponse.ok) {
+      event.waitUntil(cache.put(request, freshResponse.clone()));
+    }
+    return freshResponse;
   } catch (networkError) {
-    return (await matchCached(cache, request)) ?? freshResponse;
+    const cachedResponse = await matchCached(cache, request);
+    if (!cachedResponse) {
+      throw networkError;
+    }
+    return cachedResponse;
   }
 }
 

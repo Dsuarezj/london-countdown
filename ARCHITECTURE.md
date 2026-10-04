@@ -28,7 +28,7 @@ src/
   gateways/
     weather-gateway.js  Open-Meteo adapter with last-sky cache and offline fallback
   services/
-    cached-json.js    loadCachedJson(url): localStorage copy first, network refresh for next load
+    cached-json.js    loadCachedJson(url): network first, localStorage copy when offline
     config.js         loadConfig, applyThemeTokens
     i18n.js           createTranslator: loads translations, resolves dotted keys, language cycle
     connection.js     offline mark
@@ -155,18 +155,18 @@ show a hint ("Share → Add to Home Screen") instead of a button.
 ## 6. Offline
 
 `sw.js` is network-first for same-origin GET requests and precaches every file listed in
-`APP_SHELL`; bump `CACHE_NAME` when that list changes. If the network has not answered after
-`NETWORK_TIMEOUT_MS` (1 s) the cached copy is served, and the late network response still
-refreshes the cache. Navigations fall back to `index.html`. Cross-origin requests (the weather API)
-skip the service worker. The worker is registered first thing in `main.js`.
+`APP_SHELL`; bump `CACHE_NAME` when that list changes. Every request goes to the network
+(`cache: "no-store"`) and refreshes the cache; the cached copy is only served when the network
+fails. Navigations fall back to `index.html`. The precache bypasses the HTTP cache
+(`cache: "reload"`) and the worker is registered with `updateViaCache: "none"`, so a deploy is
+visible on the next load. Cross-origin requests (the weather API) skip the service worker.
 
 `index.html` lists every module with `<link rel="modulepreload">`, so the whole module graph is
 requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.
 
 `config.json` and `translations/*.json` go through `loadCachedJson` (`src/services/cached-json.js`):
-the copy stored in `localStorage` (`loa-json:<url>`) is used immediately and the network response
-replaces it for the next load, so after the first visit the countdown, labels and kicker render in
-the first frame. Edits to those files show up on the second load after deploying.
+the network response is used and stored in `localStorage` (`loa-json:<url>`); the stored copy is
+only read when the request fails.
 
 The last fetched sky of each place is stored in `localStorage` (`place-sky:<lat>,<lon>`). Weather
 backgrounds paint it instantly and then fade to the fresh response; the request never blocks the

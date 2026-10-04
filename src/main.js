@@ -18,7 +18,7 @@ const languageButton = document.getElementById("languageButton");
 const languageCodeField = document.getElementById("languageCode");
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
+  navigator.serviceWorker.register("sw.js", { updateViaCache: "none" });
 }
 
 const offerInstall = prepareInstallPrompt();
