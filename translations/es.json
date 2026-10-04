@@ -12,32 +12,59 @@
     "close": "Cerrar",
     "installInvite": "Guarda la cuenta atrás en tu pantalla de inicio",
     "installIos": "Toca Compartir y luego “Añadir a pantalla de inicio”",
-    "installAction": "Instalar"
+    "installAction": "Instalar",
+    "didYouKnow": "¿Sabías que…?",
+    "factSource": "Fuente: Wikipedia",
+    "currentLocation": "Ubicación actual: {place}"
   },
   "places": {
     "london": "Londres",
+    "reykjavik": "Reikiavik",
+    "ceret": "Céret",
     "iceland": "Islandia",
     "france": "Francia"
   },
   "characters": {
     "plover": {
       "name": "Lóa · Chorlito dorado europeo",
-      "ariaLabel": "Lóa, un chorlito dorado que llega volando desde Islandia",
-      "facts": [
-        "En Islandia su regreso es noticia: la primera lóa del año anuncia la primavera.",
-        "Los islandeses oyen en su canto “dýrðin, dýrðin”, la gloria.",
-        "Muchos chorlitos dorados de Islandia pasan el invierno en Gran Bretaña e Irlanda."
-      ]
+      "ariaLabel": "Lóa, un chorlito dorado que llega volando desde Islandia"
     },
     "hummingbird": {
       "name": "Quinde · Colibrí rutilante",
-      "ariaLabel": "Quinde, un colibrí ecuatoriano que llega a saltos desde Francia",
-      "facts": [
-        "En Ecuador a los colibríes se les llama quindes, una palabra que viene del kichwa.",
-        "El colibrí rutilante es uno de los más comunes en los jardines de Quito.",
-        "En Ecuador viven más de 130 especies de colibríes."
-      ]
+      "ariaLabel": "Quinde, un colibrí ecuatoriano que llega a saltos desde Francia"
     }
+  },
+  "facts": {
+    "goldenPlover": [
+      "En Islandia su regreso es noticia: la primera lóa del año anuncia la primavera.",
+      "Los islandeses oyen en su canto “dýrðin, dýrðin”, la gloria.",
+      "Muchos chorlitos dorados de Islandia pasan el invierno en Gran Bretaña e Irlanda."
+    ],
+    "sparklingVioletear": [
+      "En Ecuador a los colibríes se les llama quindes, una palabra que viene del kichwa.",
+      "El colibrí rutilante es uno de los más comunes en los jardines de Quito.",
+      "En Ecuador viven más de 130 especies de colibríes."
+    ],
+    "ceret": [
+      "Cada primavera, las primeras cerezas de Francia salen de Céret y se envían al presidente de la República.",
+      "A principios del siglo XX, Picasso, Braque y Juan Gris pasaron temporadas en Céret; por eso la llaman la Meca del cubismo.",
+      "El Pont du Diable de Céret, del siglo XIV, cruza el río Tech con un solo arco de unos 45 metros."
+    ],
+    "france": [
+      "Francia es el país más visitado del mundo.",
+      "Contando sus territorios de ultramar, Francia tiene 12 husos horarios, más que ningún otro país.",
+      "Por su forma, los franceses llaman a su país «el Hexágono»."
+    ],
+    "reykjavik": [
+      "Reikiavik es la capital de un estado soberano más al norte del mundo.",
+      "Su nombre significa «bahía humeante», por el vapor de las fuentes termales.",
+      "Casi todas las casas de Reikiavik se calientan con energía geotérmica."
+    ],
+    "iceland": [
+      "El Alþingi de Islandia, fundado en el año 930, es uno de los parlamentos más antiguos del mundo.",
+      "En Islandia no hay mosquitos.",
+      "Más de la mitad de los islandeses vive en Reikiavik y sus alrededores."
+    ]
   },
   "kickers": {
     "sameSky": "El mismo cielo, la misma noche",

@@ -27,21 +27,29 @@
   "origins": {
     "north": {
       "character": "plover",
-      "city": "Reykjavík",
+      "city": "places.reykjavik",
       "label": "places.iceland",
       "latitude": 64.1466,
       "longitude": -21.9426,
       "timeZone": "Atlantic/Reykjavik",
-      "nightSky": "aurora"
+      "nightSky": "aurora",
+      "topics": [
+        { "article": "Reykjavík", "facts": "facts.reykjavik" },
+        { "article": "Iceland", "facts": "facts.iceland" }
+      ]
     },
     "south": {
       "character": "hummingbird",
-      "city": "Céret",
+      "city": "places.ceret",
       "label": "places.france",
       "latitude": 42.4853,
       "longitude": 2.7486,
       "timeZone": "Europe/Paris",
-      "nightSky": "stars"
+      "nightSky": "stars",
+      "topics": [
+        { "article": "Céret", "facts": "facts.ceret" },
+        { "article": "France", "facts": "facts.france" }
+      ]
     }
   },
   "characters": {
@@ -49,13 +57,15 @@
       "markup": "characters/plover/plover.svg",
       "stylesheet": "characters/plover/plover.css",
       "scientificName": "Pluvialis apricaria",
-      "text": "characters.plover"
+      "text": "characters.plover",
+      "topic": { "article": "European golden plover", "facts": "facts.goldenPlover" }
     },
     "hummingbird": {
       "markup": "characters/hummingbird/hummingbird.svg",
       "stylesheet": "characters/hummingbird/hummingbird.css",
       "scientificName": "Colibri coruscans",
-      "text": "characters.hummingbird"
+      "text": "characters.hummingbird",
+      "topic": { "article": "Sparkling violetear", "facts": "facts.sparklingVioletear" }
     }
   },
   "affection": {

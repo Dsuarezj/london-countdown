@@ -12,32 +12,59 @@
     "close": "Close",
     "installInvite": "Keep the countdown on your home screen",
     "installIos": "Tap Share, then “Add to Home Screen”",
-    "installAction": "Install"
+    "installAction": "Install",
+    "didYouKnow": "Did you know…?",
+    "factSource": "Source: Wikipedia",
+    "currentLocation": "Current location: {place}"
   },
   "places": {
     "london": "London",
+    "reykjavik": "Reykjavík",
+    "ceret": "Céret",
     "iceland": "Iceland",
     "france": "France"
   },
   "characters": {
     "plover": {
       "name": "Lóa · European golden plover",
-      "ariaLabel": "Lóa, a golden plover flying in from Iceland",
-      "facts": [
-        "In Iceland her return is news: the first lóa of the year means spring has arrived.",
-        "Icelanders hear her call as “dýrðin, dýrðin”, the glory.",
-        "Many Icelandic golden plovers spend the winter in Britain and Ireland."
-      ]
+      "ariaLabel": "Lóa, a golden plover flying in from Iceland"
     },
     "hummingbird": {
       "name": "Quinde · Sparkling violetear",
-      "ariaLabel": "Quinde, an Ecuadorian hummingbird hopping up from France",
-      "facts": [
-        "In Ecuador hummingbirds are called quindes, a word that comes from Kichwa.",
-        "The sparkling violetear is one of the most common hummingbirds in Quito's gardens.",
-        "Ecuador is home to more than 130 hummingbird species."
-      ]
+      "ariaLabel": "Quinde, an Ecuadorian hummingbird hopping up from France"
     }
+  },
+  "facts": {
+    "goldenPlover": [
+      "In Iceland her return is news: the first lóa of the year means spring has arrived.",
+      "Icelanders hear her call as “dýrðin, dýrðin”, the glory.",
+      "Many Icelandic golden plovers spend the winter in Britain and Ireland."
+    ],
+    "sparklingVioletear": [
+      "In Ecuador hummingbirds are called quindes, a word that comes from Kichwa.",
+      "The sparkling violetear is one of the most common hummingbirds in Quito's gardens.",
+      "Ecuador is home to more than 130 hummingbird species."
+    ],
+    "ceret": [
+      "Every spring the first cherries in France come from Céret and are sent to the President of the Republic.",
+      "In the early 20th century Picasso, Braque and Juan Gris spent seasons in Céret, which is why it is called the Mecca of Cubism.",
+      "Céret's 14th-century Pont du Diable crosses the river Tech in a single arch of about 45 metres."
+    ],
+    "france": [
+      "France is the most visited country in the world.",
+      "Counting its overseas territories, France spans 12 time zones, more than any other country.",
+      "Because of its shape, the French call their country “the Hexagon”."
+    ],
+    "reykjavik": [
+      "Reykjavík is the northernmost capital of a sovereign state.",
+      "Its name means “smoky bay”, after the steam rising from the hot springs.",
+      "Almost every house in Reykjavík is heated with geothermal energy."
+    ],
+    "iceland": [
+      "Iceland's Alþingi, founded in 930, is one of the oldest parliaments in the world.",
+      "There are no mosquitoes in Iceland.",
+      "More than half of Icelanders live in and around Reykjavík."
+    ]
   },
   "kickers": {
     "sameSky": "Same sky, same night",

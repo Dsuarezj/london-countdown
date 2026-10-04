@@ -22,21 +22,26 @@ render them.
 ```
 index.html            static shell: layout slots, dialog, install prompt, import map
 config.json           the control panel
-translations/         en.json, es.json, is.json: ui, places, characters, kickers, thresholds
+manifest.webmanifest  PWA name, display, icons
+icons/                SVG + PNG touch icons listed in the manifest and APP_SHELL
+translations/         en.json, es.json, is.json: ui, places, characters, facts, kickers, thresholds
 src/
   main.js             composition root: loads config, wires modules, owns the language
   gateways/
     weather-gateway.js  Open-Meteo adapter with last-sky cache and offline fallback
+    wikipedia-gateway.js  English article sentences per topic, refreshed weekly in localStorage
+    translation-gateway.js  MyMemory translation from English, cached per language and text
   services/
+    daily-fact.js     daily "Did you know" deck: local facts + article sentences, one per day
     cached-json.js    loadCachedJson(url): network first, localStorage copy when offline
     config.js         loadConfig, applyThemeTokens
     i18n.js           createTranslator: loads translations, resolves dotted keys, language cycle
-    connection.js     offline mark
+    connection.js     toggles #offlineMark when the origin probe fails
   ui/
     headline.js       daily kicker, threshold line under the countdown, city/date/time label
     countdown.js      days/hours/minutes/seconds or the reunion message
     origin-pins.js    pin labels + click -> info card
-    info-card.js      <dialog> content for an origin and its character
+    info-card.js      <dialog>: name, scientific name, current location, daily fact (+ Wikipedia source)
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
     meeting.js        journey -> arrived -> affection beats
     together.js       one-shot reunion overlay (heart rain) after countdown zero
@@ -48,7 +53,7 @@ src/
     thresholds.js     findActiveThreshold(entries, remainingMs), shared by the threshold line and backgrounds
   backgrounds/
     index.js          registry and createSky: picks the background from config and mounts it once per plan
-    aurora-tropics.js the original sky (shared layers)
+    aurora-tropics.js the original sky (shared layers in sky-layers.css; no own stylesheet)
     origin-weather.js time and weather of each origin city
     converging.js     last days: both skies drift towards the centre
     meeting-city.js   meeting day: meeting city time and weather, both skies swirling together
@@ -60,7 +65,7 @@ styles/
   together/<id>.css   one-shot reunion overlay; path lives with the player in together.js
   info-card.css       bottom sheet / anchored card
   install-prompt.css  install prompt
-  backgrounds/*.css   one file per background, linked in index.html so the first paint never waits
+  backgrounds/*.css   per-background overrides when needed, linked in index.html so the first paint never waits
 characters/<id>/      <id>.svg + <id>.css per character
 ```
 
@@ -75,14 +80,16 @@ the only place that knows about all of them.
 | `meeting.date`, `meeting.time`, `meeting.timeZone` | Wall clock of the meeting in its own zone. Converted once to an absolute instant; the countdown is `instant - Date.now()`, so the device time zone never matters. |
 | `languages` | Language codes with a file in `translations/`. The first one is the fallback for missing keys. |
 | `meeting.city` | Translation key of the headline city. |
+| `meeting.latitude`, `meeting.longitude` | Coordinates of the meeting city. Used by `meeting-city` when `backgrounds.weather` is on. |
 | `theme.tokens` | Overrides for the CSS custom properties defined in `styles/base.css` `:root` (`--night`, `--deep`, `--aurora-mint`, `--aurora-teal`, `--aurora-violet`, `--tropic-magenta`, `--tropic-orange`, `--tropic-turquoise`, `--ink`, `--surface`). Defaults stay in CSS so the first paint is right before config loads. |
 | `backgrounds.weather` | `true` follows the live weather (day/night and conditions). `false` skips the weather API and keeps every sky on a clear night (aurora or stars from `nightSky`). |
 | `backgrounds.mode` | `BackgroundMode`: `"fixed"` uses `backgrounds.fixed`; `"random"` picks from `backgrounds.random.pool`, stable for `everyDays` days. See `src/utils/enums.js`. |
 | `backgrounds.fixed` / `random.pool` / `countdown[].background` / `meetingDay` | `BackgroundId` values: `"aurora-tropics"`, `"origin-weather"`, `"converging"`, `"meeting-city"`. |
 | `backgrounds.countdown` | `[{ withinHours, background }]`. When the remaining time is inside a window, that background wins over the mode. The smallest matching window wins. |
 | `backgrounds.meetingDay` | Background for the calendar day of the meeting (in the meeting zone). Highest priority. Empty string disables it. |
-| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city`, `label` (translation key of the country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). |
-| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName` and `text`: translation key of an object with `name`, `ariaLabel` and `facts`, shown in the info card. |
+| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city` and `label` (translation keys of the city and country), coordinates, `timeZone` (used by the weather background and its offline estimate), `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared) and `topics` (city and country, see below). |
+| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName`, `topic` and `text`: translation key of an object with `name` and `ariaLabel`, shown in the info card. |
+| `topic` / `topics[]` | `{ article, facts }`: `article` is the English Wikipedia title, `facts` the translation key of the cold-start facts. The info card deck interleaves the character topic with the origin topics. |
 | `affection` | `stylesheet`, `beats` (body classes defined in that stylesheet) and `intervalMs`. Beat length comes from `--beat-duration` in the stylesheet. |
 | `together` | Id of the one-shot reunion overlay (`heart-rain`). Empty string disables it. Stylesheet and player live together in `src/ui/together.js`. |
 | `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
@@ -93,19 +100,21 @@ Background priority: `meetingDay` → `countdown` window → `mode`.
 ## 4. Extending
 
 **New background**: add `src/backgrounds/<id>.js` exporting `{ markup, decorate? }`,
-add `styles/backgrounds/<id>.css` scoped under `.sky--<id>` and link it in `index.html`, register it in
-`src/backgrounds/index.js`, list the files in `sw.js`, then reference the id from config.
+register it in `src/backgrounds/index.js`, list the files in `sw.js`, then reference the id from
+config. Add `styles/backgrounds/<id>.css` scoped under `.sky--<id>` and link it in `index.html`
+only when the shared layers in `sky-layers.css` are not enough (`aurora-tropics` has no own file).
 Reuse `AURORA_TROPICS_LAYERS` to keep the visual family. `decorate(skyElement, context)` may set
 `data-*` attributes; CSS reacts to them.
 
 **New character**: create `characters/<id>/<id>.svg` and `<id>.css`, add it to `config.characters`,
-add its `name` / `ariaLabel` / `facts` under `characters.<id>` in every translation file, and point an
-origin at it. The SVG and CSS must respect the rig contract in `ANIMATION.md`
+add its `name` / `ariaLabel` under `characters.<id>` and its cold-start facts under
+`facts.<key>` in every translation file, give it a `topic`, and point an origin at it. The SVG and CSS must respect the rig contract in `ANIMATION.md`
 (wing groups, facing direction, journey keyframes ending at `translate(0, 0)`).
 
 **New together animation**: add `{ stylesheet, play }` under that id in `src/ui/together.js`, add
 `styles/together/<id>.css`, list both in `sw.js`, then set `together` to the id. It runs once when
-the countdown is at zero and the birds have arrived.
+the countdown is at zero, the birds have arrived, and the opening affection beat has finished
+(1 s + `--beat-duration`) if they just met.
 
 **New affection set**: copy `styles/affection.css`, keep selectors on slots (`.bird--north`,
 `.bird--south`), never on characters, and point `affection.stylesheet` / `affection.beats` to it.
@@ -137,6 +146,10 @@ JavaScript, and nothing measures the viewport.
 The card is a native `<dialog>` opened with `showModal()`: focus trap, Escape to close, backdrop
 and top layer come for free, so it never fights the stage's stacking or overflow rules.
 
+Content, top to bottom: character `name`, `scientificName`, current location
+(`ui.currentLocation` with `{place}` → translated `city, country`, no bird name),
+`ui.didYouKnow`, the fact of the day, and `ui.factSource` only when that fact came from Wikipedia.
+
 - **Phones (default)**: bottom sheet. Full width, `max-height: min(78dvh, 34rem)`, internal scroll
   with `overscroll-behavior: contain`, bottom padding includes the home indicator safe area. A
   bottom sheet keeps content in the thumb zone and works the same in portrait and in short
@@ -149,7 +162,13 @@ and top layer come for free, so it never fights the stage's stacking or overflow
 ### Install prompt
 
 A small fixed bar above the bottom pin (so the pin stays tappable), limited to `24rem` wide and
-centred with auto margins. It appears after the birds arrive, never during the journey.
+centred with auto margins. Markup lives in `index.html` (`#installPrompt`); copy comes from
+`ui.installInvite`, `ui.installIos` and `ui.installAction`. It appears after the birds arrive
+(`offerInstall` from `playMeeting`'s arrived callback), never during the journey. State is stored
+in `localStorage` under `install-prompt` as
+`{ firstVisitAt, dismissedOn?, installed? }`. The dismiss calendar day is the device's local date,
+not the meeting zone. `InstallRoute` (`native` / `ios-hint`) lives next to the prompt module, not
+in `enums.js`.
 
 | Condition | Shown |
 | --- | --- |
@@ -158,7 +177,9 @@ centred with auto margins. It appears after the birds arrive, never during the j
 | Day 8+, or installed / standalone | never |
 
 Chromium uses the deferred `beforeinstallprompt` event. iOS has no such event, so the same rules
-show a hint ("Share → Add to Home Screen") instead of a button.
+show a hint ("Share → Add to Home Screen") instead of a button. `appinstalled` or already running
+in standalone marks `installed: true` and hides the bar for good. The PWA shell is
+`manifest.webmanifest` plus the icons under `icons/`.
 
 ## 6. Offline
 
@@ -168,7 +189,8 @@ window, the worker probes the origin. With no connection it serves the cached co
 when reachable it uses network-first (`cache: "no-store"`) and refreshes the cache. Navigations
 fall back to `index.html`. The precache bypasses the HTTP cache (`cache: "reload"`) and the worker
 is registered with `updateViaCache: "none"`, so a deploy is visible on the next load.
-Cross-origin requests (the weather API) skip the service worker.
+Cross-origin requests skip the service worker: Open-Meteo (weather), English Wikipedia (article
+sentences) and MyMemory (on-demand translation).
 
 `index.html` lists every module with `<link rel="modulepreload">`, so the whole module graph is
 requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.
@@ -177,6 +199,9 @@ requested in parallel instead of one import level at a time. Keep it in sync wit
 the network response is used and stored in `localStorage` (`trip-json:<url>`); the stored copy is
 only read when the request fails. City, date and time zone are not hard-coded in the shell: they
 come from `config.json` and `translations/*/places`.
+
+`connection.js` probes the origin the same way the worker does and toggles `#offlineMark` when the
+app is offline. The active language is stored in `trip-language`.
 
 The sky is the one piece that is cache-first. Before any request, `main.js` reads the stored config
 (`readCachedConfig`) and mounts the sky from it, so a returning visit opens on the sky it last
@@ -190,3 +215,13 @@ layers' `transition` plays for day/night (or weather) changes and a revisit duri
 does not replay them. With no stored sky, the default night markup is painted first and then fades
 into the first forecast. When the request fails the gateway keeps the stored sky, or estimates
 day/night from the place's time zone if nothing was stored.
+
+The info card shows one "Did you know" fact per day. Each pin builds a deck from its topics
+(character, city, country): the cold-start facts from `translations/*/facts` plus up to eight
+sentences of each topic's English Wikipedia article (`article-sentences:<title>`, refreshed at
+most once a week). Only sentences that name the topic (last word of the title) and come before the
+appendix sections are kept. Topics are interleaved, so consecutive days move between bird and place, and the
+fact is `deck[dayNumber % deck.length]` with the day counted in the meeting zone. Article sentences
+are translated through MyMemory only when shown and cached per language
+(`translation:<language>:<text>`). With no connection the deck still has the stored sentences and
+translations; if a translation is missing or degenerates into repeated words it falls back to a cold-start fact of the same topic.
