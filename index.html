@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#060f1d">
+<meta name="theme-color" content="#0b1f33">
 <meta name="description" content="Countdown to 13 November, 22:00 London time.">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="London">
 <title>London · 13 November</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
@@ -41,6 +43,17 @@
 <script type="module" src="src/main.js"></script>
 </head>
 <body>
+
+<div class="splash" id="splash" role="status" aria-label="Loading countdown">
+  <div class="splash__glow"></div>
+  <svg class="splash__mark" viewBox="0 0 120 150" aria-hidden="true">
+    <path d="M60 8 C 28 8, 4 32, 4 64 C 4 100, 40 136, 60 148 C 80 136, 116 100, 116 64 C 116 32, 92 8, 60 8 Z" fill="currentColor"/>
+    <circle cx="60" cy="62" r="34" fill="#0b1f33"/>
+    <circle cx="60" cy="62" r="26" fill="none" stroke="#f3f7ff" stroke-width="2.5"/>
+    <path d="M60 44v20l14 9" fill="none" stroke="#f3f7ff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="60" cy="62" r="3.5" fill="#f3f7ff"/>
+  </svg>
+</div>
 
 <div class="sky" id="sky" aria-hidden="true"></div>
 

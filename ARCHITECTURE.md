@@ -155,11 +155,12 @@ show a hint ("Share → Add to Home Screen") instead of a button.
 ## 6. Offline
 
 `sw.js` is network-first for same-origin GET requests and precaches every file listed in
-`APP_SHELL`; bump `CACHE_NAME` when that list changes. Every request goes to the network
-(`cache: "no-store"`) and refreshes the cache; the cached copy is only served when the network
-fails. Navigations fall back to `index.html`. The precache bypasses the HTTP cache
-(`cache: "reload"`) and the worker is registered with `updateViaCache: "none"`, so a deploy is
-visible on the next load. Cross-origin requests (the weather API) skip the service worker.
+`APP_SHELL`; bump `CACHE_NAME` when that list changes. Before the first request in each five-second
+window, the worker probes the origin. With no connection it serves the cached copy immediately;
+when reachable it uses network-first (`cache: "no-store"`) and refreshes the cache. Navigations
+fall back to `index.html`. The precache bypasses the HTTP cache (`cache: "reload"`) and the worker
+is registered with `updateViaCache: "none"`, so a deploy is visible on the next load.
+Cross-origin requests (the weather API) skip the service worker.
 
 `index.html` lists every module with `<link rel="modulepreload">`, so the whole module graph is
 requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.

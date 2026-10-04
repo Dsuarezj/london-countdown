@@ -1,4 +1,8 @@
-const CACHE_NAME = "london-countdown-v12";
+const CACHE_NAME = "london-countdown-v14";
+const NETWORK_PROBE_TIMEOUT_MS = 350;
+const NETWORK_PROBE_TTL_MS = 5000;
+let networkStatus;
+let networkStatusCheckedAt = 0;
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -72,8 +76,44 @@ async function matchCached(cache, request) {
   return cache.match("./index.html");
 }
 
+async function isNetworkAvailable() {
+  if (!self.navigator.onLine) {
+    networkStatus = false;
+    return false;
+  }
+
+  if (Date.now() - networkStatusCheckedAt < NETWORK_PROBE_TTL_MS) {
+    return networkStatus;
+  }
+
+  const abortController = new AbortController();
+  const timeoutId = setTimeout(() => abortController.abort(), NETWORK_PROBE_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`./manifest.webmanifest?ping=${Date.now()}`, {
+      cache: "no-store",
+      signal: abortController.signal
+    });
+    networkStatus = response.ok;
+  } catch (networkError) {
+    networkStatus = false;
+  } finally {
+    clearTimeout(timeoutId);
+    networkStatusCheckedAt = Date.now();
+  }
+
+  return networkStatus;
+}
+
 async function networkFirst(request, event) {
   const cache = await caches.open(CACHE_NAME);
+  if (!(await isNetworkAvailable())) {
+    const cachedResponse = await matchCached(cache, request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+  }
+
   try {
     const freshResponse = await fetch(request, { cache: "no-store" });
     if (freshResponse.ok) {
