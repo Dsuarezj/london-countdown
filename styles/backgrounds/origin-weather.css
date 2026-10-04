@@ -102,7 +102,7 @@
 
 .sky--origin-weather [data-phase="day"] .daylight { opacity: 1; }
 .sky--origin-weather [data-phase="day"][data-condition="partly"] .overcast { opacity: .52; }
-.sky--origin-weather [data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .96; }
+.sky--origin-weather [data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .68; }
 
 .sky--origin-weather [data-phase="night"][data-night-sky="aurora"] .aurora-field {
   opacity: .92;
@@ -132,7 +132,8 @@
 .sky--origin-weather [data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .48; }
 
 .sky--origin-weather [data-condition="partly"] .veil { opacity: .42; }
-.sky--origin-weather :is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .72; }
+.sky--origin-weather [data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .5; }
+.sky--origin-weather [data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .72; }
 
 .sky--origin-weather [data-condition="rain"] .precipitation {
   opacity: .75;

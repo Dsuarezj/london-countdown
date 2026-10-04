@@ -121,7 +121,7 @@
 
 .sky--meeting-city[data-phase="day"] .daylight { opacity: 1; }
 .sky--meeting-city[data-phase="day"][data-condition="partly"] .overcast { opacity: .52; }
-.sky--meeting-city[data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .96; }
+.sky--meeting-city[data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .68; }
 
 .sky--meeting-city[data-phase="night"] .stars,
 .sky--meeting-city[data-phase="night"] .city-lights {
@@ -142,7 +142,8 @@
 .sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: .48; }
 
 .sky--meeting-city[data-condition="partly"] .veil { opacity: .42; }
-.sky--meeting-city:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .72; }
+.sky--meeting-city[data-phase="day"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .5; }
+.sky--meeting-city[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .72; }
 
 .sky--meeting-city[data-condition="rain"] .precipitation {
   opacity: .75;
