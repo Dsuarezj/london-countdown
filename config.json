@@ -12,6 +12,7 @@
     "tokens": {}
   },
   "backgrounds": {
+    "weather": true,
     "mode": "fixed",
     "fixed": "origin-weather",
     "random": {

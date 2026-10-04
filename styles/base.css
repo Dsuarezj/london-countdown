@@ -124,7 +124,8 @@ body {
 .pin--south {
   bottom: calc(env(safe-area-inset-bottom, 0px) + 1.2rem);
   right: 1.2rem;
-  color: rgba(255, 141, 173, .8);
+  color: #ffd0dc;
+  text-shadow: 0 1px 10px rgba(8, 16, 28, .75), 0 0 1px rgba(8, 16, 28, .9);
   flex-direction: row-reverse;
 }
 
@@ -268,8 +269,8 @@ body {
   gap: .35rem;
   padding: clamp(.5rem, min(3vw, 1.9vh), 1rem) .25rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, .07);
-  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(8, 16, 28, .42);
+  border: 1px solid rgba(255, 255, 255, .16);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }

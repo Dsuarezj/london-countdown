@@ -158,7 +158,7 @@ Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared p
 | Background | Idea |
 | --- | --- |
 | `aurora-tropics` | The original: aurora north, tropical glow south |
-| `origin-weather` | One `.hemisphere` per origin (north on top, south at the bottom). Each gets `data-phase`, `data-condition` and `data-night-sky` from its origin: days share the same sunny or overcast sky, nights show aurora with stars or only stars (the south aurora is the north one flipped with `scaleY(-1)`), and cloud veils, rain or snow fade in on top |
+| `origin-weather` | One `.hemisphere` per origin (north on top, south at the bottom). Each gets `data-phase`, `data-condition` and `data-night-sky`. Day uses the shared daylight sky. Night keeps aurora and/or stars as a base layer; partly/overcast/rain/snow fade in on top and only dim that night sky |
 | `converging` | Last days: aurora reaches lower, tropics rise higher, a warm glow where they meet |
 | `meeting-city` | Meeting day: one sky that follows the meeting city's time and weather (`data-phase`, `data-condition`). No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
 

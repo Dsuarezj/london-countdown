@@ -1,4 +1,4 @@
-import { cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
+import { CLEAR_NIGHT_SKY, cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
 
 function hemisphereMarkup(slot) {
   return `
@@ -25,10 +25,14 @@ function applySky(hemisphere, { phase, condition }) {
 export const originWeather = {
   stylesheet: "styles/backgrounds/origin-weather.css",
   markup: `${hemisphereMarkup("north")}${hemisphereMarkup("south")}`,
-  async decorate(skyElement, { origins }) {
+  async decorate(skyElement, { origins, weather }) {
     await Promise.all(Object.entries(origins).map(async ([slot, origin]) => {
       const hemisphere = skyElement.querySelector(`.hemisphere--${slot}`);
       hemisphere.dataset.nightSky = origin.nightSky;
+      if (!weather) {
+        applySky(hemisphere, CLEAR_NIGHT_SKY);
+        return;
+      }
       applySky(hemisphere, cachedPlaceSky(origin));
       applySky(hemisphere, await fetchPlaceSky(origin));
     }));

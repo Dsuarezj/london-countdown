@@ -13,7 +13,7 @@ render them.
 | `config.json` as the control panel | One file edits date, theme tokens, backgrounds, origins, characters, affection beats, kickers and thresholds. It is fetched at start (network-first, cached for offline). |
 | Translations apart from config | Every visible text lives in `translations/<language>.json`. Config never holds words, only translation keys (`"kickers.sameSky"`, `"characters.plover"`), so adding a language is one new file plus its code in `config.languages`. |
 | Registry for code, config for choice | Backgrounds need behaviour (the weather one fetches data), so they are JS modules registered in `src/backgrounds/index.js`. Config only picks ids. Characters need no behaviour, so they are pure files (SVG + CSS) referenced by path from config. |
-| Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It returns `{ phase, condition }` using `SkyPhase` and `SkyCondition` from `src/utils/enums.js`. Swapping provider or moving it behind a server (e.g. a Cloudflare Worker) only changes this file. Open-Meteo needs no API key, so a client-side gateway is enough for now. |
+| Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It maps every WMO `weather_code` to `SkyCondition` (`clear`, `partly`, `overcast`, `rain`, `snow`) and uses `is_day` for `SkyPhase`. Daylight is shared; aurora/stars only paint when the phase is night. |
 | Closed options as enums | Fixed string sets live in `Object.freeze` maps (`BackgroundMode`, `BackgroundId`, `NightSky`, `SkyPhase`, `SkyCondition`, plus install routes in `install-prompt.js`). Config still stores the string values; JS compares against the enum. |
 | Install prompt kept small | For 7 days after the first visit it can show on every load. Cancel stores `dismissedOn` for today and hides it until the next calendar day. Install (or already standalone) stops it for good. |
 
@@ -74,6 +74,7 @@ the only place that knows about all of them.
 | `languages` | Language codes with a file in `translations/`. The first one is the fallback for missing keys. |
 | `meeting.city` | Translation key of the headline city. |
 | `theme.tokens` | Overrides for the CSS custom properties defined in `styles/base.css` `:root` (`--night`, `--deep`, `--aurora-mint`, `--aurora-teal`, `--aurora-violet`, `--tropic-magenta`, `--tropic-orange`, `--tropic-turquoise`, `--ink`, `--surface`). Defaults stay in CSS so the first paint is right before config loads. |
+| `backgrounds.weather` | `true` follows the live weather (day/night and conditions). `false` skips the weather API and keeps every sky on a clear night (aurora or stars from `nightSky`). |
 | `backgrounds.mode` | `BackgroundMode`: `"fixed"` uses `backgrounds.fixed`; `"random"` picks from `backgrounds.random.pool`, stable for `everyDays` days. See `src/utils/enums.js`. |
 | `backgrounds.fixed` / `random.pool` / `countdown[].background` / `meetingDay` | `BackgroundId` values: `"aurora-tropics"`, `"origin-weather"`, `"converging"`, `"meeting-city"`. |
 | `backgrounds.countdown` | `[{ withinHours, background }]`. When the remaining time is inside a window, that background wins over the mode. The smallest matching window wins. |

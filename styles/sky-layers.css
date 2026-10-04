@@ -12,8 +12,10 @@
   --sunny-zenith: #2b76c2;
   --sunny-horizon: #6eabe0;
   --sun-glare: rgba(255, 240, 208, .55);
-  --overcast-zenith: #7f93a6;
-  --overcast-horizon: #a3b2c1;
+  --overcast-zenith: #3d4754;
+  --overcast-horizon: #5a6674;
+  --partly-zenith: #5c6b7c;
+  --partly-horizon: #7a8a9b;
   background:
     radial-gradient(130% 70% at 50% 110%, #2a0f3d 0%, transparent 60%),
     linear-gradient(180deg, #03080f 0%, var(--deep) 42%, #2b1430 72%, #5c1f3c 100%);

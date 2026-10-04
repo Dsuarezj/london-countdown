@@ -22,7 +22,8 @@ export const SkyPhase = Object.freeze({
 
 export const SkyCondition = Object.freeze({
   CLEAR: "clear",
-  CLOUDY: "cloudy",
+  PARTLY: "partly",
+  OVERCAST: "overcast",
   RAIN: "rain",
   SNOW: "snow"
 });

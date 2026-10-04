@@ -6,10 +6,14 @@ const SKY_CACHE_PREFIX = "place-sky:";
 const DAYLIGHT_START_HOUR = 7;
 const DAYLIGHT_END_HOUR = 19;
 
+export const CLEAR_NIGHT_SKY = Object.freeze({ phase: SkyPhase.NIGHT, condition: SkyCondition.CLEAR });
+
 const CONDITIONS_BY_WEATHER_CODE = [
   { condition: SkyCondition.SNOW, weatherCodes: [71, 73, 75, 77, 85, 86] },
   { condition: SkyCondition.RAIN, weatherCodes: [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99] },
-  { condition: SkyCondition.CLOUDY, weatherCodes: [2, 3, 45, 48] }
+  { condition: SkyCondition.OVERCAST, weatherCodes: [3, 45, 48] },
+  { condition: SkyCondition.PARTLY, weatherCodes: [2] },
+  { condition: SkyCondition.CLEAR, weatherCodes: [0, 1] }
 ];
 
 function conditionFromWeatherCode(weatherCode) {
