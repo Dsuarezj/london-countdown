@@ -61,7 +61,7 @@
   "affection": {
     "stylesheet": "styles/affection.css",
     "beats": ["kissing", "nestling", "circling", "swaying", "perching", "nuzzling", "preening", "bowing", "chasing", "dozing"],
-    "intervalMs": 11000
+    "intervalMs": 5000
   },
   "together": "heart-rain",
   "kickers": [

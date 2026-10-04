@@ -1,5 +1,5 @@
-import { mountBackground, selectBackgroundId } from "@/backgrounds/index.js";
-import { applyThemeTokens, loadConfig } from "@/services/config.js";
+import { createSky } from "@/backgrounds/index.js";
+import { applyThemeTokens, loadConfig, readCachedConfig } from "@/services/config.js";
 import { watchConnection } from "@/services/connection.js";
 import { createTranslator } from "@/services/i18n.js";
 import { mountCharacters, renderCharacterLabels } from "@/ui/characters.js";
@@ -17,6 +17,13 @@ const skyElement = document.getElementById("sky");
 const meetingElement = document.getElementById("meeting");
 const languageButton = document.getElementById("languageButton");
 const languageCodeField = document.getElementById("languageCode");
+const showSky = createSky(skyElement);
+
+const cachedConfig = readCachedConfig();
+if (cachedConfig) {
+  applyThemeTokens(cachedConfig.theme.tokens);
+  showSky(cachedConfig, { fadeIn: false });
+}
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js", { updateViaCache: "none" });
@@ -24,6 +31,8 @@ if ("serviceWorker" in navigator) {
 
 const offerInstall = prepareInstallPrompt();
 const config = await loadConfig();
+applyThemeTokens(config.theme.tokens);
+showSky(config, { fadeIn: true });
 const { meeting } = config;
 const meetingInstant = wallClockToInstant(meeting.date, meeting.time, meeting.timeZone);
 renderCountdown(meetingInstant - Date.now());
@@ -58,7 +67,6 @@ function renderLanguage() {
   renderTick();
 }
 
-applyThemeTokens(config.theme.tokens);
 renderLanguage();
 setInterval(renderTick, 1000);
 watchConnection();
@@ -69,14 +77,7 @@ languageButton.addEventListener("click", () => {
 });
 mountOriginPins(infoCard.open);
 
-const backgroundId = selectBackgroundId(config.backgrounds, {
-  remainingMs: remainingMs(),
-  isMeetingDay: todayNumber() === calendarDayNumber(meetingInstant, meeting.timeZone),
-  dayNumber: todayNumber()
-});
-
 await Promise.all([
-  mountBackground(skyElement, backgroundId, { origins: config.origins, meeting, weather: config.backgrounds.weather }),
   mountCharacters(meetingElement, config),
   loadStylesheet(config.affection.stylesheet)
 ]);

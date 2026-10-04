@@ -3,7 +3,7 @@ import { converging } from "@/backgrounds/converging.js";
 import { meetingCity } from "@/backgrounds/meeting-city.js";
 import { originWeather } from "@/backgrounds/origin-weather.js";
 import { BackgroundId, BackgroundMode } from "@/utils/enums.js";
-import { loadStylesheet } from "@/utils/stylesheet.js";
+import { calendarDayNumber, wallClockToInstant } from "@/utils/meeting-time.js";
 import { findActiveThreshold } from "@/utils/thresholds.js";
 
 const BACKGROUNDS = {
@@ -18,7 +18,7 @@ function seededIndex(seed, length) {
   return Math.floor((noise - Math.floor(noise)) * length);
 }
 
-export function selectBackgroundId(backgroundsConfig, { remainingMs, isMeetingDay, dayNumber }) {
+function selectBackgroundId(backgroundsConfig, { remainingMs, isMeetingDay, dayNumber }) {
   if (isMeetingDay && backgroundsConfig.meetingDay) {
     return backgroundsConfig.meetingDay;
   }
@@ -33,12 +33,45 @@ export function selectBackgroundId(backgroundsConfig, { remainingMs, isMeetingDa
   return backgroundsConfig.fixed;
 }
 
-export async function mountBackground(skyElement, backgroundId, context) {
+function planSky({ meeting, backgrounds, origins }) {
+  const meetingInstant = wallClockToInstant(meeting.date, meeting.time, meeting.timeZone);
+  const todayNumber = calendarDayNumber(Date.now(), meeting.timeZone);
+  return {
+    backgroundId: selectBackgroundId(backgrounds, {
+      remainingMs: meetingInstant - Date.now(),
+      isMeetingDay: todayNumber === calendarDayNumber(meetingInstant, meeting.timeZone),
+      dayNumber: todayNumber
+    }),
+    context: { origins, meeting, weather: backgrounds.weather }
+  };
+}
+
+function afterNextPaint(callback) {
+  requestAnimationFrame(() => requestAnimationFrame(callback));
+}
+
+function mountBackground(skyElement, { backgroundId, context }, fadeIn) {
   const background = BACKGROUNDS[backgroundId];
-  if (background.stylesheet) {
-    await loadStylesheet(background.stylesheet);
-  }
   skyElement.className = `sky sky--${backgroundId}`;
   skyElement.innerHTML = background.markup;
-  background.decorate?.(skyElement, context);
+  const decorate = () => background.decorate?.(skyElement, context);
+  if (fadeIn) {
+    afterNextPaint(decorate);
+    return;
+  }
+  decorate();
+}
+
+export function createSky(skyElement) {
+  let mountedPlanKey = "";
+
+  return function showSky(config, { fadeIn }) {
+    const skyPlan = planSky(config);
+    const skyPlanKey = JSON.stringify(skyPlan);
+    if (skyPlanKey === mountedPlanKey) {
+      return;
+    }
+    mountedPlanKey = skyPlanKey;
+    mountBackground(skyElement, skyPlan, fadeIn);
+  };
 }
