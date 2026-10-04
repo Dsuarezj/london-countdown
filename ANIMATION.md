@@ -21,10 +21,14 @@ JavaScript only toggles classes on `<body>` and never writes inline styles or co
 | `journey` | The birds are travelling towards the countdown | `playMeeting()` on every page load |
 | `arrived` | The birds are perched together, wings touching | `settleTogether()` |
 | one of `config.affection.beats` | Short affectionate beat on top of `arrived` | 1 s after `arrived`, then every `affection.intervalMs`, or tap on `.meeting` |
-| `config.together` | One-shot overlay after countdown zero, `arrived`, and the opening beat if they just met | `togetherPlayer.playWhenReady` |
+
+The reunion overlay from `config.together` is **not** a body class. `together.js` mounts a temporary
+`div.together.together--<id>` on `document.body` once the countdown is at zero, the birds have
+arrived, and the opening beat has finished (1 s + `--beat-duration`) if they just met.
 
 `journey` is replaced by `arrived` after `--journey-duration`. The travel sequence runs on every
-load; it only skips straight to `arrived` when the user prefers reduced motion.
+load; it only skips straight to `arrived` when the user prefers reduced motion. Affection beats
+still start after that skip.
 
 Durations JavaScript needs are CSS custom properties, read with `getComputedStyle`:
 
@@ -139,7 +143,7 @@ during its pause.
 aspect ratio. `vector-effect="non-scaling-stroke"` keeps stroke width and dash pattern uniform:
 
 ```html
-<path class="route__line" d="M 10 3 C 18 20, 28 32, 50 57" vector-effect="non-scaling-stroke"/>
+<path class="route__line route__line--north" d="M 10 3 C 18 20, 28 32, 50 59" vector-effect="non-scaling-stroke"/>
 ```
 
 The origin pins (`.pin--north`, `.pin--south`) are HTML buttons positioned against the safe areas,

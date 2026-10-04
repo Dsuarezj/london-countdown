@@ -12,32 +12,59 @@
     "close": "Loka",
     "installInvite": "Hafðu niðurtalninguna á heimaskjánum",
     "installIos": "Ýttu á Deila og svo „Bæta á heimaskjá“",
-    "installAction": "Setja upp"
+    "installAction": "Setja upp",
+    "didYouKnow": "Vissir þú…?",
+    "factSource": "Heimild: Wikipedia",
+    "currentLocation": "Núverandi staðsetning: {place}"
   },
   "places": {
     "london": "London",
+    "reykjavik": "Reykjavík",
+    "ceret": "Céret",
     "iceland": "Ísland",
     "france": "Frakkland"
   },
   "characters": {
     "plover": {
       "name": "Lóa · Heiðlóa",
-      "ariaLabel": "Lóa sem flýgur frá Íslandi",
-      "facts": [
-        "Koma fyrstu lóunnar er frétt á Íslandi: þá er vorið komið.",
-        "Íslendingar heyra hana syngja „dýrðin, dýrðin“.",
-        "Margar íslenskar heiðlóur hafa vetursetu á Bretlandi og Írlandi."
-      ]
+      "ariaLabel": "Lóa sem flýgur frá Íslandi"
     },
     "hummingbird": {
       "name": "Quinde · Fjólueyrakólibrí",
-      "ariaLabel": "Quinde, ekvadorskur kólibrífugl sem hoppar norður frá Frakklandi",
-      "facts": [
-        "Í Ekvador eru kólibrífuglar kallaðir quindes, orð úr kichwa.",
-        "Þessi tegund er ein sú algengasta í görðum Quito.",
-        "Í Ekvador lifa yfir 130 tegundir kólibrífugla."
-      ]
+      "ariaLabel": "Quinde, ekvadorskur kólibrífugl sem hoppar norður frá Frakklandi"
     }
+  },
+  "facts": {
+    "goldenPlover": [
+      "Koma fyrstu lóunnar er frétt á Íslandi: þá er vorið komið.",
+      "Íslendingar heyra hana syngja „dýrðin, dýrðin“.",
+      "Margar íslenskar heiðlóur hafa vetursetu á Bretlandi og Írlandi."
+    ],
+    "sparklingVioletear": [
+      "Í Ekvador eru kólibrífuglar kallaðir quindes, orð úr kichwa.",
+      "Þessi tegund er ein sú algengasta í görðum Quito.",
+      "Í Ekvador lifa yfir 130 tegundir kólibrífugla."
+    ],
+    "ceret": [
+      "Á hverju vori koma fyrstu kirsuber Frakklands frá Céret og eru send forseta lýðveldisins.",
+      "Í byrjun 20. aldar dvöldu Picasso, Braque og Juan Gris í Céret og því er bærinn kallaður Mekka kúbismans.",
+      "Djöflabrúin í Céret er frá 14. öld og liggur yfir ána Tech í einum um 45 metra löngum boga."
+    ],
+    "france": [
+      "Frakkland er mest heimsótta land í heimi.",
+      "Með yfirráðasvæðum handan hafsins nær Frakkland yfir 12 tímabelti, fleiri en nokkurt annað land.",
+      "Vegna lögunar sinnar kalla Frakkar landið sitt „sexhyrninginn“."
+    ],
+    "reykjavik": [
+      "Reykjavík er nyrsta höfuðborg sjálfstæðs ríkis í heiminum.",
+      "Nafnið vísar til gufunnar sem steig upp af laugunum við víkina.",
+      "Nær öll hús í Reykjavík eru hituð með jarðvarma."
+    ],
+    "iceland": [
+      "Alþingi var stofnað árið 930 og er eitt elsta þjóðþing heims.",
+      "Á Íslandi eru engar moskítóflugur.",
+      "Meira en helmingur Íslendinga býr á höfuðborgarsvæðinu."
+    ]
   },
   "kickers": {
     "sameSky": "Sami himinn, sama nótt",

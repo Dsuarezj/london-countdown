@@ -1,4 +1,4 @@
-const CACHE_NAME = "trip-countdown-v27";
+const CACHE_NAME = "trip-countdown-v30";
 const NETWORK_PROBE_TIMEOUT_MS = 350;
 const NETWORK_PROBE_TTL_MS = 5000;
 let networkStatus;
@@ -43,6 +43,9 @@ const APP_SHELL = [
   "./src/ui/info-card.js",
   "./src/ui/install-prompt.js",
   "./src/gateways/weather-gateway.js",
+  "./src/gateways/wikipedia-gateway.js",
+  "./src/gateways/translation-gateway.js",
+  "./src/services/daily-fact.js",
   "./src/backgrounds/index.js",
   "./src/backgrounds/aurora-tropics.js",
   "./src/backgrounds/origin-weather.js",

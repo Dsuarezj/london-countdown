@@ -27,10 +27,13 @@
 <link rel="modulepreload" href="src/backgrounds/converging.js">
 <link rel="modulepreload" href="src/backgrounds/meeting-city.js">
 <link rel="modulepreload" href="src/backgrounds/origin-weather.js">
+<link rel="modulepreload" href="src/gateways/translation-gateway.js">
 <link rel="modulepreload" href="src/gateways/weather-gateway.js">
+<link rel="modulepreload" href="src/gateways/wikipedia-gateway.js">
 <link rel="modulepreload" href="src/services/cached-json.js">
 <link rel="modulepreload" href="src/services/config.js">
 <link rel="modulepreload" href="src/services/connection.js">
+<link rel="modulepreload" href="src/services/daily-fact.js">
 <link rel="modulepreload" href="src/services/i18n.js">
 <link rel="modulepreload" href="src/ui/characters.js">
 <link rel="modulepreload" href="src/ui/countdown.js">
@@ -111,10 +114,12 @@
     <form method="dialog">
       <button class="info-card__close" type="submit" data-i18n-aria="ui.close">×</button>
     </form>
-    <p class="info-card__origin" id="infoCardOrigin"></p>
     <h2 class="info-card__name" id="infoCardName"></h2>
     <p class="info-card__scientific" id="infoCardScientificName"></p>
-    <ul class="info-card__facts" id="infoCardFacts"></ul>
+    <p class="info-card__arrival" id="infoCardArrival"></p>
+    <p class="info-card__fact-title" data-i18n="ui.didYouKnow"></p>
+    <p class="info-card__fact" id="infoCardFact"></p>
+    <p class="info-card__fact-source" id="infoCardFactSource" data-i18n="ui.factSource" hidden></p>
   </div>
 </dialog>
 
