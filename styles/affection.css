@@ -22,6 +22,19 @@ body.arrived.nuzzling .bird--north .bird__body { animation: nuzzle-left var(--be
 body.arrived.nuzzling .bird--south .bird__body { animation: nuzzle-right var(--beat-duration) ease-in-out; }
 body.arrived.nuzzling .heart { animation: heart-rise var(--beat-duration) ease-out .2s; }
 
+body.arrived.preening .bird--north .bird__body { animation: preen var(--beat-duration) ease-in-out; }
+body.arrived.preening .bird--south .bird__body { animation: receive-preen var(--beat-duration) ease-in-out; }
+body.arrived.preening .heart { animation: heart-rise var(--beat-duration) ease-out .15s; }
+
+body.arrived.bowing .bird--north .bird__body { animation: bow-left var(--beat-duration) ease-in-out; }
+body.arrived.bowing .bird--south .bird__body { animation: bow-right var(--beat-duration) ease-in-out; }
+
+body.arrived.chasing .bird--south .bird__body { animation: chase-arc var(--beat-duration) ease-in-out; }
+body.arrived.chasing .bird--north .bird__body { animation: follow-chase var(--beat-duration) ease-in-out; }
+
+body.arrived.dozing .bird--north .bird__body { animation: doze-left var(--beat-duration) ease-in-out; }
+body.arrived.dozing .bird--south .bird__body { animation: doze-right var(--beat-duration) ease-in-out; }
+
 @keyframes kiss {
   0%, 100% { transform: translate(0, 0) rotate(0); }
   35%      { transform: translate(9px, -5px) rotate(11deg); }
@@ -101,4 +114,59 @@ body.arrived.nuzzling .heart { animation: heart-rise var(--beat-duration) ease-o
   0%, 100% { transform: translate(0, 0) rotate(0); }
   40%      { transform: translate(-8px, -2px) rotate(-10deg); }
   60%      { transform: translate(-10px, -1px) rotate(-12deg); }
+}
+
+@keyframes preen {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  18%      { transform: translate(7px, -6px) rotate(10deg); }
+  32%      { transform: translate(5px, -4px) rotate(6deg); }
+  46%      { transform: translate(8px, -7px) rotate(12deg); }
+  60%      { transform: translate(5px, -4px) rotate(6deg); }
+  74%      { transform: translate(7px, -6px) rotate(10deg); }
+}
+
+@keyframes receive-preen {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25%      { transform: translate(2px, 3px) rotate(-6deg); }
+  50%      { transform: translate(3px, 4px) rotate(-8deg); }
+  75%      { transform: translate(2px, 3px) rotate(-5deg); }
+}
+
+@keyframes bow-left {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(2px, 5px) rotate(16deg); }
+  55%      { transform: translate(2px, 6px) rotate(18deg); }
+}
+
+@keyframes bow-right {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(-2px, 5px) rotate(-16deg); }
+  55%      { transform: translate(-2px, 6px) rotate(-18deg); }
+}
+
+@keyframes chase-arc {
+  0%   { transform: translate(0, 0) rotate(0); }
+  22%  { transform: translate(-28px, -18px) rotate(-18deg); }
+  48%  { transform: translate(-42px, 4px) rotate(8deg); }
+  72%  { transform: translate(-12px, 10px) rotate(14deg); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+
+@keyframes follow-chase {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  22%      { transform: rotate(-8deg); }
+  48%      { transform: rotate(10deg); }
+  72%      { transform: rotate(4deg); }
+}
+
+@keyframes doze-left {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  35%      { transform: translate(0, 4px) rotate(8deg); }
+  65%      { transform: translate(0, 5px) rotate(10deg); }
+}
+
+@keyframes doze-right {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  35%      { transform: translate(0, 4px) rotate(-10deg); }
+  65%      { transform: translate(0, 5px) rotate(-12deg); }
 }

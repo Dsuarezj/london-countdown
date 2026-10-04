@@ -1,4 +1,4 @@
-const CACHE_NAME = "trip-countdown-v13";
+const CACHE_NAME = "trip-countdown-v14";
 const NETWORK_PROBE_TIMEOUT_MS = 350;
 const NETWORK_PROBE_TTL_MS = 5000;
 let networkStatus;
