@@ -1,8 +1,10 @@
 import { CLEAR_NIGHT_SKY, cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
 
-function applySky(skyElement, { phase, condition }) {
+function applySky(skyElement, { phase, condition, raining, snowing }) {
   skyElement.dataset.phase = phase;
   skyElement.dataset.condition = condition;
+  skyElement.dataset.raining = raining;
+  skyElement.dataset.snowing = snowing;
 }
 
 export const meetingCity = {

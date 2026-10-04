@@ -17,9 +17,11 @@ function hemisphereMarkup(slot) {
   `;
 }
 
-function applySky(hemisphere, { phase, condition }) {
+function applySky(hemisphere, { phase, condition, raining, snowing }) {
   hemisphere.dataset.phase = phase;
   hemisphere.dataset.condition = condition;
+  hemisphere.dataset.raining = raining;
+  hemisphere.dataset.snowing = snowing;
 }
 
 export const originWeather = {
