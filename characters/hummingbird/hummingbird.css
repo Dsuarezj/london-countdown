@@ -1,0 +1,54 @@
+.character--hummingbird {
+  width: clamp(54px, min(18vw, 11.5vh), 84px);
+  margin: 0 0 .5rem -.6rem;
+}
+
+.character--hummingbird .wing--near,
+.character--hummingbird .wing--far { animation: hummingbird-buzz .14s linear infinite; }
+
+body.journey .character--hummingbird {
+  animation: hummingbird-journey var(--journey-duration) linear forwards;
+}
+
+body.journey .character--hummingbird .bird__body {
+  animation: hummingbird-hop calc(var(--journey-duration) / 7) ease-in-out infinite;
+}
+
+body.arrived .character--hummingbird {
+  transform: rotate(-3deg);
+}
+
+body.arrived .character--hummingbird .wing--reach {
+  transform-origin: 44% 62%;
+  animation: snuggle 5.5s ease-in-out infinite reverse;
+}
+
+body.arrived .character--hummingbird .bird__body {
+  animation: settle 5.5s ease-in-out infinite;
+}
+
+@keyframes hummingbird-buzz {
+  0%, 100% { transform: rotate(-22deg) scaleY(.75); }
+  50%      { transform: rotate(18deg) scaleY(1.05); }
+}
+
+@keyframes hummingbird-journey {
+  0%   { transform: translate(58vw, 30vh) scale(.5); }
+  7%   { transform: translate(58vw, 30vh) scale(.5); }
+  15%  { transform: translate(42vw, 10vh) scale(.6); }
+  22%  { transform: translate(36vw, 26vh) scale(.66); }
+  30%  { transform: translate(36vw, 26vh) scale(.66); }
+  38%  { transform: translate(26vw, 4vh) scale(.74); }
+  45%  { transform: translate(22vw, 20vh) scale(.78); }
+  53%  { transform: translate(22vw, 20vh) scale(.78); }
+  61%  { transform: translate(13vw, -2vh) scale(.86); }
+  68%  { transform: translate(10vw, 14vh) scale(.9); }
+  76%  { transform: translate(10vw, 14vh) scale(.9); }
+  87%  { transform: translate(4vw, -8vh) scale(.96); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes hummingbird-hop {
+  0%, 100% { transform: scale(1.1, .9) translateY(3px); }
+  40%      { transform: scale(.94, 1.08) translateY(-4px); }
+}

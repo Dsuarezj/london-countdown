@@ -1,0 +1,61 @@
+{
+  "locale": "en-GB",
+  "ui": {
+    "days": "days",
+    "hours": "hours",
+    "minutes": "min",
+    "seconds": "sec",
+    "reunion": "You are both here.",
+    "countdownLabel": "Time left until the meeting",
+    "offline": "Offline · showing your saved version",
+    "language": "Change language",
+    "close": "Close",
+    "installInvite": "Keep the countdown on your home screen",
+    "installIos": "Tap Share, then “Add to Home Screen”",
+    "installAction": "Install"
+  },
+  "places": {
+    "london": "London",
+    "iceland": "Iceland",
+    "france": "France"
+  },
+  "characters": {
+    "plover": {
+      "name": "Lóa · European golden plover",
+      "ariaLabel": "Lóa, a golden plover flying in from Iceland",
+      "facts": [
+        "In Iceland her return is news: the first lóa of the year means spring has arrived.",
+        "Icelanders hear her call as “dýrðin, dýrðin”, the glory.",
+        "Many Icelandic golden plovers spend the winter in Britain and Ireland."
+      ]
+    },
+    "hummingbird": {
+      "name": "Quinde · Sparkling violetear",
+      "ariaLabel": "Quinde, an Ecuadorian hummingbird hopping up from France",
+      "facts": [
+        "In Ecuador hummingbirds are called quindes, a word that comes from Kichwa.",
+        "The sparkling violetear is one of the most common hummingbirds in Quito's gardens.",
+        "Ecuador is home to more than 130 hummingbird species."
+      ]
+    }
+  },
+  "kickers": {
+    "sameSky": "Same sky, same night",
+    "twoRoutes": "Two routes, one street",
+    "twoTimeZones": "Two time zones, one clock",
+    "twoMaps": "Two maps, one point",
+    "differentWeather": "Different weather, same plan",
+    "sameMoon": "Same moon, different windows",
+    "twoFlights": "Two flights, one arrival",
+    "sameStars": "Same stars, other latitudes",
+    "oneDayLess": "Every day, one day less",
+    "sameCity": "Same city, same hour"
+  },
+  "thresholds": {
+    "countingDays": "Now we count in days",
+    "lastWeek": "One week. Suitcases out",
+    "lastNights": "Only a few nights left",
+    "lastDay": "Less than a day. It's real now",
+    "lastHour": "Almost there. Breathe"
+  }
+}

@@ -1,0 +1,104 @@
+:root {
+  --beat-duration: 2.6s;
+}
+
+body.arrived.kissing .bird--north .bird__body { animation: kiss var(--beat-duration) ease-in-out; }
+body.arrived.kissing .bird--south .bird__body { animation: blush var(--beat-duration) ease-in-out; }
+body.arrived.kissing .heart { animation: heart-rise var(--beat-duration) ease-out; }
+
+body.arrived.nestling .bird--north .bird__body { animation: shelter var(--beat-duration) ease-in-out; }
+body.arrived.nestling .bird--south .bird__body { animation: nestle-in var(--beat-duration) ease-in-out; }
+body.arrived.nestling .bird--north .wing--reach { animation: wing-cover var(--beat-duration) ease-in-out; }
+
+body.arrived.circling .bird--south .bird__body { animation: circle-hop var(--beat-duration) ease-in-out; }
+body.arrived.circling .bird--north .bird__body { animation: watch var(--beat-duration) ease-in-out; }
+
+body.arrived.swaying .bird .bird__body { animation: sway-together var(--beat-duration) ease-in-out; }
+
+body.arrived.perching .bird--south .bird__body { animation: perch-on var(--beat-duration) ease-in-out; }
+body.arrived.perching .bird--north .bird__body { animation: carry var(--beat-duration) ease-in-out; }
+
+body.arrived.nuzzling .bird--north .bird__body { animation: nuzzle-left var(--beat-duration) ease-in-out; }
+body.arrived.nuzzling .bird--south .bird__body { animation: nuzzle-right var(--beat-duration) ease-in-out; }
+body.arrived.nuzzling .heart { animation: heart-rise var(--beat-duration) ease-out .2s; }
+
+@keyframes kiss {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  35%      { transform: translate(9px, -5px) rotate(11deg); }
+  60%      { transform: translate(11px, -3px) rotate(13deg); }
+}
+
+@keyframes blush {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(3px, 2px) rotate(-8deg); }
+}
+
+@keyframes heart-rise {
+  0%   { opacity: 0; transform: translateY(0) scale(.5); }
+  30%  { opacity: 1; transform: translateY(-14px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-34px) scale(.8); }
+}
+
+@keyframes shelter {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(4px, 2px) rotate(4deg); }
+  70%      { transform: translate(5px, 3px) rotate(5deg); }
+}
+
+@keyframes nestle-in {
+  0%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
+  35%      { transform: translate(-14px, 6px) rotate(-12deg) scale(.92); }
+  65%      { transform: translate(-16px, 8px) rotate(-14deg) scale(.9); }
+}
+
+@keyframes wing-cover {
+  0%, 100% { transform: rotate(0); }
+  40%      { transform: rotate(-18deg) scaleX(1.15); }
+  70%      { transform: rotate(-22deg) scaleX(1.2); }
+}
+
+@keyframes circle-hop {
+  0%   { transform: translate(0, 0) rotate(0); }
+  20%  { transform: translate(10px, -16px) rotate(-12deg); }
+  45%  { transform: translate(-6px, -22px) rotate(8deg); }
+  70%  { transform: translate(-14px, -6px) rotate(16deg); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+
+@keyframes watch {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25%      { transform: rotate(-4deg); }
+  55%      { transform: rotate(6deg); }
+  80%      { transform: rotate(-2deg); }
+}
+
+@keyframes sway-together {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25%      { transform: translate(-6px, 1px) rotate(-5deg); }
+  75%      { transform: translate(6px, 1px) rotate(5deg); }
+}
+
+@keyframes perch-on {
+  0%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
+  25%      { transform: translate(-18px, -22px) rotate(-20deg) scale(.95); }
+  50%      { transform: translate(-28px, -8px) rotate(-8deg) scale(.9); }
+  70%      { transform: translate(-28px, -6px) rotate(-6deg) scale(.9); }
+}
+
+@keyframes carry {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  50%      { transform: translate(0, 3px) rotate(2deg); }
+  70%      { transform: translate(0, 4px) rotate(3deg); }
+}
+
+@keyframes nuzzle-left {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(8px, -2px) rotate(8deg); }
+  60%      { transform: translate(10px, -1px) rotate(10deg); }
+}
+
+@keyframes nuzzle-right {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  40%      { transform: translate(-8px, -2px) rotate(-10deg); }
+  60%      { transform: translate(-10px, -1px) rotate(-12deg); }
+}

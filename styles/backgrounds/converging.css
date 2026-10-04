@@ -1,0 +1,25 @@
+.sky--converging .aurora {
+  inset: 2% -40% auto -40%;
+  height: 62%;
+}
+
+.sky--converging .aurora--two {
+  height: 54%;
+}
+
+.sky--converging .tropics {
+  inset: 32% -15% 0 -15%;
+}
+
+.sky--converging .stars {
+  inset: 0 0 52% 0;
+}
+
+.sky--converging .meeting-glow {
+  position: absolute;
+  inset: 30% 5%;
+  background: radial-gradient(closest-side, rgba(255, 196, 140, .22), rgba(95, 242, 191, .08) 60%, transparent);
+  filter: blur(24px);
+  mix-blend-mode: screen;
+  animation: tropics-breathe 11s ease-in-out infinite;
+}

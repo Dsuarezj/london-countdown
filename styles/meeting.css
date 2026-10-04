@@ -1,0 +1,90 @@
+:root {
+  --journey-duration: 8.4s;
+}
+
+.meeting {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: .2rem;
+  height: clamp(56px, min(20vw, 13vh), 92px);
+  visibility: hidden;
+}
+
+body.journey .meeting,
+body.arrived .meeting {
+  visibility: visible;
+}
+
+body.arrived .meeting {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.bird {
+  position: relative;
+  will-change: transform;
+}
+
+.bird__body {
+  transform-origin: 50% 70%;
+}
+
+.bird svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.wing {
+  transform-origin: 46% 68%;
+}
+
+.wing--rest,
+.wing--reach {
+  opacity: 0;
+}
+
+body.arrived .wing--far,
+body.arrived .wing--near {
+  opacity: 0;
+  animation: none;
+}
+
+body.arrived .wing--rest,
+body.arrived .wing--reach {
+  opacity: 1;
+}
+
+.heart {
+  position: absolute;
+  left: 52%;
+  top: -.2rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--tropic-magenta);
+  text-shadow: 0 0 14px rgba(255, 79, 147, .7);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes snuggle {
+  0%, 100% { transform: rotate(0); }
+  50%      { transform: rotate(-3deg); }
+}
+
+@keyframes settle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wing,
+  .bird__body,
+  .bird,
+  .heart {
+    animation: none !important;
+  }
+}

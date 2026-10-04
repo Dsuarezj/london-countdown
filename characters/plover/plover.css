@@ -1,0 +1,45 @@
+.character--plover {
+  width: clamp(80px, min(27vw, 17vh), 122px);
+}
+
+.character--plover .wing--near { animation: plover-flap 1.1s ease-in-out infinite; }
+.character--plover .wing--far { animation: plover-flap 1.1s ease-in-out infinite reverse; }
+
+body.journey .character--plover {
+  animation: plover-journey var(--journey-duration) cubic-bezier(.33, .1, .4, 1) forwards;
+}
+
+body.journey .character--plover .bird__body {
+  animation: plover-glide 2.6s ease-in-out infinite;
+}
+
+body.arrived .character--plover {
+  transform: rotate(2deg);
+}
+
+body.arrived .character--plover .wing--reach {
+  transform-origin: 56% 62%;
+  animation: snuggle 5.5s ease-in-out infinite;
+}
+
+body.arrived .character--plover .bird__body {
+  animation: settle 5.5s ease-in-out infinite;
+}
+
+@keyframes plover-flap {
+  0%, 100% { transform: rotate(-16deg) scaleY(.9); }
+  50%      { transform: rotate(26deg) scaleY(1.1); }
+}
+
+@keyframes plover-journey {
+  0%   { transform: translate(-62vw, -58vh) rotate(16deg) scale(.45); }
+  28%  { transform: translate(-34vw, -36vh) rotate(10deg) scale(.68); }
+  55%  { transform: translate(-18vw, -22vh) rotate(-6deg) scale(.82); }
+  80%  { transform: translate(-7vw, -9vh) rotate(6deg) scale(.93); }
+  100% { transform: translate(0, 0) rotate(0) scale(1); }
+}
+
+@keyframes plover-glide {
+  0%, 100% { transform: translateY(-4px) rotate(-2deg); }
+  50%      { transform: translateY(5px) rotate(3deg); }
+}

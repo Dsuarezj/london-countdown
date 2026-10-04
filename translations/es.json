@@ -1,0 +1,61 @@
+{
+  "locale": "es-ES",
+  "ui": {
+    "days": "días",
+    "hours": "horas",
+    "minutes": "min",
+    "seconds": "seg",
+    "reunion": "Ya están las dos aquí.",
+    "countdownLabel": "Tiempo que falta para el encuentro",
+    "offline": "Sin conexión · mostrando tu versión guardada",
+    "language": "Cambiar idioma",
+    "close": "Cerrar",
+    "installInvite": "Guarda la cuenta atrás en tu pantalla de inicio",
+    "installIos": "Toca Compartir y luego “Añadir a pantalla de inicio”",
+    "installAction": "Instalar"
+  },
+  "places": {
+    "london": "Londres",
+    "iceland": "Islandia",
+    "france": "Francia"
+  },
+  "characters": {
+    "plover": {
+      "name": "Lóa · Chorlito dorado europeo",
+      "ariaLabel": "Lóa, un chorlito dorado que llega volando desde Islandia",
+      "facts": [
+        "En Islandia su regreso es noticia: la primera lóa del año anuncia la primavera.",
+        "Los islandeses oyen en su canto “dýrðin, dýrðin”, la gloria.",
+        "Muchos chorlitos dorados de Islandia pasan el invierno en Gran Bretaña e Irlanda."
+      ]
+    },
+    "hummingbird": {
+      "name": "Quinde · Colibrí rutilante",
+      "ariaLabel": "Quinde, un colibrí ecuatoriano que llega a saltos desde Francia",
+      "facts": [
+        "En Ecuador a los colibríes se les llama quindes, una palabra que viene del kichwa.",
+        "El colibrí rutilante es uno de los más comunes en los jardines de Quito.",
+        "En Ecuador viven más de 130 especies de colibríes."
+      ]
+    }
+  },
+  "kickers": {
+    "sameSky": "El mismo cielo, la misma noche",
+    "twoRoutes": "Dos rutas, una calle",
+    "twoTimeZones": "Dos husos horarios, un reloj",
+    "twoMaps": "Dos mapas, un punto",
+    "differentWeather": "Distinto clima, el mismo plan",
+    "sameMoon": "La misma luna, distintas ventanas",
+    "twoFlights": "Dos vuelos, una llegada",
+    "sameStars": "Las mismas estrellas, otras latitudes",
+    "oneDayLess": "Cada día, un día menos",
+    "sameCity": "La misma ciudad, la misma hora"
+  },
+  "thresholds": {
+    "countingDays": "Ya contamos en días",
+    "lastWeek": "Una semana. Fuera las maletas",
+    "lastNights": "Solo quedan unas noches",
+    "lastDay": "Menos de un día. Ya es real",
+    "lastHour": "Ya casi. Respira"
+  }
+}

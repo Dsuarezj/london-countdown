@@ -11,31 +11,30 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/sky-layers.css">
+<link rel="stylesheet" href="styles/meeting.css">
+<link rel="stylesheet" href="styles/info-card.css">
+<link rel="stylesheet" href="styles/install-prompt.css">
+<script type="importmap">{ "imports": { "@/": "./src/" } }</script>
+<script type="module" src="src/main.js"></script>
 </head>
 <body>
 
-<div class="sky" aria-hidden="true">
-  <div class="aurora aurora--one"></div>
-  <div class="aurora aurora--two"></div>
-  <div class="aurora aurora--three"></div>
-  <div class="tropics"></div>
-  <div class="stars"></div>
-  <div class="horizon"></div>
-</div>
+<div class="sky" id="sky" aria-hidden="true"></div>
 
 <svg class="route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
   <path class="route__line route__line--north" d="M 10 3 C 18 20, 28 32, 50 57" vector-effect="non-scaling-stroke"/>
   <path class="route__line route__line--south" d="M 92 99 C 80 86, 74 74, 50 61" vector-effect="non-scaling-stroke"/>
 </svg>
 
-<div class="pins" aria-hidden="true">
-  <span class="pin pin--north"><i></i><span data-i18n="north"></span></span>
-  <span class="pin pin--south"><i></i><span data-i18n="south"></span></span>
-</div>
+<nav class="pins">
+  <button class="pin pin--north" type="button" data-origin="north" aria-haspopup="dialog"><i></i><span class="pin__label"></span></button>
+  <button class="pin pin--south" type="button" data-origin="south" aria-haspopup="dialog"><i></i><span class="pin__label"></span></button>
+</nav>
 
 <div class="topbar">
-  <span class="offline-mark" id="offlineMark" role="status" hidden>
+  <span class="offline-mark" id="offlineMark" role="status" data-i18n-aria="ui.offline" hidden>
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <g fill="currentColor">
         <circle cx="8.8" cy="13" r="3.4"/>
@@ -47,7 +46,7 @@
       <path d="M3.6 3.6 20.4 20.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
     </svg>
   </span>
-  <button class="lang" id="languageButton" type="button">
+  <button class="lang" id="languageButton" type="button" data-i18n-aria="ui.language">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
       <path d="M3.5 12h17M12 3.5c2.4 2.3 2.4 14.2 0 17M12 3.5c-2.4 2.3-2.4 14.2 0 17" fill="none" stroke="currentColor" stroke-width="1.6"/>
@@ -59,87 +58,44 @@
 <main class="stage">
 
   <header class="headline">
-    <p class="headline__kicker" data-i18n="kicker"></p>
-    <h1 class="headline__city" data-i18n="city"></h1>
-    <p class="headline__when"><span id="meetingDate"></span> · 22:00 <span id="londonZone"></span></p>
+    <p class="headline__kicker" id="kicker"></p>
+    <h1 class="headline__city" id="city"></h1>
+    <p class="headline__when"><span id="meetingDate"></span> · <strong id="meetingTime"></strong> <span id="meetingZone"></span></p>
   </header>
 
-  <section class="countdown" aria-live="polite" data-i18n-aria="countdownLabel">
-    <div class="unit"><span class="unit__value" id="days">--</span><span class="unit__label" data-i18n="days"></span></div>
-    <div class="unit"><span class="unit__value" id="hours">--</span><span class="unit__label" data-i18n="hours"></span></div>
-    <div class="unit"><span class="unit__value" id="minutes">--</span><span class="unit__label" data-i18n="minutes"></span></div>
-    <div class="unit"><span class="unit__value" id="seconds">--</span><span class="unit__label" data-i18n="seconds"></span></div>
+  <section class="countdown" id="countdown" aria-live="polite" data-i18n-aria="ui.countdownLabel">
+    <div class="unit"><span class="unit__value" id="days">--</span><span class="unit__label" data-i18n="ui.days"></span></div>
+    <div class="unit"><span class="unit__value" id="hours">--</span><span class="unit__label" data-i18n="ui.hours"></span></div>
+    <div class="unit"><span class="unit__value" id="minutes">--</span><span class="unit__label" data-i18n="ui.minutes"></span></div>
+    <div class="unit"><span class="unit__value" id="seconds">--</span><span class="unit__label" data-i18n="ui.seconds"></span></div>
   </section>
 
-  <p class="reunion" id="reunion" data-i18n="reunion" hidden></p>
+  <p class="reunion" id="reunion" data-i18n="ui.reunion" hidden></p>
 
   <div class="meeting" id="meeting">
     <span class="heart" aria-hidden="true">♥</span>
-    <div class="bird bird--plover">
-      <div class="bird__body">
-        <svg viewBox="0 0 110 76" role="img" data-i18n-aria="plover">
-          <g class="wing wing--far">
-            <path d="M48 32 C 34 10, 16 4, 4 12 C 18 22, 28 34, 44 40 Z" fill="#6c5a3c"/>
-          </g>
-          <path class="tail" d="M28 40 C 14 36, 6 42, 2 50 C 14 52, 22 50, 32 46 Z" fill="#8a7447"/>
-          <ellipse cx="55" cy="44" rx="29" ry="19" fill="#b89a5c"/>
-          <path d="M34 52 C 44 62, 66 62, 78 50 C 66 58, 46 58, 34 52 Z" fill="#f6eedd"/>
-          <path d="M42 30 C 52 24, 68 24, 78 32 C 68 28, 52 28, 42 30 Z" fill="#e8d8a8" opacity=".8"/>
-          <circle cx="86" cy="30" r="14" fill="#c2a465"/>
-          <path d="M74 30 C 78 20, 92 16, 98 22 C 92 20, 80 24, 74 30 Z" fill="#241d14"/>
-          <path d="M78 40 C 84 44, 92 44, 97 40 C 92 46, 82 46, 78 40 Z" fill="#f6eedd"/>
-          <circle cx="90" cy="27" r="2.6" fill="#1a1510"/>
-          <path d="M99 31 L 110 34 L 99 36 Z" fill="#3a3024"/>
-          <g class="wing wing--near">
-            <path d="M52 40 C 40 18, 22 10, 8 18 C 24 30, 34 44, 50 50 Z" fill="#9c8450"/>
-            <path d="M46 44 C 34 30, 22 22, 12 22 C 26 32, 34 42, 44 48 Z" fill="#7d683d" opacity=".7"/>
-          </g>
-          <g class="wing wing--rest">
-            <path d="M40 36 C 56 28, 74 34, 79 45 C 64 49, 48 45, 38 39 Z" fill="#9c8450"/>
-            <path d="M46 39 C 58 35, 70 39, 74 45 C 62 47, 52 44, 46 41 Z" fill="#7d683d" opacity=".55"/>
-          </g>
-          <g class="wing wing--reach">
-            <path d="M62 46 C 82 47, 99 52, 114 60 C 99 65, 78 59, 60 52 Z" fill="#a88c52"/>
-          </g>
-        </svg>
-      </div>
-    </div>
-
-    <div class="bird bird--hummingbird">
-      <div class="bird__body">
-        <svg viewBox="0 0 90 70" role="img" data-i18n-aria="hummingbird">
-          <g class="wing wing--far">
-            <path d="M46 26 C 58 8, 76 4, 86 12 C 72 20, 60 30, 48 34 Z" fill="#2f8f7a" opacity=".55"/>
-          </g>
-          <path class="tail" d="M62 38 C 74 34, 84 38, 88 46 C 76 48, 68 46, 60 44 Z" fill="#1f7a68"/>
-          <ellipse cx="48" cy="38" rx="21" ry="15" fill="#2ec4a0"/>
-          <path d="M32 44 C 42 52, 58 50, 66 42 C 56 48, 42 50, 32 44 Z" fill="#dff7ef"/>
-          <circle cx="28" cy="29" r="11" fill="#35d6ae"/>
-          <path d="M20 34 C 24 42, 34 44, 38 38 C 32 40, 24 38, 20 34 Z" fill="#ef3d7a"/>
-          <path d="M22 26 C 26 20, 34 20, 37 24 C 32 22, 26 22, 22 26 Z" fill="#1b4f45" opacity=".6"/>
-          <circle cx="25" cy="26" r="2.2" fill="#13302a"/>
-          <path d="M18 30 L 2 24 L 18 33 Z" fill="#2a241c"/>
-          <g class="wing wing--near">
-            <path d="M44 32 C 56 12, 74 6, 84 16 C 70 24, 56 34, 46 40 Z" fill="#49e0bb" opacity=".8"/>
-          </g>
-          <g class="wing wing--rest">
-            <path d="M40 29 C 54 25, 69 31, 73 40 C 58 45, 45 38, 38 33 Z" fill="#2fb894"/>
-          </g>
-          <g class="wing wing--reach">
-            <path d="M38 42 C 23 43, 8 48, -8 56 C 7 61, 26 54, 40 48 Z" fill="#3fd4ad"/>
-          </g>
-        </svg>
-      </div>
-    </div>
   </div>
-
-  <footer class="local">
-    <p class="local__line"><span data-i18n="localIntro"></span> <strong id="localTime">—</strong></p>
-    <p class="local__zone" id="localZone">—</p>
-  </footer>
 
 </main>
 
-<script src="app.js"></script>
+<dialog class="info-card" id="infoCard" aria-labelledby="infoCardName">
+  <div class="info-card__sheet">
+    <form method="dialog">
+      <button class="info-card__close" type="submit" data-i18n-aria="ui.close">×</button>
+    </form>
+    <p class="info-card__origin" id="infoCardOrigin"></p>
+    <h2 class="info-card__name" id="infoCardName"></h2>
+    <p class="info-card__scientific" id="infoCardScientificName"></p>
+    <ul class="info-card__facts" id="infoCardFacts"></ul>
+  </div>
+</dialog>
+
+<aside class="install-prompt" id="installPrompt" hidden>
+  <p class="install-prompt__text" id="installInvite" data-i18n="ui.installInvite"></p>
+  <p class="install-prompt__text" id="installIosHint" data-i18n="ui.installIos"></p>
+  <button class="install-prompt__action" id="installAction" type="button" data-i18n="ui.installAction"></button>
+  <button class="install-prompt__close" id="installClose" type="button" data-i18n-aria="ui.close">×</button>
+</aside>
+
 </body>
 </html>

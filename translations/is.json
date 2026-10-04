@@ -1,0 +1,61 @@
+{
+  "locale": "is-IS",
+  "ui": {
+    "days": "dagar",
+    "hours": "klst",
+    "minutes": "mín",
+    "seconds": "sek",
+    "reunion": "Þið eruð báðar hér.",
+    "countdownLabel": "Tíminn sem er eftir fram að endurfundunum",
+    "offline": "Ótengt · sýnir vistaða útgáfu",
+    "language": "Breyta tungumáli",
+    "close": "Loka",
+    "installInvite": "Hafðu niðurtalninguna á heimaskjánum",
+    "installIos": "Ýttu á Deila og svo „Bæta á heimaskjá“",
+    "installAction": "Setja upp"
+  },
+  "places": {
+    "london": "London",
+    "iceland": "Ísland",
+    "france": "Frakkland"
+  },
+  "characters": {
+    "plover": {
+      "name": "Lóa · Heiðlóa",
+      "ariaLabel": "Lóa sem flýgur frá Íslandi",
+      "facts": [
+        "Koma fyrstu lóunnar er frétt á Íslandi: þá er vorið komið.",
+        "Íslendingar heyra hana syngja „dýrðin, dýrðin“.",
+        "Margar íslenskar heiðlóur hafa vetursetu á Bretlandi og Írlandi."
+      ]
+    },
+    "hummingbird": {
+      "name": "Quinde · Fjólueyrakólibrí",
+      "ariaLabel": "Quinde, ekvadorskur kólibrífugl sem hoppar norður frá Frakklandi",
+      "facts": [
+        "Í Ekvador eru kólibrífuglar kallaðir quindes, orð úr kichwa.",
+        "Þessi tegund er ein sú algengasta í görðum Quito.",
+        "Í Ekvador lifa yfir 130 tegundir kólibrífugla."
+      ]
+    }
+  },
+  "kickers": {
+    "sameSky": "Sami himinn, sama nótt",
+    "twoRoutes": "Tvær leiðir, ein gata",
+    "twoTimeZones": "Tvö tímabelti, ein klukka",
+    "twoMaps": "Tvö kort, einn punktur",
+    "differentWeather": "Ólíkt veður, sama áætlun",
+    "sameMoon": "Sama tunglið, ólíkir gluggar",
+    "twoFlights": "Tvö flug, ein lending",
+    "sameStars": "Sömu stjörnur, aðrar breiddargráður",
+    "oneDayLess": "Hver dagur, einum degi færra",
+    "sameCity": "Sama borg, sama stund"
+  },
+  "thresholds": {
+    "countingDays": "Nú teljum við í dögum",
+    "lastWeek": "Ein vika. Töskurnar fram",
+    "lastNights": "Bara nokkrar nætur eftir",
+    "lastDay": "Minna en dagur. Þetta er að gerast",
+    "lastHour": "Næstum komnar. Andaðu"
+  }
+}

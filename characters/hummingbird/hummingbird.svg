@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 70" aria-hidden="true">
+  <g class="wing wing--far">
+    <path d="M46 26 C 58 8, 76 4, 86 12 C 72 20, 60 30, 48 34 Z" fill="#2f8f7a" opacity=".55"/>
+  </g>
+  <path class="tail" d="M62 38 C 74 34, 84 38, 88 46 C 76 48, 68 46, 60 44 Z" fill="#1f7a68"/>
+  <ellipse cx="48" cy="38" rx="21" ry="15" fill="#2ec4a0"/>
+  <path d="M32 44 C 42 52, 58 50, 66 42 C 56 48, 42 50, 32 44 Z" fill="#dff7ef"/>
+  <circle cx="28" cy="29" r="11" fill="#35d6ae"/>
+  <path d="M20 34 C 24 42, 34 44, 38 38 C 32 40, 24 38, 20 34 Z" fill="#ef3d7a"/>
+  <path d="M22 26 C 26 20, 34 20, 37 24 C 32 22, 26 22, 22 26 Z" fill="#1b4f45" opacity=".6"/>
+  <circle cx="25" cy="26" r="2.2" fill="#13302a"/>
+  <path d="M18 30 L 2 24 L 18 33 Z" fill="#2a241c"/>
+  <g class="wing wing--near">
+    <path d="M44 32 C 56 12, 74 6, 84 16 C 70 24, 56 34, 46 40 Z" fill="#49e0bb" opacity=".8"/>
+  </g>
+  <g class="wing wing--rest">
+    <path d="M40 29 C 54 25, 69 31, 73 40 C 58 45, 45 38, 38 33 Z" fill="#2fb894"/>
+  </g>
+  <g class="wing wing--reach">
+    <path d="M38 42 C 23 43, 8 48, -8 56 C 7 61, 26 54, 40 48 Z" fill="#3fd4ad"/>
+  </g>
+</svg>
