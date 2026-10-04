@@ -28,12 +28,13 @@ src/
   gateways/
     weather-gateway.js  Open-Meteo adapter with last-sky cache and offline fallback
   services/
+    cached-json.js    loadCachedJson(url): localStorage copy first, network refresh for next load
     config.js         loadConfig, applyThemeTokens
     i18n.js           createTranslator: loads translations, resolves dotted keys, language cycle
     connection.js     offline mark
   ui/
     headline.js       kicker (daily or threshold) + city/date/time label
-    countdown.js      days/hours/minutes/seconds or the reunion message, cached meeting instant
+    countdown.js      days/hours/minutes/seconds or the reunion message
     origin-pins.js    pin labels + click -> info card
     info-card.js      <dialog> content for an origin and its character
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
@@ -154,10 +155,20 @@ show a hint ("Share → Add to Home Screen") instead of a button.
 ## 6. Offline
 
 `sw.js` is network-first for same-origin GET requests and precaches every file listed in
-`APP_SHELL`; bump `CACHE_NAME` when that list changes. Cross-origin requests (the weather API)
-skip the service worker.
+`APP_SHELL`; bump `CACHE_NAME` when that list changes. If the network has not answered after
+`NETWORK_TIMEOUT_MS` (1 s) the cached copy is served, and the late network response still
+refreshes the cache. Navigations fall back to `index.html`. Cross-origin requests (the weather API)
+skip the service worker. The worker is registered first thing in `main.js`.
+
+`index.html` lists every module with `<link rel="modulepreload">`, so the whole module graph is
+requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.
+
+`config.json` and `translations/*.json` go through `loadCachedJson` (`src/services/cached-json.js`):
+the copy stored in `localStorage` (`loa-json:<url>`) is used immediately and the network response
+replaces it for the next load, so after the first visit the countdown, labels and kicker render in
+the first frame. Edits to those files show up on the second load after deploying.
 
 The last fetched sky of each place is stored in `localStorage` (`place-sky:<lat>,<lon>`). Weather
-backgrounds paint it instantly and then fade to the fresh response. When the request fails the
-gateway keeps the stored condition and estimates day/night from the place's time zone. The meeting
-instant is stored too (`loa-meeting-instant`), so the countdown renders before `config.json` loads.
+backgrounds paint it instantly and then fade to the fresh response; the request never blocks the
+countdown. When the request fails the gateway keeps the stored condition and estimates day/night
+from the place's time zone.

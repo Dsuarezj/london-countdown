@@ -1,6 +1,7 @@
-export async function loadConfig() {
-  const response = await fetch("config.json");
-  return response.json();
+import { loadCachedJson } from "@/services/cached-json.js";
+
+export function loadConfig() {
+  return loadCachedJson("config.json");
 }
 
 export function applyThemeTokens(tokens) {

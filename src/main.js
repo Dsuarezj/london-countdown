@@ -3,7 +3,7 @@ import { applyThemeTokens, loadConfig } from "@/services/config.js";
 import { watchConnection } from "@/services/connection.js";
 import { createTranslator } from "@/services/i18n.js";
 import { mountCharacters, renderCharacterLabels } from "@/ui/characters.js";
-import { rememberMeetingInstant, renderCachedCountdown, renderCountdown } from "@/ui/countdown.js";
+import { renderCountdown } from "@/ui/countdown.js";
 import { renderKicker, renderMeetingLabel } from "@/ui/headline.js";
 import { createInfoCard } from "@/ui/info-card.js";
 import { prepareInstallPrompt } from "@/ui/install-prompt.js";
@@ -17,12 +17,14 @@ const meetingElement = document.getElementById("meeting");
 const languageButton = document.getElementById("languageButton");
 const languageCodeField = document.getElementById("languageCode");
 
-renderCachedCountdown();
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+
 const offerInstall = prepareInstallPrompt();
 const config = await loadConfig();
 const { meeting } = config;
 const meetingInstant = wallClockToInstant(meeting.date, meeting.time, meeting.timeZone);
-rememberMeetingInstant(meetingInstant);
 renderCountdown(meetingInstant - Date.now());
 const translator = await createTranslator(config.languages);
 const infoCard = createInfoCard(config, translator);
@@ -74,7 +76,3 @@ await Promise.all([
 ]);
 renderCharacterLabels(meetingElement, config.characters, translator);
 playMeeting(meetingElement, config.affection, offerInstall);
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
