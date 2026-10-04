@@ -60,9 +60,10 @@
   },
   "affection": {
     "stylesheet": "styles/affection.css",
-    "beats": ["kissing", "nestling", "circling", "swaying", "perching", "nuzzling"],
+    "beats": ["kissing", "nestling", "circling", "swaying", "perching", "nuzzling", "preening", "bowing", "chasing", "dozing"],
     "intervalMs": 11000
   },
+  "together": "heart-rain",
   "kickers": [
     "kickers.sameSky",
     "kickers.twoRoutes",

@@ -9,6 +9,7 @@ import { createInfoCard } from "@/ui/info-card.js";
 import { prepareInstallPrompt } from "@/ui/install-prompt.js";
 import { playMeeting } from "@/ui/meeting.js";
 import { mountOriginPins, renderOriginPins } from "@/ui/origin-pins.js";
+import { createTogetherPlayer } from "@/ui/together.js";
 import { calendarDayNumber, wallClockToInstant } from "@/utils/meeting-time.js";
 import { loadStylesheet } from "@/utils/stylesheet.js";
 
@@ -29,6 +30,8 @@ renderCountdown(meetingInstant - Date.now());
 const translator = await createTranslator(config.languages);
 const infoCard = createInfoCard(config, translator);
 
+const togetherPlayer = createTogetherPlayer(config.together);
+
 function remainingMs() {
   return meetingInstant - Date.now();
 }
@@ -38,9 +41,11 @@ function todayNumber() {
 }
 
 function renderTick() {
-  renderCountdown(remainingMs());
+  const remaining = remainingMs();
+  renderCountdown(remaining);
   renderKicker(config, translator, todayNumber());
-  renderThreshold(config, translator, remainingMs());
+  renderThreshold(config, translator, remaining);
+  togetherPlayer.playIfReady(remaining);
 }
 
 function renderLanguage() {
@@ -76,4 +81,8 @@ await Promise.all([
   loadStylesheet(config.affection.stylesheet)
 ]);
 renderCharacterLabels(meetingElement, config.characters, translator);
-playMeeting(meetingElement, config.affection, offerInstall);
+playMeeting(meetingElement, config.affection, () => {
+  togetherPlayer.markArrived();
+  togetherPlayer.playIfReady(remainingMs());
+  offerInstall();
+});

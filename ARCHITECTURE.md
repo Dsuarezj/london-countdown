@@ -39,6 +39,7 @@ src/
     info-card.js      <dialog> content for an origin and its character
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
     meeting.js        journey -> arrived -> affection beats
+    together.js       one-shot reunion animation (heart rain) after countdown zero
     install-prompt.js install prompt (7-day window, dismiss until tomorrow)
   utils/
     enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase, SkyCondition
@@ -56,6 +57,7 @@ styles/
   sky-layers.css      shared weather opacities plus aurora / tropics / stars / horizon
   meeting.css         bird rig contract, wing sets, heart
   affection.css       affection beats (configurable stylesheet)
+  together/<id>.css   one-shot reunion overlay; path lives with the player in together.js
   info-card.css       bottom sheet / anchored card
   install-prompt.css  install prompt
   backgrounds/*.css   one file per background, loaded only when selected
@@ -82,6 +84,7 @@ the only place that knows about all of them.
 | `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city`, `label` (translation key of the country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). |
 | `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName` and `text`: translation key of an object with `name`, `ariaLabel` and `facts`, shown in the info card. |
 | `affection` | `stylesheet`, `beats` (body classes defined in that stylesheet) and `intervalMs`. Beat length comes from `--beat-duration` in the stylesheet. |
+| `together` | Id of the one-shot reunion overlay (`heart-rain`). Empty string disables it. Stylesheet and player live together in `src/ui/together.js`. |
 | `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
 | `thresholds` | `[{ withinHours, text }]` with `text` as a translation key. Inside a window a small line appears under the countdown (15, 7, 3, 1 days and the last hour). |
 
@@ -99,6 +102,10 @@ Reuse `AURORA_TROPICS_LAYERS` to keep the visual family. `decorate(skyElement, c
 add its `name` / `ariaLabel` / `facts` under `characters.<id>` in every translation file, and point an
 origin at it. The SVG and CSS must respect the rig contract in `ANIMATION.md`
 (wing groups, facing direction, journey keyframes ending at `translate(0, 0)`).
+
+**New together animation**: add `{ stylesheet, play }` under that id in `src/ui/together.js`, add
+`styles/together/<id>.css`, list both in `sw.js`, then set `together` to the id. It runs once when
+the countdown is at zero and the birds have arrived.
 
 **New affection set**: copy `styles/affection.css`, keep selectors on slots (`.bird--north`,
 `.bird--south`), never on characters, and point `affection.stylesheet` / `affection.beats` to it.
