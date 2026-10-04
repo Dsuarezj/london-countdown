@@ -46,20 +46,11 @@ function planSky({ meeting, backgrounds, origins }) {
   };
 }
 
-function afterNextPaint(callback) {
-  requestAnimationFrame(() => requestAnimationFrame(callback));
-}
-
 function mountBackground(skyElement, { backgroundId, context }, fadeIn) {
   const background = BACKGROUNDS[backgroundId];
   skyElement.className = `sky sky--${backgroundId}`;
   skyElement.innerHTML = background.markup;
-  const decorate = () => background.decorate?.(skyElement, context);
-  if (fadeIn) {
-    afterNextPaint(decorate);
-    return;
-  }
-  decorate();
+  background.decorate?.(skyElement, { ...context, fadeIn });
 }
 
 export function createSky(skyElement) {

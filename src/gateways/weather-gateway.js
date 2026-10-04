@@ -49,9 +49,36 @@ function skyCacheKey({ latitude, longitude }) {
   return `${SKY_CACHE_PREFIX}${latitude},${longitude}`;
 }
 
-export function cachedPlaceSky(place) {
+function readStoredPlaceSky(place) {
   const cachedSky = localStorage.getItem(skyCacheKey(place));
-  return cachedSky ? JSON.parse(cachedSky) : { phase: estimatePhase(place.timeZone), condition: SkyCondition.CLEAR };
+  if (!cachedSky) {
+    return null;
+  }
+  const parsedSky = JSON.parse(cachedSky);
+  return {
+    phase: parsedSky.phase,
+    condition: parsedSky.condition,
+    raining: Boolean(parsedSky.raining),
+    snowing: Boolean(parsedSky.snowing)
+  };
+}
+
+function samePlaceSky(leftSky, rightSky) {
+  return leftSky.phase === rightSky.phase
+    && leftSky.condition === rightSky.condition
+    && leftSky.raining === rightSky.raining
+    && leftSky.snowing === rightSky.snowing;
+}
+
+function afterNextPaint(callback) {
+  requestAnimationFrame(() => requestAnimationFrame(callback));
+}
+
+export function applyPlaceSky(element, { phase, condition, raining, snowing }) {
+  element.dataset.phase = phase;
+  element.dataset.condition = condition;
+  element.dataset.raining = raining;
+  element.dataset.snowing = snowing;
 }
 
 export async function fetchPlaceSky(place) {
@@ -59,7 +86,28 @@ export async function fetchPlaceSky(place) {
     const placeSky = await requestPlaceSky(place);
     localStorage.setItem(skyCacheKey(place), JSON.stringify(placeSky));
     return placeSky;
-  } catch (requestError) {
-    return { ...cachedPlaceSky(place), phase: estimatePhase(place.timeZone) };
+  } catch {
+    return readStoredPlaceSky(place) ?? {
+      phase: estimatePhase(place.timeZone),
+      condition: SkyCondition.CLEAR,
+      raining: false,
+      snowing: false
+    };
   }
+}
+
+export async function followPlaceSky(element, place, fadeIn) {
+  const storedSky = readStoredPlaceSky(place);
+  if (storedSky) {
+    applyPlaceSky(element, storedSky);
+  }
+  const freshSky = await fetchPlaceSky(place);
+  if (storedSky && samePlaceSky(storedSky, freshSky)) {
+    return;
+  }
+  if (!storedSky && fadeIn) {
+    afterNextPaint(() => applyPlaceSky(element, freshSky));
+    return;
+  }
+  applyPlaceSky(element, freshSky);
 }

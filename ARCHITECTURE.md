@@ -179,13 +179,14 @@ only read when the request fails. City, date and time zone are not hard-coded in
 come from `config.json` and `translations/*/places`.
 
 The sky is the one piece that is cache-first. Before any request, `main.js` reads the stored config
-(`readCachedConfig`) and mounts the sky from it with no animation, so a returning visit opens on the
-sky it last showed. The fresh config then goes through the same `showSky`, which builds a plan
-(background id plus the context it needs) and only remounts when that plan changed. On the first
-visit (no stored config) and on a remount, the weather is applied one frame after the markup, so the
-default night sky fades into it through the layers' own `transition` instead of jumping.
+(`readCachedConfig`) and mounts the sky from it, so a returning visit opens on the sky it last
+showed. The fresh config then goes through the same `showSky`, which builds a plan (background id
+plus the context it needs) and only remounts when that plan changed.
 
-The last fetched sky of each place is stored in `localStorage` (`place-sky:<lat>,<lon>`). Weather
-backgrounds paint it instantly and fade only if the fresh response differs; the request never
-blocks the countdown. When the request fails the gateway keeps the stored condition and estimates day/night
-from the place's time zone.
+Each place's last sky (`phase`, `condition`, `raining`, `snowing`) is stored in `localStorage`
+(`place-sky:<lat>,<lon>`). Weather backgrounds paint that stored sky with the markup. The forecast
+request runs in the background and only writes the dataset again when the fresh sky differs, so the
+layers' `transition` plays for day/night (or weather) changes and a revisit during the same sky
+does not replay them. With no stored sky, the default night markup is painted first and then fades
+into the first forecast. When the request fails the gateway keeps the stored sky, or estimates
+day/night from the place's time zone if nothing was stored.

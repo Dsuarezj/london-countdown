@@ -1,4 +1,4 @@
-import { CLEAR_NIGHT_SKY, cachedPlaceSky, fetchPlaceSky } from "@/gateways/weather-gateway.js";
+import { CLEAR_NIGHT_SKY, applyPlaceSky, followPlaceSky } from "@/gateways/weather-gateway.js";
 
 function hemisphereMarkup(slot) {
   return `
@@ -17,25 +17,17 @@ function hemisphereMarkup(slot) {
   `;
 }
 
-function applySky(hemisphere, { phase, condition, raining, snowing }) {
-  hemisphere.dataset.phase = phase;
-  hemisphere.dataset.condition = condition;
-  hemisphere.dataset.raining = raining;
-  hemisphere.dataset.snowing = snowing;
-}
-
 export const originWeather = {
   markup: `${hemisphereMarkup("north")}${hemisphereMarkup("south")}`,
-  async decorate(skyElement, { origins, weather }) {
+  async decorate(skyElement, { origins, weather, fadeIn }) {
     await Promise.all(Object.entries(origins).map(async ([slot, origin]) => {
       const hemisphere = skyElement.querySelector(`.hemisphere--${slot}`);
       hemisphere.dataset.nightSky = origin.nightSky;
       if (!weather) {
-        applySky(hemisphere, CLEAR_NIGHT_SKY);
+        applyPlaceSky(hemisphere, CLEAR_NIGHT_SKY);
         return;
       }
-      applySky(hemisphere, cachedPlaceSky(origin));
-      applySky(hemisphere, await fetchPlaceSky(origin));
+      await followPlaceSky(hemisphere, origin, fadeIn);
     }));
   }
 };
