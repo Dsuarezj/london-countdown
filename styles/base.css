@@ -43,61 +43,6 @@ body {
   background: var(--night);
 }
 
-.splash {
-  position: fixed;
-  z-index: 20;
-  inset: 0;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  color: var(--ink);
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255, 79, 147, .22), transparent 26rem),
-    radial-gradient(circle at 50% 72%, rgba(139, 107, 255, .16), transparent 22rem),
-    var(--night);
-  transition: opacity .45s ease, visibility .45s ease;
-}
-
-.splash[data-dismissed] {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.splash__glow {
-  position: absolute;
-  width: min(110vw, 36rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 30deg,
-    transparent,
-    rgba(255, 79, 147, .28),
-    transparent,
-    rgba(139, 107, 255, .22),
-    transparent
-  );
-  filter: blur(24px);
-  animation: splash-orbit 4s linear infinite;
-}
-
-.splash__mark {
-  position: relative;
-  width: 7.5rem;
-  color: var(--tropic-magenta);
-  filter: drop-shadow(0 0 28px rgba(255, 79, 147, .45));
-  animation: splash-breathe 2.4s ease-in-out infinite;
-}
-
-@keyframes splash-orbit {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes splash-breathe {
-  0%, 100% { transform: scale(.94); opacity: .75; }
-  50% { transform: scale(1); opacity: 1; }
-}
-
 /* --- travel route --- */
 
 .route {
@@ -356,9 +301,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .route__line,
-  .pin i,
-  .splash__glow,
-  .splash__mark {
+  .pin i {
     animation: none !important;
   }
 }

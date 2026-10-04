@@ -16,7 +16,6 @@ const skyElement = document.getElementById("sky");
 const meetingElement = document.getElementById("meeting");
 const languageButton = document.getElementById("languageButton");
 const languageCodeField = document.getElementById("languageCode");
-const splashElement = document.getElementById("splash");
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js", { updateViaCache: "none" });
@@ -56,7 +55,6 @@ function renderLanguage() {
 
 applyThemeTokens(config.theme.tokens);
 renderLanguage();
-splashElement.dataset.dismissed = "true";
 setInterval(renderTick, 1000);
 watchConnection();
 
