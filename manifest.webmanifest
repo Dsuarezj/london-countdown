@@ -1,13 +1,13 @@
 {
   "name": "London · 13 November",
-  "short_name": "London 13.11",
+  "short_name": "London",
   "description": "Countdown to 13 November, 22:00 London time.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#060f1d",
-  "theme_color": "#060f1d",
+  "background_color": "#0b1f33",
+  "theme_color": "#0b1f33",
   "icons": [
     {
       "src": "icons/icon-192.png",
