@@ -1,0 +1,135 @@
+.info-card {
+  --card-accent: var(--aurora-mint);
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(78dvh, 34rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 1.4rem 1.4rem 0 0;
+  color: var(--ink);
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, .45);
+  overflow: hidden;
+}
+
+.info-card[data-origin="south"] {
+  --card-accent: #ff8dad;
+}
+
+.info-card[open] {
+  animation: sheet-rise .35s ease-out;
+}
+
+.info-card::backdrop {
+  background: rgba(3, 8, 15, .5);
+}
+
+.info-card__sheet {
+  max-height: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding:
+    1.6rem
+    calc(env(safe-area-inset-right, 0px) + 1.4rem)
+    calc(env(safe-area-inset-bottom, 0px) + 1.6rem)
+    calc(env(safe-area-inset-left, 0px) + 1.4rem);
+  text-align: left;
+}
+
+.info-card__close {
+  position: absolute;
+  top: .7rem;
+  right: .7rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: rgba(255, 255, 255, .08);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.info-card__origin {
+  font-size: .62rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--card-accent);
+}
+
+.info-card__name {
+  margin: .5rem 2.6rem .15rem 0;
+  font-size: clamp(1.15rem, 5vw, 1.4rem);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.info-card__scientific {
+  font-size: .85rem;
+  font-style: italic;
+  opacity: .6;
+}
+
+.info-card__facts {
+  display: grid;
+  gap: .7rem;
+  margin-top: 1.1rem;
+  padding-left: 1.1rem;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.info-card__facts li::marker {
+  color: var(--card-accent);
+}
+
+@keyframes sheet-rise {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes card-appear {
+  from { opacity: 0; transform: scale(.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (min-width: 720px) and (min-height: 540px) {
+  .info-card {
+    width: min(22rem, calc(100vw - 2.4rem));
+    max-height: min(70dvh, 30rem);
+    border-radius: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, .12);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, .45);
+  }
+
+  .info-card[open] {
+    animation: card-appear .25s ease-out;
+  }
+
+  .info-card[data-origin="north"] {
+    inset: calc(env(safe-area-inset-top, 0px) + 3.2rem) auto auto 1.2rem;
+    transform-origin: top left;
+  }
+
+  .info-card[data-origin="south"] {
+    inset: auto 1.2rem calc(env(safe-area-inset-bottom, 0px) + 3.2rem) auto;
+    transform-origin: bottom right;
+  }
+
+  .info-card__sheet {
+    padding: 1.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-card[open] {
+    animation: none;
+  }
+}

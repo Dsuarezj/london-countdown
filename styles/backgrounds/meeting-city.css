@@ -1,0 +1,132 @@
+.sky--meeting-city {
+  background:
+    radial-gradient(120% 55% at 50% 100%, #3a1d3f 0%, transparent 62%),
+    linear-gradient(180deg, #050b16 0%, #0c1a2e 50%, #1e1530 100%);
+}
+
+.sky--meeting-city .stars {
+  inset: 0 0 52% 0;
+}
+
+.sky--meeting-city .confluence {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 62%;
+  height: min(40vw, 28vh, 230px);
+  transform: translateY(-50%);
+  filter: blur(16px);
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(closest-side, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 40%, transparent 100%);
+  animation: confluence-breathe 12s ease-in-out infinite;
+}
+
+.sky--meeting-city .confluence__current {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+  translate: 0 -50%;
+  animation: confluence-turn 46s linear infinite;
+}
+
+.sky--meeting-city .confluence__current--north {
+  background: conic-gradient(from 0deg, transparent 0deg, var(--aurora-mint) 70deg, var(--aurora-teal) 120deg, transparent 190deg);
+}
+
+.sky--meeting-city .confluence__current--south {
+  background: conic-gradient(from 180deg, transparent 0deg, var(--tropic-magenta) 70deg, var(--tropic-orange) 120deg, transparent 190deg);
+}
+
+@keyframes confluence-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes confluence-breathe {
+  0%, 100% { opacity: .36; }
+  50%      { opacity: .54; }
+}
+
+.sky--meeting-city .daylight,
+.sky--meeting-city .veil,
+.sky--meeting-city .precipitation {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 2.4s ease;
+}
+
+.sky--meeting-city .daylight {
+  background:
+    radial-gradient(60% 40% at 84% 0%, var(--sun-glare), transparent 70%),
+    linear-gradient(180deg, var(--sunny-zenith) 0%, var(--sunny-horizon) 100%);
+}
+
+.sky--meeting-city[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .daylight {
+  background: linear-gradient(180deg, var(--overcast-zenith) 0%, var(--overcast-horizon) 100%);
+}
+
+.sky--meeting-city .veil {
+  bottom: 30%;
+  background:
+    radial-gradient(60% 40% at 18% 20%, rgba(185, 195, 212, .7) 0%, transparent 72%),
+    radial-gradient(70% 44% at 55% 8%, rgba(165, 178, 198, .58) 0%, transparent 70%),
+    radial-gradient(62% 40% at 88% 26%, rgba(152, 166, 188, .5) 0%, transparent 68%),
+    linear-gradient(180deg, rgba(118, 130, 150, .45), transparent 90%);
+  filter: blur(22px);
+}
+
+.sky--meeting-city .precipitation {
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 15%, #000 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 15%, #000 80%, transparent 100%);
+}
+
+.sky--meeting-city .city-glow {
+  position: absolute;
+  inset: auto -10% 0 -10%;
+  height: 32%;
+  background: radial-gradient(60% 100% at 50% 100%, rgba(255, 184, 108, .32), transparent 72%);
+  filter: blur(12px);
+}
+
+.sky--meeting-city .city-lights {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 14%;
+  background-image:
+    radial-gradient(1.6px 1.6px at 8% 70%, #ffd7a0 50%, transparent),
+    radial-gradient(1.4px 1.4px at 19% 52%, #ffe7c2 50%, transparent),
+    radial-gradient(1.8px 1.8px at 31% 78%, #ffd7a0 50%, transparent),
+    radial-gradient(1.3px 1.3px at 44% 60%, #fff1d8 50%, transparent),
+    radial-gradient(1.7px 1.7px at 57% 82%, #ffd7a0 50%, transparent),
+    radial-gradient(1.4px 1.4px at 69% 56%, #ffe7c2 50%, transparent),
+    radial-gradient(1.6px 1.6px at 82% 74%, #ffd7a0 50%, transparent),
+    radial-gradient(1.3px 1.3px at 93% 62%, #fff1d8 50%, transparent);
+  animation: twinkle 7s ease-in-out infinite;
+}
+
+.sky--meeting-city[data-phase="day"] .daylight { opacity: 1; }
+.sky--meeting-city[data-phase="day"] .stars,
+.sky--meeting-city[data-phase="day"] .city-lights { visibility: hidden; }
+
+.sky--meeting-city:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: .85; }
+.sky--meeting-city:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .stars { visibility: hidden; }
+.sky--meeting-city[data-phase="day"]:is([data-condition="cloudy"], [data-condition="rain"], [data-condition="snow"]) .daylight { opacity: .92; }
+
+.sky--meeting-city[data-condition="rain"] .precipitation {
+  opacity: .75;
+  background-image: var(--rain-image);
+  background-size: var(--rain-size);
+  filter: blur(.7px);
+  animation: rainfall 2.4s linear infinite;
+}
+
+.sky--meeting-city[data-condition="snow"] .precipitation {
+  opacity: .55;
+  background-image: var(--snow-image);
+  background-size: var(--snow-size);
+  animation: snowfall 9s linear infinite;
+}

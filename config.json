@@ -1,0 +1,84 @@
+{
+  "languages": ["en", "es", "is"],
+  "meeting": {
+    "date": "2026-11-13",
+    "time": "22:00",
+    "timeZone": "Europe/London",
+    "city": "places.london",
+    "latitude": 51.5072,
+    "longitude": -0.1276
+  },
+  "theme": {
+    "tokens": {}
+  },
+  "backgrounds": {
+    "mode": "fixed",
+    "fixed": "origin-weather",
+    "random": {
+      "pool": ["aurora-tropics", "origin-weather"],
+      "everyDays": 1
+    },
+    "countdown": [
+      { "withinHours": 72, "background": "converging" }
+    ],
+    "meetingDay": "meeting-city"
+  },
+  "origins": {
+    "north": {
+      "character": "plover",
+      "city": "Reykjavík",
+      "label": "places.iceland",
+      "latitude": 64.1466,
+      "longitude": -21.9426,
+      "timeZone": "Atlantic/Reykjavik",
+      "nightSky": "aurora"
+    },
+    "south": {
+      "character": "hummingbird",
+      "city": "Céret",
+      "label": "places.france",
+      "latitude": 42.4853,
+      "longitude": 2.7486,
+      "timeZone": "Europe/Paris",
+      "nightSky": "stars"
+    }
+  },
+  "characters": {
+    "plover": {
+      "markup": "characters/plover/plover.svg",
+      "stylesheet": "characters/plover/plover.css",
+      "scientificName": "Pluvialis apricaria",
+      "text": "characters.plover"
+    },
+    "hummingbird": {
+      "markup": "characters/hummingbird/hummingbird.svg",
+      "stylesheet": "characters/hummingbird/hummingbird.css",
+      "scientificName": "Colibri coruscans",
+      "text": "characters.hummingbird"
+    }
+  },
+  "affection": {
+    "stylesheet": "styles/affection.css",
+    "beats": ["kissing", "nestling", "circling", "swaying", "perching", "nuzzling"],
+    "intervalMs": 11000
+  },
+  "kickers": [
+    "kickers.sameSky",
+    "kickers.twoRoutes",
+    "kickers.twoTimeZones",
+    "kickers.twoMaps",
+    "kickers.differentWeather",
+    "kickers.sameMoon",
+    "kickers.twoFlights",
+    "kickers.sameStars",
+    "kickers.oneDayLess",
+    "kickers.sameCity"
+  ],
+  "thresholds": [
+    { "withinHours": 360, "text": "thresholds.countingDays" },
+    { "withinHours": 168, "text": "thresholds.lastWeek" },
+    { "withinHours": 72, "text": "thresholds.lastNights" },
+    { "withinHours": 24, "text": "thresholds.lastDay" },
+    { "withinHours": 1, "text": "thresholds.lastHour" }
+  ]
+}

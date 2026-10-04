@@ -1,48 +1,60 @@
 # Animation map
 
-How the Lóa / hummingbird reunion is built, so new animations can follow the same pattern.
+How the Lóa / hummingbird reunion is built, so new characters and animations can follow the same
+pattern. See `ARCHITECTURE.md` for how the pieces are wired and configured.
 
-Everything lives in `styles.css`. JavaScript only toggles three classes on `<body>` and never
-writes inline styles or coordinates.
+JavaScript only toggles classes on `<body>` and never writes inline styles or coordinates.
+
+| File | Owns |
+| --- | --- |
+| `styles/meeting.css` | The rig contract shared by every character: wing sets, heart, `snuggle`, `settle`, `--journey-duration` |
+| `characters/<id>/<id>.css` | One character: size, flap, journey path, gait, arrived pose |
+| `styles/affection.css` | Affection beats, written against slots (`.bird--north`, `.bird--south`) |
+| `styles/sky-layers.css` | Aurora / tropics / stars / horizon primitives reused by every background |
 
 ## 1. State machine
 
-`app.js` drives the whole scene with three body classes:
+`src/meeting.js` drives the whole scene with body classes:
 
 | Body class | Meaning | Set by |
 | --- | --- | --- |
-| `journey` | The birds are travelling towards the countdown | `playArrival()` on every page load |
+| `journey` | The birds are travelling towards the countdown | `playMeeting()` on every page load |
 | `arrived` | The birds are perched together, wings touching | `settleTogether()` |
-| `kissing` / `nestling` / `circling` / `swaying` / `perching` / `nuzzling` | Short affectionate beat on top of `arrived` | timer every 11 s, or tap on `.meeting` |
+| one of `config.affection.beats` | Short affectionate beat on top of `arrived` | timer every `affection.intervalMs`, or tap on `.meeting` |
 
-`journey` is replaced by `arrived` after `--journey-duration`. `playArrival()` runs the travel
-sequence on every load (first visit and refresh). It only skips straight to `arrived` when the
-user prefers reduced motion.
+`journey` is replaced by `arrived` after `--journey-duration`. The travel sequence runs on every
+load; it only skips straight to `arrived` when the user prefers reduced motion.
 
-The single source of truth for the travel length is the CSS custom property:
+Durations JavaScript needs are CSS custom properties, read with `getComputedStyle`:
 
 ```css
-:root { --journey-duration: 8.4s; }
+:root { --journey-duration: 8.4s; }   /* styles/meeting.css */
+:root { --beat-duration: 2.6s; }      /* styles/affection.css */
 ```
 
-`app.js` reads it with `getComputedStyle(...).getPropertyValue("--journey-duration")`. Change the
-value in CSS only; the timeout follows automatically.
+Change the value in CSS only; the timeouts follow automatically.
 
 ## 2. The meeting point is layout, not coordinates
 
-The key idea: the birds' **final** position is decided by normal flex layout, and every animation
-is a *relative offset from that resting place*.
+The birds' **final** position is decided by normal flex layout, and every animation is a
+*relative offset from that resting place*.
 
 ```html
 <div class="meeting">
   <span class="heart">♥</span>
-  <div class="bird bird--plover">...</div>
-  <div class="bird bird--hummingbird">...</div>
+  <div class="bird bird--north character--plover">...</div>
+  <div class="bird bird--south character--hummingbird">...</div>
 </div>
 ```
 
-`.meeting` is a flex row sitting right below the countdown. Because the birds already occupy their
-final slots, every travel keyframe ends at `translate(0, 0)` and starts at a large offset:
+`src/characters.js` creates one `.bird` per origin in `config.origins` order. Two classes are
+always present:
+
+- `bird--<slot>` (`north` / `south`) — the place in the story. Affection beats target this.
+- `character--<id>` — the artwork. Its own stylesheet targets this.
+
+Because the birds already occupy their final slots, every travel keyframe ends at
+`translate(0, 0)` and starts at a large offset:
 
 ```css
 @keyframes plover-journey {
@@ -51,72 +63,59 @@ final slots, every travel keyframe ends at `translate(0, 0)` and starts at a lar
 }
 ```
 
-This is why the scene stays centred on any screen size without measuring anything in JavaScript.
+This keeps the scene centred on any screen size without measuring anything in JavaScript.
 Offsets use `vw`/`vh` so they scale with the viewport, and `scale()` grows from small to full size
-to suggest distance.
-
-When adding a traveller, never animate `left`/`top`. Put the element in the layout where it should
-end up, then animate `transform` from an off-screen offset back to zero.
+to suggest distance. Never animate `left`/`top`.
 
 ## 3. Two-layer rig per bird
 
-Each bird is two nested elements so that two independent motions can be composed without fighting
-over the same `transform`:
+Each bird is two nested elements so two independent motions compose without fighting over the
+same `transform`:
 
 ```html
-<div class="bird bird--plover">      <!-- layer 1: the long journey across the screen -->
-  <div class="bird__body">           <!-- layer 2: the local bob, hop, glide or kiss -->
+<div class="bird bird--north character--plover">   <!-- layer 1: the journey path -->
+  <div class="bird__body">                           <!-- layer 2: gait, bob, beats -->
     <svg>...</svg>
   </div>
 </div>
 ```
 
 - `.bird` owns the **path** (`plover-journey`, `hummingbird-journey`).
-- `.bird__body` owns the **personality** (`glide`, `hop-squash`, `settle`, `kiss`).
+- `.bird__body` owns the **personality** (`plover-glide`, `hummingbird-hop`, `settle`, beats).
 
-Nesting is what lets a hummingbird squash on every hop while simultaneously arcing across the
-screen. If you need a third simultaneous motion, add another wrapper rather than merging keyframes.
+If you need a third simultaneous motion, add another wrapper rather than merging keyframes.
 
-## 4. Wing sets swapped by state
+## 4. Character contract
 
-Each bird's SVG carries four wing groups. Only two are visible at a time, and the state class
-decides which pair:
+A character is `characters/<id>/<id>.svg` + `characters/<id>/<id>.css`, referenced from
+`config.characters`. To be swappable it must respect:
 
-| Group | Purpose | Visible when |
-| --- | --- | --- |
-| `.wing--far` | Back wing, flapping | `journey` |
-| `.wing--near` | Front wing, flapping | `journey` |
-| `.wing--rest` | Folded over the body | `arrived` |
-| `.wing--reach` | Stretched towards the partner | `arrived` |
+1. **Wing groups.** The SVG has four groups: `.wing--far`, `.wing--near` (flapping, visible during
+   `journey`), `.wing--rest` (folded) and `.wing--reach` (stretched to the partner), visible when
+   `arrived`. `styles/meeting.css` swaps them.
+2. **Facing.** A north character faces right and comes from the top-left; a south character faces
+   left and comes from the bottom-right. Its `.wing--reach` path extends past the `viewBox` edge
+   towards the partner; `overflow: visible` on the SVG makes the wings overlap.
+3. **Scoped CSS.** Every selector starts with `.character--<id>` and every keyframe name with
+   `<id>-`, so two characters never collide.
+4. **Flap only on flying wings.** Flap animations target `.wing--far` / `.wing--near` only, never
+   `.wing--rest` / `.wing--reach`, or they keep moving after arrival.
+5. **Own size.** Width uses `clamp(min, min(Xvw, Yvh), max)` inside the character stylesheet.
+6. **No `aria` in the SVG.** `characters.js` sets `role="img"` and the localized `ariaLabel` on
+   `.bird`.
 
 ```css
-.wing--rest,
-.wing--reach { opacity: 0; }
-
-body.arrived .wing--far,
-body.arrived .wing--near { opacity: 0; animation: none; }
-
-body.arrived .wing--rest,
-body.arrived .wing--reach { opacity: 1; }
+.character--plover .wing--near { animation: plover-flap 1.1s ease-in-out infinite; }
+body.journey .character--plover { animation: plover-journey var(--journey-duration) ... forwards; }
+body.arrived .character--plover .wing--reach { transform-origin: 56% 62%; animation: snuggle 5.5s ... }
 ```
 
-The "wings together" moment is purely geometric: the plover's `.wing--reach` path extends past the
-right edge of its `viewBox` and the hummingbird's extends past its left edge, while
-`.bird--hummingbird` pulls itself closer with `margin-left: -.6rem`. The two shapes overlap, so the
-wings read as touching. `overflow: visible` on the SVGs is required for this to work.
-
-Flap speed is the main character cue: `flap` runs at `1.1s` for the plover, `buzz` at `.14s` for
-the hummingbird. Both animations are scoped to `.wing--far` / `.wing--near` only — never to
-`.wing--rest` / `.wing--reach`, or they keep buzzing after arrival.
-
 ## 5. Travel rhythm: flight vs hops
-
-The two paths encode different movement styles using only keyframe spacing.
 
 **Flight** — few keyframes, smooth easing, gentle rotation as the bird banks:
 
 ```css
-body.journey .bird--plover {
+body.journey .character--plover {
   animation: plover-journey var(--journey-duration) cubic-bezier(.33, .1, .4, 1) forwards;
 }
 ```
@@ -130,97 +129,90 @@ different percentages mean "stay still for that slice of time":
 38%  { transform: translate(26vw, 4vh) scale(.74); }    /* apex of the next hop */
 ```
 
-Each landing/apex pair is one hop, and the paused landings are the "places" the hummingbird visits.
 Keep every landing offset under roughly `30vh` and `40vw`, otherwise the bird sits off-screen
-during its pause and the stop is invisible.
+during its pause.
 
 ## 6. The dotted map behind them
 
 `.route` is a full-viewport SVG with `preserveAspectRatio="none"` so its two curves stretch to any
-aspect ratio. The trick that keeps it from looking distorted:
+aspect ratio. `vector-effect="non-scaling-stroke"` keeps stroke width and dash pattern uniform:
 
 ```html
 <path class="route__line" d="M 10 3 C 18 20, 28 32, 50 57" vector-effect="non-scaling-stroke"/>
 ```
 
-`vector-effect="non-scaling-stroke"` keeps the stroke width and the dash pattern uniform no matter
-how much the `viewBox` is stretched. The travelling-dashes effect is one animated property:
-
-```css
-@keyframes route-flow { to { stroke-dashoffset: -14; } }
-```
-
-The endpoint labels (`.pin--north`, `.pin--south`) are plain HTML positioned in percentages rather
-than SVG text, so they never scale or skew with the stretched `viewBox`.
+The origin pins (`.pin--north`, `.pin--south`) are HTML buttons positioned against the safe areas,
+so they never scale or skew with the stretched `viewBox`. They open the info card.
 
 ## 7. Background layers
 
-The sky is four stacked gradient layers inside `.sky`, all `position: absolute` and blurred:
+Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared primitives in
+`styles/sky-layers.css`:
 
-1. `.aurora--one/two/three` — linear gradients sheared by `aurora-drift` (`skewX` + `scaleY`) to
-   suggest curtains. Different durations (26 s / 34 s / 19 s) stop them moving in lockstep.
+1. `.aurora--one/two/three` — linear gradients sheared by `aurora-drift` (`skewX` + `scaleY`).
+   Different durations (26 s / 34 s / 19 s) stop them moving in lockstep.
 2. `.tropics` — three radial gradients in the southern half.
-3. `.stars` — a single element whose `background-image` is a list of tiny `radial-gradient` dots.
+3. `.stars` — one element whose `background-image` is a list of tiny `radial-gradient` dots.
 4. `.horizon` — a dark gradient that grounds the bottom edge.
 
-Two constraints learned here, worth keeping:
+| Background | Idea |
+| --- | --- |
+| `aurora-tropics` | The original: aurora north, tropical glow south |
+| `origin-weather` | One `.hemisphere` per origin (north on top, south at the bottom). Each gets `data-phase`, `data-condition` and `data-night-sky` from its origin: days share the same sunny or overcast sky, nights show aurora with stars or only stars (the south aurora is the north one flipped with `scaleY(-1)`), and cloud veils, rain or snow fade in on top |
+| `converging` | Last days: aurora reaches lower, tropics rise higher, a warm glow where they meet |
+| `meeting-city` | Meeting day: one sky that follows the meeting city's time and weather (`data-phase`, `data-condition`). No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
 
-- Radial gradient centres must stay **inside** the element box. A centre at `100%` on an element
-  that already extends past the viewport puts the brightest part off-screen and the colour
-  disappears.
-- `mix-blend-mode: screen` is what makes the aurora and tropical colours glow where they meet. It
-  only brightens, so it needs a dark base underneath.
+Constraints worth keeping:
+
+- Radial gradient centres must stay **inside** the element box, or the brightest part ends up
+  off-screen.
+- `mix-blend-mode: screen` only brightens, so it needs a dark base underneath.
+- Layers that animate `opacity` (`.tropics`, `.stars`) can't be dimmed with `opacity`; use
+  `filter` or `visibility` instead.
+- Weather reactions use `transition`, not `animation`, so the change from the default night look
+  to the fetched state is a slow fade.
 
 ## 8. Affection beats
 
-Every 11 s, `playRandomAffection()` picks one class from
-`["kissing", "nestling", "circling", "swaying", "perching", "nuzzling"]`, adds it for 2.6 s,
-then removes it. The same function runs on a tap/click of `.meeting` once `arrived` is set.
-An `affectionBusy` flag blocks overlapping beats.
+Every `affection.intervalMs`, `src/meeting.js` picks one class from `config.affection.beats`,
+adds it for `--beat-duration`, then removes it. The same function runs on a tap of `.meeting`. An
+`affectionBusy` flag blocks overlapping beats.
 
 | Class | What happens |
 | --- | --- |
-| `kissing` | Lóa leans in, hummingbird tilts back, heart rises |
-| `nestling` | Hummingbird tucks under Lóa; her reach wing covers further |
-| `circling` | Hummingbird hops a small arc around Lóa's head; Lóa watches |
+| `kissing` | North leans in, south tilts back, heart rises |
+| `nestling` | South tucks under north; north's reach wing covers further |
+| `circling` | South hops a small arc around north's head; north watches |
 | `swaying` | Both lean left then right together |
-| `perching` | Hummingbird lands briefly on Lóa's back |
+| `perching` | South lands briefly on north's back |
 | `nuzzling` | Both lean in until beaks meet; heart rises |
 
-To add another beat: put the name in `AFFECTION_BEATS`, write CSS under `body.<name>`, and keep
-the duration at `BEAT_DURATION_MS` (or read a custom property if it needs to differ).
+Selectors start with `body.arrived.<beat>` so they always outrank the character's arrived
+animation regardless of stylesheet load order:
+
+```css
+body.arrived.kissing .bird--north .bird__body { animation: kiss var(--beat-duration) ease-in-out; }
+```
+
+To add a beat: write the CSS in the affection stylesheet and add its name to `affection.beats`.
 
 ## 9. Accessibility and size rules
 
-Always end a new animation with a reduced-motion escape. The existing block disables every moving
-part and lets the layout show the final state:
+Each stylesheet ends with its own reduced-motion escape (`meeting.css`, `sky-layers.css`,
+`base.css`, `info-card.css`, `install-prompt.css`). New files must do the same.
 
-```css
-@media (prefers-reduced-motion: reduce) {
-  .aurora, .tropics, .stars, .route__line, .wing, .bird__body, .bird {
-    animation: none !important;
-  }
-}
-```
-
-Two more things to respect when adding elements:
-
-- Off-screen travel offsets would normally create scrollbars. Three rules contain them without
-  disabling page scroll: `html { overflow-x: clip }` (propagates to the viewport and kills
-  horizontal scroll), `body { overflow: clip }` (contains the vertical reach of the travellers),
-  and `.sky { overflow: hidden }` (the aurora layers are inset by `-40%` and, being children of a
-  `position: fixed` element, escape the body's clip). Vertical page scroll still works, which is
-  what a short screen needs.
-- Sizes use `clamp(min, min(Xvw, Yvh), max)`. The inner `min()` ties type and artwork to the
-  *shorter* side of the screen, which is what keeps the scene fitting in landscape.
+- Off-screen travel offsets would normally create scrollbars. `html { overflow-x: clip }`,
+  `body { overflow: clip }` and `.sky { overflow: hidden }` contain them without disabling
+  vertical page scroll.
+- Sizes use `clamp(min, min(Xvw, Yvh), max)` so artwork follows the shorter side of the screen.
 
 ## 10. Checklist for a new animation
 
 1. Place the element in the layout at its final resting position.
 2. Decide which body state(s) it reacts to: `journey`, `arrived`, an affection beat, or a new one.
-3. Wrap it if it needs two simultaneous motions (path on the outside, personality inside).
+3. Wrap it if it needs two simultaneous motions (path outside, personality inside).
 4. Write keyframes that end at `translate(0, 0)` and start at a `vw`/`vh` offset.
 5. Use repeated keyframes for pauses, `linear` for hops, a cubic-bezier for flight.
-6. Drive any new duration from a custom property on `:root` if JavaScript needs to know it.
-7. Add the element to the `prefers-reduced-motion` block.
+6. Drive any duration JavaScript needs from a custom property on `:root`.
+7. Add a `prefers-reduced-motion` escape.
 8. Check 320×360 portrait and 667×375 landscape, the smallest sizes the layout targets.
