@@ -14,8 +14,8 @@ render them.
 | Translations apart from config | Every visible text lives in `translations/<language>.json`. Config never holds words, only translation keys (`"kickers.sameSky"`, `"characters.plover"`), so adding a language is one new file plus its code in `config.languages`. |
 | Registry for code, config for choice | Backgrounds need behaviour (the weather one fetches data), so they are JS modules registered in `src/backgrounds/index.js`. Config only picks ids. Characters need no behaviour, so they are pure files (SVG + CSS) referenced by path from config. |
 | Weather behind a gateway | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo. It returns `{ phase, condition }` using `SkyPhase` and `SkyCondition` from `src/utils/enums.js`. Swapping provider or moving it behind a server (e.g. a Cloudflare Worker) only changes this file. Open-Meteo needs no API key, so a client-side gateway is enough for now. |
-| Closed options as enums | Fixed string sets live in `Object.freeze` maps (`BackgroundMode`, `BackgroundId`, `NightSky`, `SkyPhase`, `SkyCondition`, plus install phases in `install-prompt.js`). Config still stores the string values; JS compares against the enum. |
-| Install prompt as a state machine | Phases are an enum (`introducing`, `resting`, `last-call`, `retired`, `installed`), not booleans. Only terminal phases are stored; the rest are derived from the first visit date. |
+| Closed options as enums | Fixed string sets live in `Object.freeze` maps (`BackgroundMode`, `BackgroundId`, `NightSky`, `SkyPhase`, `SkyCondition`, plus install routes in `install-prompt.js`). Config still stores the string values; JS compares against the enum. |
+| Install prompt kept small | For 7 days after the first visit it can show on every load. Cancel stores `dismissedOn` for today and hides it until the next calendar day. Install (or already standalone) stops it for good. |
 
 ## 2. Module map
 
@@ -38,7 +38,7 @@ src/
     info-card.js      <dialog> content for an origin and its character
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
     meeting.js        journey -> arrived -> affection beats
-    install-prompt.js install prompt state machine
+    install-prompt.js install prompt (7-day window, dismiss until tomorrow)
   utils/
     enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase, SkyCondition
     stylesheet.js     loadStylesheet(href) -> Promise
@@ -142,12 +142,11 @@ and top layer come for free, so it never fights the stage's stacking or overflow
 A small fixed bar above the bottom pin (so the pin stays tappable), limited to `24rem` wide and
 centred with auto margins. It appears after the birds arrive, never during the journey.
 
-| Days since first visit | Phase | Shown |
-| --- | --- | --- |
-| 1 – 3 | `introducing` | once per session |
-| 4 – 6 | `resting` | no |
-| 7+ | `last-call` | once, then the phase becomes `retired` |
-| any, app running standalone or `appinstalled` fired | `installed` | never |
+| Condition | Shown |
+| --- | --- |
+| First 7 days, not dismissed today, not installed | yes, on every load after the birds arrive |
+| Cancelled today (`dismissedOn` = today) | no, until the next calendar day |
+| Day 8+, or installed / standalone | never |
 
 Chromium uses the deferred `beforeinstallprompt` event. iOS has no such event, so the same rules
 show a hint ("Share → Add to Home Screen") instead of a button.

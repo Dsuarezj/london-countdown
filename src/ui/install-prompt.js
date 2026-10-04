@@ -1,25 +1,11 @@
 const INSTALL_RECORD_KEY = "install-prompt";
-const SESSION_KEY = "install-prompt-session";
-const SESSION_OFFERED = "offered";
 const DAY_MS = 86400000;
-const INTRODUCING_DAYS = 3;
-const LAST_CALL_DAY_INDEX = 6;
-
-const InstallPhase = Object.freeze({
-  INTRODUCING: "introducing",
-  RESTING: "resting",
-  LAST_CALL: "last-call",
-  RETIRED: "retired",
-  INSTALLED: "installed"
-});
+const OFFER_DAYS = 7;
 
 const InstallRoute = Object.freeze({
   NATIVE: "native",
   IOS_HINT: "ios-hint"
 });
-
-const SETTLED_PHASES = [InstallPhase.RETIRED, InstallPhase.INSTALLED];
-const OFFERING_PHASES = [InstallPhase.INTRODUCING, InstallPhase.LAST_CALL];
 
 const promptElement = document.getElementById("installPrompt");
 const inviteText = document.getElementById("installInvite");
@@ -41,31 +27,36 @@ function readInstallRecord() {
   return firstRecord;
 }
 
-function settlePhase(settledPhase) {
-  saveInstallRecord({ ...readInstallRecord(), settledPhase });
+function todayKey() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
 }
 
-function currentPhase() {
-  const record = readInstallRecord();
-  if (SETTLED_PHASES.includes(record.settledPhase)) {
-    return record.settledPhase;
-  }
-  const daysSinceFirstVisit = Math.floor((Date.now() - record.firstVisitAt) / DAY_MS);
-  if (daysSinceFirstVisit < INTRODUCING_DAYS) {
-    return InstallPhase.INTRODUCING;
-  }
-  if (daysSinceFirstVisit < LAST_CALL_DAY_INDEX) {
-    return InstallPhase.RESTING;
-  }
-  return InstallPhase.LAST_CALL;
+function markInstalled() {
+  saveInstallRecord({ ...readInstallRecord(), installed: true });
 }
 
-function isOfferDue() {
-  return OFFERING_PHASES.includes(currentPhase()) && sessionStorage.getItem(SESSION_KEY) !== SESSION_OFFERED;
+function dismissForToday() {
+  saveInstallRecord({ ...readInstallRecord(), dismissedOn: todayKey() });
+  hidePrompt();
 }
 
 function isRunningInstalled() {
   return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+}
+
+function isOfferDue() {
+  const record = readInstallRecord();
+  if (record.installed || isRunningInstalled()) {
+    return false;
+  }
+  const daysSinceFirstVisit = Math.floor((Date.now() - record.firstVisitAt) / DAY_MS);
+  if (daysSinceFirstVisit >= OFFER_DAYS) {
+    return false;
+  }
+  return record.dismissedOn !== todayKey();
 }
 
 function isAppleMobile() {
@@ -77,11 +68,6 @@ function hidePrompt() {
 }
 
 function showPrompt(route, installEvent) {
-  if (currentPhase() === InstallPhase.LAST_CALL) {
-    settlePhase(InstallPhase.RETIRED);
-  }
-  sessionStorage.setItem(SESSION_KEY, SESSION_OFFERED);
-
   inviteText.hidden = route !== InstallRoute.NATIVE;
   installButton.hidden = route !== InstallRoute.NATIVE;
   iosHintText.hidden = route !== InstallRoute.IOS_HINT;
@@ -103,13 +89,13 @@ function waitForNativeInstall() {
 
 export function prepareInstallPrompt() {
   if (isRunningInstalled()) {
-    settlePhase(InstallPhase.INSTALLED);
+    markInstalled();
   }
   window.addEventListener("appinstalled", () => {
-    settlePhase(InstallPhase.INSTALLED);
+    markInstalled();
     hidePrompt();
   });
-  closeButton.addEventListener("click", hidePrompt);
+  closeButton.addEventListener("click", dismissForToday);
 
   const nativeInstallReady = waitForNativeInstall();
 
