@@ -42,7 +42,7 @@ function planSky({ meeting, backgrounds, origins }) {
       isMeetingDay: todayNumber === calendarDayNumber(meetingInstant, meeting.timeZone),
       dayNumber: todayNumber
     }),
-    context: { origins, meeting, weather: backgrounds.weather }
+    context: { origins, meeting, weatherEnabled: backgrounds.weather }
   };
 }
 

@@ -11,6 +11,7 @@ JavaScript only toggles classes on `<body>` and never writes inline styles or co
 | `characters/<id>/<id>.css` | One character: size, flap, journey path, gait, arrived pose |
 | `styles/affection.css` | Affection beats, written against slots (`.bird--north`, `.bird--south`) |
 | `styles/sky-layers.css` | Aurora / tropics / stars / horizon primitives reused by every background |
+| `styles/weather-scene.css` | The `.weather` component: daylight, clouds, rain, snow and thunder driven by `data-*` |
 
 ## 1. State machine
 
@@ -163,9 +164,22 @@ Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared p
 | Background | Idea |
 | --- | --- |
 | `aurora-tropics` | The original: aurora north, tropical glow south |
-| `origin-weather` | One `.hemisphere` per origin (north on top, south at the bottom). Each gets `data-phase`, `data-condition`, `data-rain`, `data-snowfall` and `data-night-sky`. Millimetres greater than 0 add the falling layer; `--rain-strength` (0 at 0.2 mm, 1 above 3 mm) densifies and sharpens the drops. The cloud cover still follows `data-condition`. Day uses the shared daylight sky. Night keeps aurora and/or stars as a base layer; partly/overcast/rain/snow fade in on top and only dim that night sky |
+| `origin-weather` | One `.weather.hemisphere` per origin (north on top, south at the bottom, mirrored with `--sky-direction: 0deg` and `scale: 1 -1` on clouds and thunder) plus `data-night-sky`. Night keeps aurora and/or stars as a base layer; clouds, rain, snow and thunder fade in on top and only dim that night sky |
 | `converging` | Last days: aurora reaches lower, tropics rise higher, a warm glow where they meet |
-| `meeting-city` | Meeting day: one sky that follows the meeting city's time and weather (`data-phase`, `data-condition`, `data-rain`, `data-snowfall`). No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
+| `meeting-city` | Meeting day: one `.weather` scene for the meeting city. No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
+
+The `.weather` component (`weather-scene.js` + `weather-scene.css`) stacks
+`.daylight → .overcast → (background layers) → .veil → .thunder → .precipitation` and reacts to
+`data-phase`, `data-condition`, `data-rain`, `data-snowfall` and `data-thunder`:
+
+- **Clouds** follow `data-condition`; `partly` swaps the cover colours, rain and snow use the
+  heaviest cover.
+- **Rain / snow**: millimetres greater than 0 turn the falling layer on; `--rain-strength`
+  (0 at 0.2 mm, 1 above 3 mm) densifies and sharpens the drops.
+- **Thunder** keeps the rain sky and adds: a darker storm cover (`--storm-*`), clouds dimmed with
+  `brightness(.62)`, and two soft glows inside the clouds (`.thunder::before/::after`) that
+  flicker with `lightning` on 9 s and 13 s cycles so flashes never repeat in step. By day the
+  flashes are weaker (`--day-lightning`). Reduced motion leaves them off.
 
 Constraints worth keeping:
 
@@ -210,7 +224,7 @@ To add a beat: write the CSS in the affection stylesheet and add its name to `af
 ## 9. Accessibility and size rules
 
 Each stylesheet ends with its own reduced-motion escape (`meeting.css`, `sky-layers.css`,
-`base.css`, `info-card.css`, `install-prompt.css`). New files must do the same.
+`weather-scene.css`, `base.css`, `info-card.css`, `install-prompt.css`). New files must do the same.
 
 - Off-screen travel offsets would normally create scrollbars. `html { overflow-x: clip }`,
   `body { overflow: clip }` and `.sky { overflow: hidden }` contain them without disabling
