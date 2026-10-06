@@ -1,33 +1,24 @@
-import { CLEAR_NIGHT_SKY, applyPlaceSky, followPlaceSky } from "@/gateways/weather-gateway.js";
+import { AURORA_LAYERS } from "@/backgrounds/aurora-tropics.js";
+import { WEATHER_BASE_LAYERS, WEATHER_CLOUD_LAYERS, followWeather } from "@/backgrounds/weather-scene.js";
 
 function hemisphereMarkup(slot) {
   return `
-    <div class="hemisphere hemisphere--${slot}">
-      <div class="daylight"></div>
-      <div class="overcast"></div>
-      <div class="aurora-field">
-        <div class="aurora aurora--one"></div>
-        <div class="aurora aurora--two"></div>
-        <div class="aurora aurora--three"></div>
-      </div>
+    <div class="weather hemisphere hemisphere--${slot}">
+      ${WEATHER_BASE_LAYERS}
+      <div class="aurora-field">${AURORA_LAYERS}</div>
       <div class="stars"></div>
-      <div class="veil"></div>
-      <div class="precipitation"></div>
+      ${WEATHER_CLOUD_LAYERS}
     </div>
   `;
 }
 
 export const originWeather = {
   markup: `${hemisphereMarkup("north")}${hemisphereMarkup("south")}`,
-  async decorate(skyElement, { origins, weather, fadeIn }) {
-    await Promise.all(Object.entries(origins).map(async ([slot, origin]) => {
+  decorate(skyElement, { origins, weatherEnabled, fadeIn }) {
+    return Promise.all(Object.entries(origins).map(([slot, origin]) => {
       const hemisphere = skyElement.querySelector(`.hemisphere--${slot}`);
       hemisphere.dataset.nightSky = origin.nightSky;
-      if (!weather) {
-        applyPlaceSky(hemisphere, CLEAR_NIGHT_SKY);
-        return;
-      }
-      await followPlaceSky(hemisphere, origin, fadeIn);
+      return followWeather(hemisphere, origin, { enabled: weatherEnabled, fadeIn });
     }));
   }
 };

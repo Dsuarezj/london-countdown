@@ -1,0 +1,218 @@
+.weather {
+  --sky-direction: 180deg;
+  --sun-position: 84% 0%;
+  --rain-strength: 0;
+  --sunny-zenith: #2b76c2;
+  --sunny-horizon: #6eabe0;
+  --sun-glare: rgba(255, 240, 208, .55);
+  --overcast-zenith: #5a7088;
+  --overcast-horizon: #7d93ab;
+  --partly-zenith: #5c6b7c;
+  --partly-horizon: #7a8a9b;
+  --storm-zenith: #323d4d;
+  --storm-horizon: #4f5c6e;
+  --lightning-glow: rgba(214, 226, 255, .62);
+  --lightning-wash: rgba(186, 202, 236, .14);
+  --day-partly-overcast: .52;
+  --day-overcast-cover: .7;
+  --day-rain-overcast: .79;
+  --night-partly-overcast: .28;
+  --night-heavy-overcast: .48;
+  --partly-veil: .42;
+  --day-overcast-veil: .60;
+  --day-rain-veil: .70;
+  --night-heavy-veil: .69;
+  --snow-cover: .55;
+  --night-sky-clear: 1;
+  --night-sky-partly: .55;
+  --night-sky-heavy: .28;
+  --night-aurora-clear: .92;
+  --night-aurora-partly: .62;
+  --night-aurora-heavy: .34;
+  --day-lightning: .55;
+  --rain-image:
+    repeating-linear-gradient(110deg, transparent 0 30px, rgba(215, 232, 255, .22) 30px 31.4px, transparent 31.4px 58px),
+    repeating-linear-gradient(114deg, transparent 0 44px, rgba(195, 218, 248, .14) 44px 45.2px, transparent 45.2px 84px),
+    repeating-linear-gradient(107deg, transparent 0 36px, rgba(210, 228, 252, .12) 36px 37.1px, transparent 37.1px 72px);
+  --snow-image:
+    radial-gradient(2px 2px at 20% 30%, #fff 50%, transparent),
+    radial-gradient(1.6px 1.6px at 70% 10%, #fff 50%, transparent),
+    radial-gradient(2.2px 2.2px at 45% 75%, #fff 50%, transparent),
+    radial-gradient(1.4px 1.4px at 85% 60%, #fff 50%, transparent);
+  --snow-size: 120px 120px;
+}
+
+/* --- layers --- */
+
+.weather :is(.daylight, .overcast, .veil, .thunder, .precipitation) {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 2.4s ease;
+}
+
+.weather .daylight {
+  background:
+    radial-gradient(60% 50% at var(--sun-position), var(--sun-glare), transparent 70%),
+    linear-gradient(var(--sky-direction), var(--sunny-zenith) 0%, var(--sunny-horizon) 100%);
+}
+
+.weather .overcast {
+  background: linear-gradient(var(--sky-direction), var(--overcast-zenith) 0%, var(--overcast-horizon) 100%);
+}
+
+.weather .veil {
+  left: -22%;
+  right: -22%;
+  background:
+    radial-gradient(58% 28% at 16% 14%, rgba(236, 241, 248, .85) 0%, transparent 70%),
+    radial-gradient(62% 24% at 18% 24%, rgba(78, 90, 108, .42) 0%, transparent 72%),
+    radial-gradient(68% 30% at 56% 8%, rgba(226, 233, 243, .8) 0%, transparent 70%),
+    radial-gradient(72% 24% at 58% 18%, rgba(84, 96, 114, .38) 0%, transparent 72%),
+    radial-gradient(56% 28% at 88% 26%, rgba(214, 223, 236, .72) 0%, transparent 70%),
+    radial-gradient(60% 22% at 88% 36%, rgba(80, 92, 110, .36) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(118, 132, 152, .4), transparent 88%);
+  filter: blur(14px);
+  transition: opacity 2.4s ease, filter 2.4s ease;
+  will-change: transform;
+  animation: cloud-drift 26s ease-in-out infinite alternate;
+}
+
+.weather .thunder {
+  background: linear-gradient(180deg, var(--lightning-wash), transparent 75%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+}
+
+.weather .thunder::before,
+.weather .thunder::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.weather .thunder::before {
+  background: radial-gradient(34% 22% at 30% 20%, var(--lightning-glow), transparent 72%);
+}
+
+.weather .thunder::after {
+  background: radial-gradient(28% 18% at 72% 30%, var(--lightning-glow), transparent 74%);
+}
+
+.weather .precipitation {
+  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 78%, transparent 100%);
+}
+
+.weather .aurora-field {
+  opacity: 0;
+  transition: opacity 2.4s ease;
+}
+
+.weather :is(.stars, .city-lights) {
+  filter: opacity(0);
+  transition: filter 2.4s ease;
+}
+
+/* --- day --- */
+
+.weather[data-phase="day"] .daylight { opacity: 1; }
+.weather[data-phase="day"][data-condition="partly"] .overcast { opacity: var(--day-partly-overcast); }
+.weather[data-phase="day"][data-condition="overcast"] .overcast { opacity: var(--day-overcast-cover); }
+.weather[data-phase="day"]:is([data-condition="rain"], [data-condition="snow"]) .overcast { opacity: var(--day-rain-overcast); }
+.weather[data-phase="day"][data-condition="overcast"] .veil { opacity: var(--day-overcast-veil); }
+.weather[data-phase="day"]:is([data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--day-rain-veil); }
+
+/* --- night --- */
+
+.weather[data-phase="night"] :is(.stars, .city-lights) { filter: opacity(var(--night-sky-clear)); }
+.weather[data-phase="night"][data-condition="partly"] :is(.stars, .city-lights) { filter: opacity(var(--night-sky-partly)); }
+.weather[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) :is(.stars, .city-lights) { filter: opacity(var(--night-sky-heavy)); }
+
+.weather[data-phase="night"][data-night-sky="aurora"] .aurora-field { opacity: var(--night-aurora-clear); }
+.weather[data-phase="night"][data-night-sky="aurora"][data-condition="partly"] .aurora-field { opacity: var(--night-aurora-partly); }
+.weather[data-phase="night"][data-night-sky="aurora"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .aurora-field { opacity: var(--night-aurora-heavy); }
+
+.weather[data-phase="night"][data-condition="partly"] .overcast { opacity: var(--night-partly-overcast); }
+.weather[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: var(--night-heavy-overcast); }
+.weather[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--night-heavy-veil); }
+
+/* --- condition --- */
+
+.weather[data-condition="partly"] .overcast {
+  background: linear-gradient(var(--sky-direction), var(--partly-zenith) 0%, var(--partly-horizon) 100%);
+}
+
+.weather[data-condition="partly"] .veil { opacity: var(--partly-veil); }
+
+/* --- precipitation --- */
+
+.weather:is([data-condition="rain"], [data-rain]:not([data-rain="0"])) .precipitation {
+  --rain-tile-primary: calc(220px - 188px * var(--rain-strength));
+  --rain-tile-secondary: calc(280px - 232px * var(--rain-strength));
+  --rain-tile-tertiary: calc(248px - 208px * var(--rain-strength));
+  opacity: calc(.28 + .6 * var(--rain-strength));
+  background-image: var(--rain-image);
+  background-size:
+    var(--rain-tile-primary) var(--rain-tile-primary),
+    var(--rain-tile-secondary) var(--rain-tile-secondary),
+    var(--rain-tile-tertiary) var(--rain-tile-tertiary);
+  mix-blend-mode: screen;
+  filter: blur(calc(3.4px - 3.25px * var(--rain-strength)));
+  animation: rainfall calc(2.8s - 1.2s * var(--rain-strength)) linear infinite;
+}
+
+.weather:is([data-condition="snow"], [data-snowfall]:not([data-snowfall="0"])) .precipitation {
+  opacity: var(--snow-cover);
+  background-image: var(--snow-image);
+  background-size: var(--snow-size);
+  animation: snowfall 9s linear infinite;
+}
+
+/* --- thunder --- */
+
+.weather[data-thunder="true"] .overcast {
+  background: linear-gradient(var(--sky-direction), var(--storm-zenith) 0%, var(--storm-horizon) 100%);
+}
+
+.weather[data-thunder="true"] .veil {
+  filter: blur(14px) brightness(.62);
+}
+
+.weather[data-thunder="true"] .thunder { opacity: 1; }
+.weather[data-phase="day"][data-thunder="true"] .thunder { opacity: var(--day-lightning); }
+.weather[data-thunder="true"] .thunder::before { animation: lightning 6s linear infinite; }
+.weather[data-thunder="true"] .thunder::after { animation: lightning 9s linear 4.6s infinite; }
+
+/* --- motion --- */
+
+@keyframes cloud-drift {
+  from { transform: translate3d(-14%, 1.2%, 0); }
+  to   { transform: translate3d(14%, -1.2%, 0); }
+}
+
+@keyframes rainfall {
+  from { background-position: 0 0, 0 0, 0 0; }
+  to   { background-position: 0 var(--rain-tile-primary), 0 var(--rain-tile-secondary), 0 var(--rain-tile-tertiary); }
+}
+
+@keyframes snowfall {
+  to { background-position: 20px 120px; }
+}
+
+@keyframes lightning {
+  0%, 100% { opacity: 0; }
+  1.5%     { opacity: .85; }
+  2.5%     { opacity: .2; }
+  4%       { opacity: 1; }
+  7%       { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weather *,
+  .weather *::before,
+  .weather *::after {
+    animation: none !important;
+  }
+}
