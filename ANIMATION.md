@@ -224,6 +224,13 @@ with `crypto.getRandomValues` (uniform, no consecutive-repeat memory), adds it f
 | `bowing` | Both dip their heads in a greeting and rise |
 | `chasing` | South darts behind north and back; north turns to follow |
 | `dozing` | Both sink and dip their beaks, slow and quiet |
+| `wing-greeting` | Both reach wings wave towards one another |
+| `double-hop` | Both birds hop twice in sync |
+| `heart-beat` | The heart pulses twice in place |
+
+Affection beats are selected one at a time, so a beat may animate the bird bodies, reach wings, or
+heart without competing with another beat. All continue to respect the meeting stylesheet's
+reduced-motion rule.
 
 Selectors start with `body.arrived.<beat>` so they always outrank the character's arrived
 animation regardless of stylesheet load order:

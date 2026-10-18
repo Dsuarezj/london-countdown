@@ -35,6 +35,14 @@ body.arrived.chasing .bird--north .bird__body { animation: follow-chase var(--be
 body.arrived.dozing .bird--north .bird__body { animation: doze-left var(--beat-duration) ease-in-out; }
 body.arrived.dozing .bird--south .bird__body { animation: doze-right var(--beat-duration) ease-in-out; }
 
+body.arrived.wing-greeting .bird--north .wing--reach { animation: wing-wave-north var(--beat-duration) ease-in-out; }
+body.arrived.wing-greeting .bird--south .wing--reach { animation: wing-wave-south var(--beat-duration) ease-in-out; }
+
+body.arrived.double-hop .bird--north .bird__body { animation: hop-north var(--beat-duration) ease-in-out; }
+body.arrived.double-hop .bird--south .bird__body { animation: hop-south var(--beat-duration) ease-in-out; }
+
+body.arrived.heart-beat .heart { animation: heart-beat var(--beat-duration) ease-in-out; }
+
 @keyframes kiss {
   0%, 100% { transform: translate(0, 0) rotate(0); }
   35%      { transform: translate(9px, -5px) rotate(11deg); }
@@ -169,4 +177,35 @@ body.arrived.dozing .bird--south .bird__body { animation: doze-right var(--beat-
   0%, 100% { transform: translate(0, 0) rotate(0); }
   35%      { transform: translate(0, 4px) rotate(-10deg); }
   65%      { transform: translate(0, 5px) rotate(-12deg); }
+}
+
+@keyframes wing-wave-north {
+  0%, 100% { transform: rotate(0); }
+  25%, 65% { transform: rotate(-16deg); }
+  45%, 85% { transform: rotate(9deg); }
+}
+
+@keyframes wing-wave-south {
+  0%, 100% { transform: rotate(0); }
+  25%, 65% { transform: rotate(16deg); }
+  45%, 85% { transform: rotate(-9deg); }
+}
+
+@keyframes hop-north {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  25%, 65% { transform: translateY(-8px) rotate(4deg) scale(1.03); }
+  45%, 85% { transform: translateY(0) rotate(0) scale(.96); }
+}
+
+@keyframes hop-south {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  25%, 65% { transform: translateY(-8px) rotate(-4deg) scale(1.03); }
+  45%, 85% { transform: translateY(0) rotate(0) scale(.96); }
+}
+
+@keyframes heart-beat {
+  0%, 100% { opacity: 0; transform: scale(.45); }
+  18%, 46% { opacity: 1; transform: scale(1.1); }
+  32%, 68% { opacity: .35; transform: scale(.78); }
+  82%      { opacity: .9; transform: scale(1); }
 }
