@@ -31,9 +31,9 @@ src/
   main.js             composition root: loads config, wires modules, owns the language
   gateways/
     weather-gateway.js  Open-Meteo adapter: request -> PlaceSky (phase, cloudCoverPct, rainMmPerHour, snowfallCmPerHour, thunder)
-    wikipedia-gateway.js  localized articles, geographic disambiguation and complete thematic passages
+    wikipedia-gateway.js  topic resolution and complete published Did you know archive hooks
   services/
-    facts.js          configured species/city/country -> topic and passage per click, weekly cache
+    facts.js          live published curiosities per click, seen-item selection and offline backup
     place-sky.js      last sky per place in localStorage, fresh load with offline fallback
     cached-json.js    loadCachedJson(url): network first, localStorage copy when offline
     config.js         loadConfig, applyThemeTokens
@@ -154,8 +154,8 @@ and top layer come for free, so it never fights the stage's stacking or overflow
 
 Content, top to bottom: character `name`, `scientificName`, current location
 (`ui.currentLocation` with `{place}` → translated `city, country`, no bird name),
-`ui.didYouKnow` ("Something to discover"), the article title and section, a complete passage, optional
-source-language/stale-cache notices, and a `ui.factSource` link to the original Wikipedia section
+`ui.didYouKnow`, the matched topic and source name, a complete published curiosity, optional
+source-language/offline/repetition notices, and a `ui.factSource` link to the original archive revision
 with its CC BY-SA 4.0 license link.
 Loading and unavailable-content messages are explicit. Request numbering prevents a delayed
 response from overwriting a newer pin or language selection.
@@ -232,43 +232,52 @@ effect; it is not a measured 0% observation and is never cached as one. API fail
 fallbacks are logged. With weather disabled, the intentional clear-night preset has 0% clouds. None of this
 runs when `backgrounds.weather` is `false`.
 
-### Dynamic discovery content
+### Live published curiosities
 
-Each click to open a pin's info card advances its own selection counter, starting at zero.
-Selections rotate between species, city and country (`selectionIndex % 3`); after each round
-the next complete passage in each article is used. A pin's counter survives switching to the
-other pin but resets on page reload. Language rerenders do not advance it, so the same topic
-and passage index stay selected while reading. There is no daily limit.
-`createFactTopics` derives identities directly from `scientificName`, translated `city`
-and translated `label`. `translate(key, language?)` can resolve the fallback-language name
-without changing the active language. Changing a location requires the usual city/country
-labels, coordinates and time zone, but no additional `topic`, article title or fact translations.
+The content source is the English Wikipedia
+[Did you know archive](https://en.wikipedia.org/wiki/Wikipedia:Did_you_know_archive), not
+encyclopedia article paragraphs or a local fact deck. DYK hooks are complete, editor-written
+curiosities whose claims are sourced in their linked articles. The gateway preserves the whole
+published hook (including parentheticals), only flattening HTML formatting/whitespace. It does
+not cut sentences, summarise prose, translate automatically, or fall back to article extracts.
+The archive revision and CC BY-SA 4.0 links provide source/contributor attribution and licensing.
 
-The gateway first resolves the active-language Wikipedia article, following redirects.
-City articles must have coordinates within 75 km of the configured origin; if the direct title
-does not match, a city/country search checks up to five candidates with matching city names
-and coordinates. Disambiguation pages are rejected, not displayed. When the localized article
-is missing or has no suitable passages, the gateway tries the first configured language and
-its language link back to the requested edition. If only the fallback edition is suitable,
-the UI labels the original language rather than silently translating or mixing languages.
+`createFactTopics` derives the species from `scientificName`, and city/country from the existing
+English place labels (`translate(key, "en")`), irrespective of the UI language. English labels
+must remain available for this source. No additional topic titles, fact lists, credentials or
+backend are needed. As before, changing location means updating its labels, coordinates and
+time zone. City resolution follows redirects and requires coordinates within 75 km of the
+configured location. A mismatched city title can search five city/country candidates with
+matching names and coordinates; disambiguation pages are never accepted.
 
-Extraction keeps complete paragraphs of 100–800 characters, never cuts a sentence to fit,
-and prefers thematic sections (culture, etymology, behaviour, ecology and traditions) over
-general prose. Short dependent paragraphs may be joined to the immediately preceding paragraph
-within the same section; unresolved pronoun openings, reference sections and list items are
-skipped. The article title and section stay visible alongside the text. This is sourced
-discovery content, not a guarantee of editorial-quality trivia or AI-generated summaries.
-Changing language may select a different passage because Wikipedia editions differ.
+Every pin opening issues fresh, bounded, `cache: "no-store"` API requests. Selection starts
+with species, city or country (`selectionIndex % 3`), resolves its canonical English title,
+searches up to two monthly DYK archives using `linksto:"<title>"`, and parses their HTML with
+a detached DOMParser. Only complete hook list items that link to that exact article are kept;
+navigation, unrelated items, incomplete hooks and nested lists are rejected. Search offsets
+advance by two archives per round (within the first 500 results), restarting when an offset
+has no results. Offline/rate-limit/HTTP/API errors are distinguished from an empty search.
 
-Article caches (`topic-article:v1:<topic JSON>`) include the requested and fallback names,
-languages, topic kind, country and city coordinates. They refresh after seven days; failed
-refreshes keep only the matching topic's saved article, with a visible notice. Changing city,
-country or species cannot reuse the old topic's cache. An unseen topic without a connection
-shows an unavailable message rather than unrelated content. Failed requests are not cached
-and reopening advances to the next selection. Concurrent requests for the same topic share one
-in-flight promise.
+A pin remembers seen hook texts during this page visit and selects an unseen result. If the
+current topic has no matches or all returned hooks were seen, it tries the pin's other topics.
+The source does not cover every city or species: related country content may be shown, but
+unrelated topics and generic paragraphs are never substituted. No matching hooks shows an
+explicit empty state; exhausting the returned results can repeat a hook with a visible notice.
+The search is bounded, not an exhaustive crawl of all archives. Counters/history reset on reload.
+Changing the UI language keeps the currently displayed hook without a new request; the
+English source language is explicitly labelled in Spanish and Icelandic.
 
-Run the regression tests with `node --test tests/facts.test.mjs` (Node 22.15+, no dependencies).
+`published-facts:v1:<topic JSON>` saves at most 20 results from the latest successful batch
+per exact topic, including its kind, English title, country and city coordinates. Saved content
+is used **only when a source request fails**, never as the normal online data source or to
+replace a successful empty search. This also prevents a moved bird from inheriting the previous
+city's backup. Failed requests aren't saved; unavailable/malformed storage is logged.
+The former `topic-article:v1:` paragraph caches are no longer read.
+
+`npm test` includes the curiosity service/gateway regression tests. Browser tests exercise the
+real HTML parser, fresh source requests, per-click changes, language rerenders, changed
+locations, attribution, missing coverage and offline backup:
+`npm run test:e2e -- tests/e2e/facts.spec.js`.
 
 ## 7. Weather verification and manual QA
 
