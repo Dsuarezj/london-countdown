@@ -19,11 +19,3 @@ export const SkyPhase = Object.freeze({
   DAY: "day",
   NIGHT: "night"
 });
-
-export const SkyCondition = Object.freeze({
-  CLEAR: "clear",
-  PARTLY: "partly",
-  OVERCAST: "overcast",
-  RAIN: "rain",
-  SNOW: "snow"
-});
