@@ -3,7 +3,8 @@
 How the Lóa / hummingbird reunion is built, so new characters and animations can follow the same
 pattern. See `ARCHITECTURE.md` for how the pieces are wired and configured.
 
-JavaScript only toggles classes on `<body>` and never writes inline styles or coordinates.
+Character animation JavaScript toggles classes on `<body>` and never writes character coordinates.
+Weather rendering also sets data attributes and scalar CSS custom properties.
 
 | File | Owns |
 | --- | --- |
@@ -169,17 +170,29 @@ Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared p
 | `meeting-city` | Meeting day: one `.weather` scene for the meeting city. No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
 
 The `.weather` component (`weather-scene.js` + `weather-scene.css`) stacks
-`.daylight → .overcast → (background layers) → .veil → .thunder → .precipitation` and reacts to
-`data-phase`, `data-condition`, `data-rain`, `data-snowfall` and `data-thunder`:
+`.daylight → .cloud-cover → (background layers) → .cloud-veil → .thunder → .rain → .snow`
+and reacts to `data-phase`, `data-cloud-cover-pct`, `data-rain-mm-per-hour`,
+`data-snowfall-cm-per-hour` and `data-thunder`:
 
-- **Clouds** follow `data-condition`; `partly` swaps the cover colours, rain and snow use the
-  heaviest cover.
-- **Rain / snow**: millimetres greater than 0 turn the falling layer on; `--rain-strength`
-  (0 at 0.2 mm, 1 above 3 mm) densifies and sharpens the drops.
-- **Thunder** keeps the rain sky and adds: a darker storm cover (`--storm-*`), clouds dimmed with
+- **Clouds** use `c = cloudCoverPct / 100` through `--cloud-cover`. Cover opacity is `0.7c` by day
+  and `0.48c` by night; veil opacity is `0.60c` by day and `0.69c` by night. The cover tints the
+  atmosphere and the veil adds drifting texture: complementary layers, not competing weather
+  states. These linear opacity curves are an artistic approximation, not a measurement of cloud
+  thickness or an exact spatial coverage mask. Rain never forces a higher cloud percentage.
+- **Night sky**: stars use `filter: opacity(1 - 0.72c)` and aurora opacity is `0.92 - 0.58c`.
+  The nonzero minima intentionally preserve the decorative night sky. City lights remain fully
+  visible at night, independent of clouds above them.
+- **Rain / snow**: positive hourly rates enable independent falling layers, so mixed precipitation
+  stays visible. Rain is mm/h; snowfall is cm/h, not liquid-equivalent mm. `--rain-strength` is
+  `clamp((rainMmPerHour - 0.2) / 2.8, 0, 1)` and densifies and sharpens the drops. Light positive
+  rain remains visible at strength 0 (opacity 0.28); heavy rain saturates at opacity 0.88.
+  Snow uses opacity 0.55 when its rate is positive. Zero amounts show no precipitation, even if
+  the weather code describes rain, snow or a storm.
+- **Thunder** independently adds a darker cloud tint (`--storm-*`), clouds dimmed with
   `brightness(.62)`, and two soft glows inside the clouds (`.thunder::before/::after`) that
-  flicker with `lightning` on 9 s and 13 s cycles so flashes never repeat in step. By day the
-  flashes are weaker (`--day-lightning`). Reduced motion leaves them off.
+  flicker with `lightning` on 6 s and 9 s cycles. It does not invent rain or change cloud coverage.
+  By day the flashes are weaker (`--day-lightning`). Reduced motion leaves the flashes off and
+  keeps rain and snow static.
 
 Constraints worth keeping:
 
@@ -190,7 +203,7 @@ Constraints worth keeping:
   `opacity`; use `filter: opacity()` so the change can still fade.
 - Weather backgrounds paint the last cached sky on mount (no transition, so no flash), then fade
   to the fresh state with `transition`. Never toggle `visibility` or swap a gradient for a weather
-  change: add a layer (e.g. `.overcast`) and fade its `opacity`.
+  change: add a layer (e.g. `.cloud-cover`) and fade its `opacity`.
 
 ## 8. Affection beats
 
