@@ -41,7 +41,7 @@ function planSky(config) {
   const todayNumber = calendarDayNumber(Date.now(), meeting.timeZone);
   const phase = timeline.phaseAt(Date.now());
   return {
-    backgroundId: phase === TripPhase.MEMORIES ? BackgroundId.CONVERGING : selectBackgroundId(backgrounds, {
+    backgroundId: phase === TripPhase.MEMORIES ? BackgroundId.ORIGIN_WEATHER : selectBackgroundId(backgrounds, {
       remainingMs: meetingInstant - Date.now(),
       isMeetingDay: phase === TripPhase.TOGETHER || todayNumber === calendarDayNumber(meetingInstant, meeting.timeZone),
       dayNumber: todayNumber
