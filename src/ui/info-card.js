@@ -1,5 +1,7 @@
 import { pickDailyFact, refreshTopics } from "@/services/daily-fact.js";
 import { calendarDayNumber } from "@/utils/meeting-time.js";
+import { TripPhase } from "@/utils/enums.js";
+import { createTripTimeline } from "@/utils/trip-timeline.js";
 
 const dialog = document.getElementById("infoCard");
 const nameField = document.getElementById("infoCardName");
@@ -12,7 +14,9 @@ function slotTopics(origin, character) {
   return [character.topic, ...origin.topics];
 }
 
-export function createInfoCard({ origins, characters, meeting }, translator) {
+export function createInfoCard(config, translator) {
+  const { origins, characters, meeting } = config;
+  const timeline = createTripTimeline(config);
   let selectedSlot;
   let factRequestNumber = 0;
 
@@ -38,7 +42,9 @@ export function createInfoCard({ origins, characters, meeting }, translator) {
     const origin = origins[selectedSlot];
     const character = characters[origin.character];
     const characterText = translator.translate(character.text);
-    const place = `${translator.translate(origin.city)}, ${translator.translate(origin.label)}`;
+    const place = timeline.phaseAt(Date.now()) === TripPhase.TOGETHER
+      ? translator.translate(meeting.city)
+      : `${translator.translate(origin.city)}, ${translator.translate(origin.label)}`;
 
     dialog.dataset.origin = selectedSlot;
     nameField.textContent = characterText.name;

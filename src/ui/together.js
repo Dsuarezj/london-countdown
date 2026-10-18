@@ -1,7 +1,6 @@
 import { loadStylesheet } from "@/utils/stylesheet.js";
 
 const HEART_RAIN_COUNT = 10;
-const OPENING_DELAY_MS = 1000;
 
 function playHeartRain(hostElement) {
   const rainElement = document.createElement("div");
@@ -14,7 +13,11 @@ function playHeartRain(hostElement) {
     rainElement.append(heartElement);
   }
   hostElement.append(rainElement);
-  setTimeout(() => rainElement.remove(), 8500);
+  const removalTimeout = setTimeout(() => rainElement.remove(), 8500);
+  return () => {
+    clearTimeout(removalTimeout);
+    rainElement.remove();
+  };
 }
 
 const TOGETHER_ANIMATIONS = {
@@ -24,26 +27,16 @@ const TOGETHER_ANIMATIONS = {
   }
 };
 
-function wait(durationMs) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, durationMs);
-  });
-}
-
-function readBeatDurationMs() {
-  const durationSeconds = parseFloat(
-    getComputedStyle(document.documentElement).getPropertyValue("--beat-duration")
-  );
-  return Number.isFinite(durationSeconds) ? durationSeconds * 1000 : 2600;
-}
-
 export function createTogetherPlayer(togetherId) {
-  let arrivedAtMs = 0;
+  let arrived = false;
   let hasPlayed = false;
+  let stopped = false;
+  let stopAnimation;
   const togetherAnimation = TOGETHER_ANIMATIONS[togetherId];
+  const stylesReady = togetherAnimation ? loadStylesheet(togetherAnimation.stylesheet) : Promise.resolve();
 
   async function playWhenReady(remainingMs) {
-    if (hasPlayed || !arrivedAtMs || remainingMs > 0 || !togetherAnimation) {
+    if (hasPlayed || !arrived || remainingMs > 0 || !togetherAnimation) {
       return;
     }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -51,19 +44,21 @@ export function createTogetherPlayer(togetherId) {
       return;
     }
     hasPlayed = true;
-    const openingMs = OPENING_DELAY_MS + readBeatDurationMs();
-    const remainingOpeningMs = openingMs - (Date.now() - arrivedAtMs);
-    if (remainingOpeningMs > 0) {
-      await wait(remainingOpeningMs);
+    await stylesReady;
+    if (!stopped) {
+      stopAnimation = togetherAnimation.play(document.body);
     }
-    await loadStylesheet(togetherAnimation.stylesheet);
-    togetherAnimation.play(document.body);
   }
 
   return {
     markArrived() {
-      arrivedAtMs = Date.now();
+      arrived = true;
     },
-    playWhenReady
+    playWhenReady,
+    stop() {
+      stopped = true;
+      hasPlayed = true;
+      stopAnimation?.();
+    }
   };
 }

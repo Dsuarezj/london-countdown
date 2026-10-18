@@ -50,6 +50,7 @@
 <link rel="modulepreload" href="src/utils/meeting-time.js">
 <link rel="modulepreload" href="src/utils/stylesheet.js">
 <link rel="modulepreload" href="src/utils/thresholds.js">
+<link rel="modulepreload" href="src/utils/trip-timeline.js">
 <script type="module" src="src/main.js"></script>
 <script data-goatcounter="https://tripcountdown.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -94,18 +95,24 @@
   <header class="headline">
     <p class="headline__kicker" id="kicker"></p>
     <h1 class="headline__city" id="city"></h1>
-    <p class="headline__when"><span id="meetingDate"></span> · <strong id="meetingTime"></strong> <span id="meetingZone"></span></p>
+    <p class="headline__when"><span id="meetingDate"></span><span id="meetingSchedule"> · <strong id="meetingTime"></strong> <span id="meetingZone"></span></span></p>
   </header>
 
-  <section class="countdown" id="countdown" aria-live="polite" data-i18n-aria="ui.countdownLabel">
-    <div class="unit"><span class="unit__value" id="days"></span><span class="unit__label" data-i18n="ui.days"></span></div>
-    <div class="unit"><span class="unit__value" id="hours"></span><span class="unit__label" data-i18n="ui.hours"></span></div>
-    <div class="unit"><span class="unit__value" id="minutes"></span><span class="unit__label" data-i18n="ui.minutes"></span></div>
-    <div class="unit"><span class="unit__value" id="seconds"></span><span class="unit__label" data-i18n="ui.seconds"></span></div>
-  </section>
-
-  <p class="threshold" id="threshold" hidden></p>
-  <p class="reunion" id="reunion" data-i18n="ui.reunion" hidden></p>
+  <div class="countdown-scene" id="countdownScene">
+    <div class="countdown-panel" id="countdownPanel">
+      <section class="countdown" id="countdown" aria-live="polite" data-i18n-aria="ui.countdownLabel">
+        <div class="unit"><span class="unit__value" id="days"></span><span class="unit__label" data-i18n="ui.days"></span></div>
+        <div class="unit"><span class="unit__value" id="hours"></span><span class="unit__label" data-i18n="ui.hours"></span></div>
+        <div class="unit"><span class="unit__value" id="minutes"></span><span class="unit__label" data-i18n="ui.minutes"></span></div>
+        <div class="unit"><span class="unit__value" id="seconds"></span><span class="unit__label" data-i18n="ui.seconds"></span></div>
+      </section>
+      <p class="threshold" id="threshold" hidden></p>
+    </div>
+    <div class="reunion-panel" id="reunionPanel" aria-live="polite" aria-hidden="true">
+      <p class="reunion" id="reunion"></p>
+      <p class="trip-note" id="tripNote"></p>
+    </div>
+  </div>
 
   <div class="meeting" id="meeting">
     <span class="heart" aria-hidden="true">♥</span>

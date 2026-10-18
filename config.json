@@ -8,6 +8,12 @@
     "latitude": 51.5072,
     "longitude": -0.1276
   },
+  "trip": {
+    "end": {
+      "date": "2026-11-15",
+      "time": "10:00"
+    }
+  },
   "theme": {
     "tokens": {}
   },
