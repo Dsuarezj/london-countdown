@@ -1,34 +1,22 @@
 .weather {
   --sky-direction: 180deg;
   --sun-position: 84% 0%;
+  --cloud-cover: 0;
   --rain-strength: 0;
   --sunny-zenith: #2b76c2;
   --sunny-horizon: #6eabe0;
   --sun-glare: rgba(255, 240, 208, .55);
-  --overcast-zenith: #5a7088;
-  --overcast-horizon: #7d93ab;
-  --partly-zenith: #5c6b7c;
-  --partly-horizon: #7a8a9b;
+  --cloud-zenith: #5a7088;
+  --cloud-horizon: #7d93ab;
   --storm-zenith: #323d4d;
   --storm-horizon: #4f5c6e;
   --lightning-glow: rgba(214, 226, 255, .62);
   --lightning-wash: rgba(186, 202, 236, .14);
-  --day-partly-overcast: .52;
-  --day-overcast-cover: .7;
-  --day-rain-overcast: .79;
-  --night-partly-overcast: .28;
-  --night-heavy-overcast: .48;
-  --partly-veil: .42;
-  --day-overcast-veil: .60;
-  --day-rain-veil: .70;
-  --night-heavy-veil: .69;
+  --day-cloud-cover: .7;
+  --night-cloud-cover: .48;
+  --day-cloud-veil: .60;
+  --night-cloud-veil: .69;
   --snow-cover: .55;
-  --night-sky-clear: 1;
-  --night-sky-partly: .55;
-  --night-sky-heavy: .28;
-  --night-aurora-clear: .92;
-  --night-aurora-partly: .62;
-  --night-aurora-heavy: .34;
   --day-lightning: .55;
   --rain-image:
     repeating-linear-gradient(110deg, transparent 0 30px, rgba(215, 232, 255, .22) 30px 31.4px, transparent 31.4px 58px),
@@ -44,7 +32,7 @@
 
 /* --- layers --- */
 
-.weather :is(.daylight, .overcast, .veil, .thunder, .precipitation) {
+.weather :is(.daylight, .cloud-cover, .cloud-veil, .thunder, .precipitation) {
   position: absolute;
   inset: 0;
   opacity: 0;
@@ -57,11 +45,11 @@
     linear-gradient(var(--sky-direction), var(--sunny-zenith) 0%, var(--sunny-horizon) 100%);
 }
 
-.weather .overcast {
-  background: linear-gradient(var(--sky-direction), var(--overcast-zenith) 0%, var(--overcast-horizon) 100%);
+.weather .cloud-cover {
+  background: linear-gradient(var(--sky-direction), var(--cloud-zenith) 0%, var(--cloud-horizon) 100%);
 }
 
-.weather .veil {
+.weather .cloud-veil {
   left: -22%;
   right: -22%;
   background:
@@ -115,40 +103,23 @@
   transition: filter 2.4s ease;
 }
 
-/* --- day --- */
+/* --- light and cloud coverage --- */
 
 .weather[data-phase="day"] .daylight { opacity: 1; }
-.weather[data-phase="day"][data-condition="partly"] .overcast { opacity: var(--day-partly-overcast); }
-.weather[data-phase="day"][data-condition="overcast"] .overcast { opacity: var(--day-overcast-cover); }
-.weather[data-phase="day"]:is([data-condition="rain"], [data-condition="snow"]) .overcast { opacity: var(--day-rain-overcast); }
-.weather[data-phase="day"][data-condition="overcast"] .veil { opacity: var(--day-overcast-veil); }
-.weather[data-phase="day"]:is([data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--day-rain-veil); }
+.weather[data-phase="day"] .cloud-cover { opacity: calc(var(--day-cloud-cover) * var(--cloud-cover)); }
+.weather[data-phase="day"] .cloud-veil { opacity: calc(var(--day-cloud-veil) * var(--cloud-cover)); }
 
-/* --- night --- */
+.weather[data-phase="night"] .stars { filter: opacity(calc(1 - .72 * var(--cloud-cover))); }
+.weather[data-phase="night"] .city-lights { filter: opacity(1); }
 
-.weather[data-phase="night"] :is(.stars, .city-lights) { filter: opacity(var(--night-sky-clear)); }
-.weather[data-phase="night"][data-condition="partly"] :is(.stars, .city-lights) { filter: opacity(var(--night-sky-partly)); }
-.weather[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) :is(.stars, .city-lights) { filter: opacity(var(--night-sky-heavy)); }
+.weather[data-phase="night"][data-night-sky="aurora"] .aurora-field { opacity: calc(.92 - .58 * var(--cloud-cover)); }
 
-.weather[data-phase="night"][data-night-sky="aurora"] .aurora-field { opacity: var(--night-aurora-clear); }
-.weather[data-phase="night"][data-night-sky="aurora"][data-condition="partly"] .aurora-field { opacity: var(--night-aurora-partly); }
-.weather[data-phase="night"][data-night-sky="aurora"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .aurora-field { opacity: var(--night-aurora-heavy); }
-
-.weather[data-phase="night"][data-condition="partly"] .overcast { opacity: var(--night-partly-overcast); }
-.weather[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .overcast { opacity: var(--night-heavy-overcast); }
-.weather[data-phase="night"]:is([data-condition="overcast"], [data-condition="rain"], [data-condition="snow"]) .veil { opacity: var(--night-heavy-veil); }
-
-/* --- condition --- */
-
-.weather[data-condition="partly"] .overcast {
-  background: linear-gradient(var(--sky-direction), var(--partly-zenith) 0%, var(--partly-horizon) 100%);
-}
-
-.weather[data-condition="partly"] .veil { opacity: var(--partly-veil); }
+.weather[data-phase="night"] .cloud-cover { opacity: calc(var(--night-cloud-cover) * var(--cloud-cover)); }
+.weather[data-phase="night"] .cloud-veil { opacity: calc(var(--night-cloud-veil) * var(--cloud-cover)); }
 
 /* --- precipitation --- */
 
-.weather:is([data-condition="rain"], [data-rain]:not([data-rain="0"])) .precipitation {
+.weather[data-rain-mm-per-hour]:not([data-rain-mm-per-hour="0"]) .rain {
   --rain-tile-primary: calc(220px - 188px * var(--rain-strength));
   --rain-tile-secondary: calc(280px - 232px * var(--rain-strength));
   --rain-tile-tertiary: calc(248px - 208px * var(--rain-strength));
@@ -163,7 +134,7 @@
   animation: rainfall calc(2.8s - 1.2s * var(--rain-strength)) linear infinite;
 }
 
-.weather:is([data-condition="snow"], [data-snowfall]:not([data-snowfall="0"])) .precipitation {
+.weather[data-snowfall-cm-per-hour]:not([data-snowfall-cm-per-hour="0"]) .snow {
   opacity: var(--snow-cover);
   background-image: var(--snow-image);
   background-size: var(--snow-size);
@@ -172,11 +143,11 @@
 
 /* --- thunder --- */
 
-.weather[data-thunder="true"] .overcast {
+.weather[data-thunder="true"] .cloud-cover {
   background: linear-gradient(var(--sky-direction), var(--storm-zenith) 0%, var(--storm-horizon) 100%);
 }
 
-.weather[data-thunder="true"] .veil {
+.weather[data-thunder="true"] .cloud-veil {
   filter: blur(14px) brightness(.62);
 }
 

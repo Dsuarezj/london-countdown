@@ -1,32 +1,38 @@
-import { SkyCondition, SkyPhase } from "@/utils/enums.js";
+import { SkyPhase } from "@/utils/enums.js";
 
 const FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
-const THUNDERSTORM_CODES = [95, 96, 99];
-
-const CONDITIONS_BY_WEATHER_CODE = [
-  { condition: SkyCondition.SNOW, weatherCodes: [71, 73, 75, 77, 85, 86] },
-  { condition: SkyCondition.RAIN, weatherCodes: [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, ...THUNDERSTORM_CODES] },
-  { condition: SkyCondition.OVERCAST, weatherCodes: [3, 45, 48] },
-  { condition: SkyCondition.PARTLY, weatherCodes: [2] },
-  { condition: SkyCondition.CLEAR, weatherCodes: [0, 1] }
-];
-
-function conditionFromWeatherCode(weatherCode) {
-  const match = CONDITIONS_BY_WEATHER_CODE.find((entry) => entry.weatherCodes.includes(weatherCode));
-  return match ? match.condition : SkyCondition.CLEAR;
-}
+const THUNDERSTORM_CODES = [95, 96, 97, 99];
+const WEATHER_DEBUG = new URLSearchParams(globalThis.location?.search).has("weatherDebug");
 
 export async function requestPlaceSky({ latitude, longitude }) {
-  const response = await fetch(`${FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&current=weather_code,rain,showers,snowfall,is_day`);
+  const response = await fetch(`${FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&current=weather_code,cloud_cover,rain,showers,snowfall,is_day&precipitation_unit=mm`);
   if (!response.ok) {
     throw new Error(`Weather request failed with status ${response.status}`);
   }
-  const { current } = await response.json();
+  const { current, current_units: units } = await response.json();
+  if (WEATHER_DEBUG) {
+    console.groupCollapsed(`[weather] API ${latitude},${longitude}`);
+    console.table(Object.entries(current ?? {}).map(([variable, value]) => ({
+      variable, value, unit: units?.[variable]
+    })));
+    console.groupEnd();
+  }
+  if (units?.cloud_cover !== "%" || units?.rain !== "mm" || units?.showers !== "mm"
+    || units?.snowfall !== "cm" || units?.interval !== "seconds") {
+    throw new Error("Unexpected weather units; expected %, mm, cm and seconds");
+  }
+  if (!current || ![current.cloud_cover, current.rain, current.showers, current.snowfall]
+    .every((value) => Number.isFinite(value) && value >= 0)
+    || current.cloud_cover > 100 || !Number.isFinite(current.interval) || current.interval <= 0
+    || ![0, 1].includes(current.is_day) || !Number.isInteger(current.weather_code)) {
+    throw new Error("Invalid current weather values");
+  }
+  const intervalsPerHour = 3600 / current.interval;
   return {
     phase: current.is_day ? SkyPhase.DAY : SkyPhase.NIGHT,
-    condition: conditionFromWeatherCode(current.weather_code),
-    rain: current.rain + current.showers,
-    snowfall: current.snowfall,
+    cloudCoverPct: current.cloud_cover,
+    rainMmPerHour: (current.rain + current.showers) * intervalsPerHour,
+    snowfallCmPerHour: current.snowfall * intervalsPerHour,
     thunder: THUNDERSTORM_CODES.includes(current.weather_code)
   };
 }
