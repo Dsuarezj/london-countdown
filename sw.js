@@ -32,6 +32,7 @@ const APP_SHELL = [
   "./src/utils/stylesheet.js",
   "./src/utils/meeting-time.js",
   "./src/utils/thresholds.js",
+  "./src/utils/trip-timeline.js",
   "./src/services/i18n.js",
   "./src/ui/headline.js",
   "./src/ui/countdown.js",

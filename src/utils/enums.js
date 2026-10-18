@@ -19,3 +19,9 @@ export const SkyPhase = Object.freeze({
   DAY: "day",
   NIGHT: "night"
 });
+
+export const TripPhase = Object.freeze({
+  UPCOMING: "upcoming",
+  TOGETHER: "together",
+  MEMORIES: "memories"
+});

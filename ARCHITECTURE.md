@@ -52,6 +52,7 @@ src/
     enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase
     stylesheet.js     loadStylesheet(href) -> Promise
     meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
+    trip-timeline.js  optional trip end and upcoming / together / memories boundaries
     thresholds.js     findActiveThreshold(entries, remainingMs), shared by the threshold line and backgrounds
   backgrounds/
     index.js          registry and createSky: picks the background from config and mounts it once per plan
@@ -84,6 +85,7 @@ the only place that knows about all of them.
 | `meeting.date`, `meeting.time`, `meeting.timeZone` | Wall clock of the meeting in its own zone. Converted once to an absolute instant; the countdown is `instant - Date.now()`, so the device time zone never matters. |
 | `languages` | Language codes with a file in `translations/`. The first one is the fallback for missing keys. |
 | `meeting.city` | Translation key of the headline city. |
+| `meeting.end` | Optional `{ date, time }`, grouped with the meeting start and sharing `meeting.timeZone`. At that instant the stay becomes a memory scene. Must be after the meeting. Omit `meeting.end` to keep the reunion indefinitely. The current example ends Sunday 15 November 2026 at 10:00 London time: Friday through Sunday are three calendar days, not 72 hours. |
 | `meeting.latitude`, `meeting.longitude` | Coordinates of the meeting city. Used by `meeting-city` when `backgrounds.weather` is on. |
 | `theme.tokens` | Overrides for the CSS custom properties defined in `styles/base.css` `:root` (`--night`, `--deep`, `--aurora-mint`, `--aurora-teal`, `--aurora-violet`, `--tropic-magenta`, `--tropic-orange`, `--tropic-turquoise`, `--ink`, `--surface`). Defaults stay in CSS so the first paint is right before config loads. |
 | `backgrounds.weather` | `true` follows the live weather (day/night, clouds, rain, snow, thunder). `false` makes no weather request and does not read or write `place-sky`: every sky stays on a clear night (aurora or stars from `nightSky`). |
@@ -98,7 +100,22 @@ the only place that knows about all of them.
 | `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
 | `thresholds` | `[{ withinHours, text }]` with `text` as a translation key. Inside a window a small line appears under the countdown (15, 7, 3, 1 days and the last hour). |
 
-Background priority: `meetingDay` → `countdown` window → `mode`.
+Background priority before the meeting: `meetingDay` → `countdown` window → `mode`.
+During the entire stay, `meetingDay` is used when enabled, not just on the first calendar day.
+After `meeting.end`, the memory scene uses `origin-weather`, keeping each origin's local sky and weather. The main tick
+re-evaluates both phase and sky, so neither midnight nor the end requires a reload.
+
+### Reunion and post-trip scene
+
+At zero the countdown dissolves into the reunion over 1.4 seconds without removing its layout
+box. Hearts start immediately once the bird artwork is ready; the first affection beat waits
+1.8 seconds. Loads during/after the stay never repeat the incoming flight.
+
+The stay shows larger birds under a shared halo, the city and trip date range. After the end,
+each bird returns to its own origin corner beside its pin and the center stays completely empty:
+the headline, dates, countdown and memory copy are hidden. Occasionally one bird glides along its own corner and returns. Info cards
+return to their origin locations; no photo asset or external image dependency is assumed.
+All new text exists in English, Spanish and Icelandic; reduced motion keeps a static scene.
 
 ## 4. Extending
 
@@ -119,8 +136,8 @@ set its `scientificName`, and point an origin at it. No fact lists are needed. T
 
 **New together animation**: add `{ stylesheet, play }` under that id in `src/ui/together.js`, add
 `styles/together/<id>.css`, list both in `sw.js`, then set `together` to the id. It runs once when
-the countdown is at zero, the birds have arrived, and the opening affection beat has finished
-(1 s + `--beat-duration`) if they just met.
+the stay begins and the birds are mounted, before the opening affection beat. Reloads after the
+trip end do not replay the celebration.
 
 **New affection set**: copy `styles/affection.css`, keep selectors on slots (`.bird--north`,
 `.bird--south`), never on characters, and point `affection.stylesheet` / `affection.beats` to it.
@@ -290,6 +307,11 @@ npm exec playwright install chromium
 npm test
 npm run test:e2e
 ```
+
+When another checkout already serves port 4173, use
+`PLAYWRIGHT_PORT=4187 npm run test:e2e` to test this worktree instead of reusing that server.
+Trip tests cover exact meeting/end boundaries, a mid-transition countdown opacity, immediate
+hearts, reloads without travel, reduced motion and bird visibility at 320×360 and 667×375.
 
 Unit tests assert normalized weather results, combinations, rejected data, cache round-trips and
 offline behavior, not mock call counts. Playwright opens the real page with deterministic API

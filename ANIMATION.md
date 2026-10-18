@@ -20,17 +20,32 @@ Weather rendering also sets data attributes and scalar CSS custom properties.
 
 | Body class | Meaning | Set by |
 | --- | --- | --- |
-| `journey` | The birds are travelling towards the countdown | `playMeeting()` on every page load |
+| `journey` | The birds are travelling towards the countdown | `playMeeting()` on loads before the meeting |
 | `arrived` | The birds are perched together, wings touching | `settleTogether()` |
-| one of `config.affection.beats` | Short affectionate beat on top of `arrived` | 1 s after `arrived`, then every `affection.intervalMs`, or tap on `.meeting` |
+| one of `config.affection.beats` | Short affectionate beat on top of `arrived` | After 1 s (1.8 s during the stay), then every `affection.intervalMs`, or tap on `.meeting` |
 
-The reunion overlay from `config.together` is **not** a body class. `together.js` mounts a temporary
-`div.together.together--<id>` on `document.body` once the countdown is at zero, the birds have
-arrived, and the opening beat has finished (1 s + `--beat-duration`) if they just met.
+The reunion overlay from `config.together` is **not** a body class. `together.js` preloads its
+stylesheet and mounts a temporary `div.together.together--<id>` on `document.body` as soon as the
+stay begins and the characters are mounted. Hearts are the opening animation; affection starts
+1.8 s later. Reduced motion skips the overlay.
 
-`journey` is replaced by `arrived` after `--journey-duration`. The travel sequence runs on every
-load; it only skips straight to `arrived` when the user prefers reduced motion. Affection beats
-still start after that skip.
+Before the meeting, `journey` is replaced by `arrived` after `--journey-duration`. During the
+stay or after the trip, loads go straight to `arrived`; reaching zero also cancels any unfinished
+journey and active affection beat. Changing phase cleans up the previous affection timers and
+click listener. Reduced motion always skips travel.
+
+`body[data-trip-phase]` selects the story without changing the bird rig:
+
+| Phase | Scene |
+| --- | --- |
+| `upcoming` | Countdown, origin routes and the original journey |
+| `together` | Countdown/reunion crossfade over 1.4 s, larger birds, shared halo and immediate heart rain |
+| `memories` | Each bird back at its own origin corner (next to its pin), center completely empty with no text or dates, local skies and weather restored; every 12–26 s one bird glides along its own corner and returns (`flyby-north` / `flyby-south`); no meeting, hearts or celebration |
+
+Countdown and reunion panels occupy the same grid cell. The countdown fades with opacity and
+visibility instead of `hidden`, preserving the layout while it disappears. `aria-hidden` changes
+at zero; reduced motion removes these transitions. The final threshold stays inside the fading
+panel so removing it cannot cause a layout jump.
 
 Durations JavaScript needs are CSS custom properties, read with `getComputedStyle`:
 
