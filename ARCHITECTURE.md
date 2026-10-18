@@ -86,7 +86,7 @@ the only place that knows about all of them.
 | `meeting.date`, `meeting.time`, `meeting.timeZone` | Wall clock of the meeting in its own zone. Converted once to an absolute instant; the countdown is `instant - Date.now()`, so the device time zone never matters. |
 | `languages` | Language codes with a file in `translations/`. The first one is the fallback for missing keys. |
 | `meeting.city` | Translation key of the headline city. |
-| `trip.end` | Optional `{ date, time }` in `meeting.timeZone`. At that instant the stay becomes a memory scene. Must be after the meeting. Omit `trip` to keep the reunion indefinitely. The current example ends Sunday 15 November 2026 at 10:00 London time: Friday through Sunday are three calendar days, not 72 hours. |
+| `meeting.end` | Optional `{ date, time }`, grouped with the meeting start and sharing `meeting.timeZone`. At that instant the stay becomes a memory scene. Must be after the meeting. Omit `meeting.end` to keep the reunion indefinitely. The current example ends Sunday 15 November 2026 at 10:00 London time: Friday through Sunday are three calendar days, not 72 hours. |
 | `meeting.latitude`, `meeting.longitude` | Coordinates of the meeting city. Used by `meeting-city` when `backgrounds.weather` is on. |
 | `theme.tokens` | Overrides for the CSS custom properties defined in `styles/base.css` `:root` (`--night`, `--deep`, `--aurora-mint`, `--aurora-teal`, `--aurora-violet`, `--tropic-magenta`, `--tropic-orange`, `--tropic-turquoise`, `--ink`, `--surface`). Defaults stay in CSS so the first paint is right before config loads. |
 | `backgrounds.weather` | `true` follows the live weather (day/night, clouds, rain, snow, thunder). `false` makes no weather request and does not read or write `place-sky`: every sky stays on a clear night (aurora or stars from `nightSky`). |
@@ -104,7 +104,7 @@ the only place that knows about all of them.
 
 Background priority before the meeting: `meetingDay` → `countdown` window → `mode`.
 During the entire stay, `meetingDay` is used when enabled, not just on the first calendar day.
-After `trip.end`, the memory scene uses the decorative `converging` sky. The main tick
+After `meeting.end`, the memory scene uses `origin-weather`, keeping each origin's local sky and weather. The main tick
 re-evaluates both phase and sky, so neither midnight nor the end requires a reload.
 
 ### Reunion and post-trip scene
@@ -114,8 +114,8 @@ box. Hearts start immediately once the bird artwork is ready; the first affectio
 1.8 seconds. Loads during/after the stay never repeat the incoming flight.
 
 The stay shows larger birds under a shared halo, the city and trip date range. After the end,
-each bird returns to its own origin corner beside its pin and the center stays empty, with
-localized memory copy. Occasionally one bird glides along its own corner and returns. Info cards
+each bird returns to its own origin corner beside its pin and the center stays completely empty:
+the headline, dates, countdown and memory copy are hidden. Occasionally one bird glides along its own corner and returns. Info cards
 return to their origin locations; no photo asset or external image dependency is assumed.
 All new text exists in English, Spanish and Icelandic; reduced motion keeps a static scene.
 

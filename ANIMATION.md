@@ -40,7 +40,7 @@ click listener. Reduced motion always skips travel.
 | --- | --- |
 | `upcoming` | Countdown, origin routes and the original journey |
 | `together` | Countdown/reunion crossfade over 1.4 s, larger birds, shared halo and immediate heart rain |
-| `memories` | Each bird back at its own origin corner (next to its pin), center empty, date range and memory text; every 12–26 s one bird glides along its own corner and returns (`flyby-north` / `flyby-south`); no meeting, hearts or celebration |
+| `memories` | Each bird back at its own origin corner (next to its pin), center completely empty with no text or dates, local skies and weather restored; every 12–26 s one bird glides along its own corner and returns (`flyby-north` / `flyby-south`); no meeting, hearts or celebration |
 
 Countdown and reunion panels occupy the same grid cell. The countdown fades with opacity and
 visibility instead of `hidden`, preserving the layout while it disappears. `aria-hidden` changes

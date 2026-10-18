@@ -13,7 +13,7 @@ test.beforeEach(async ({ page, baseURL }) => {
     const config = await response.json();
     config.meeting.date = "2026-11-13";
     config.meeting.time = "22:00";
-    config.trip = { end: { date: "2026-11-15", time: "10:00" } };
+    config.meeting.end = { date: "2026-11-15", time: "10:00" };
     config.backgrounds.weather = false;
     await route.fulfill({ json: config });
   });
@@ -74,8 +74,11 @@ test("Sunday at 10 changes to a lasting memory scene without another celebration
   await openAt(page, "2026-11-15T09:59:59.500Z");
   await page.clock.runFor(1000);
   await expect(page.locator("body")).toHaveAttribute("data-trip-phase", "memories");
-  await expect(page.locator("#reunion")).toHaveText("Un viaje, muchos recuerdos.");
-  await expect(page.locator("#sky")).toHaveClass(/sky--converging/);
+  await expect(page.locator(".headline")).toBeHidden();
+  await expect(page.locator("#countdownScene")).toBeHidden();
+  await expect(page.locator("#sky")).toHaveClass(/sky--origin-weather/);
+  await expect(page.locator(".hemisphere--north")).toHaveAttribute("data-night-sky", "aurora");
+  await expect(page.locator(".hemisphere--south")).toHaveAttribute("data-night-sky", "stars");
   await expect(page.locator(".together")).toHaveCount(0);
   await page.clock.runFor(10000);
   await expect(page.locator(".together")).toHaveCount(0);
@@ -83,13 +86,17 @@ test("Sunday at 10 changes to a lasting memory scene without another celebration
   await expect(page.locator("body")).toHaveAttribute("data-trip-phase", "memories");
   await expect(page.locator("body")).not.toHaveClass(/journey/);
   await expect(page.locator(".together")).toHaveCount(0);
+  await expect(page.locator(".headline")).toBeHidden();
+  await expect(page.locator("#countdownScene")).toBeHidden();
+  await expect(page.locator("#sky")).toHaveClass(/sky--origin-weather/);
 });
 
 for (const viewport of [{ width: 320, height: 360 }, { width: 667, height: 375 }]) {
   test(`memories put each bird back at its corner at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
     await page.setViewportSize(viewport);
     await openAt(page, "2026-11-16T12:00:00Z");
-    await expect(page.locator("#reunion")).toBeVisible();
+    await expect(page.locator(".headline")).toBeHidden();
+    await expect(page.locator("#countdownScene")).toBeHidden();
     const north = await page.locator(".bird--north").boundingBox();
     const south = await page.locator(".bird--south").boundingBox();
     expect(north.x + north.width).toBeLessThan(viewport.width / 2);

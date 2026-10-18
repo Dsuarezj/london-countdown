@@ -351,8 +351,9 @@ body[data-trip-phase="memories"] .route {
   color: rgba(243, 247, 255, .7);
 }
 
-body[data-trip-phase="memories"] .reunion {
-  color: #ffd0dc;
+body[data-trip-phase="memories"] .headline,
+body[data-trip-phase="memories"] .countdown-scene {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
