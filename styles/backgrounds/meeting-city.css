@@ -54,7 +54,7 @@
   50%      { opacity: .54; }
 }
 
-.sky--meeting-city :is(.veil, .thunder) {
+.sky--meeting-city :is(.cloud-veil, .thunder) {
   bottom: 30%;
 }
 
@@ -81,4 +81,3 @@
     radial-gradient(1.3px 1.3px at 93% 62%, #fff1d8 50%, transparent);
   animation: twinkle 7s ease-in-out infinite;
 }
-
