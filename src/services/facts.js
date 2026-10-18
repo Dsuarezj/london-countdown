@@ -1,94 +1,79 @@
-import { requestTopicArticle } from "@/gateways/wikipedia-gateway.js";
+import { requestTopicFacts } from "@/gateways/wikipedia-gateway.js";
 
-const CACHE_PREFIX = "topic-article:v1:";
-const REFRESH_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
-const pendingArticles = new Map();
+const CACHE_PREFIX = "published-facts:v1:";
+const SAVED_FACT_LIMIT = 20;
 
-export function createFactTopics(origin, character, translator, fallbackLanguage) {
-  const language = translator.language();
-  const placeTopic = (key, kind) => ({
-    kind,
-    source: { language, title: translator.translate(key), country: translator.translate(origin.label) },
-    fallback: {
-      language: fallbackLanguage,
-      title: translator.translate(key, fallbackLanguage),
-      country: translator.translate(origin.label, fallbackLanguage)
-    },
-    ...(kind === "city" ? { latitude: origin.latitude, longitude: origin.longitude } : {})
-  });
+export function createFactTopics(origin, character, translator) {
   return [
+    { kind: "species", title: character.scientificName },
     {
-      kind: "species",
-      source: { language, title: character.scientificName },
-      fallback: { language: fallbackLanguage, title: character.scientificName }
+      kind: "city", title: translator.translate(origin.city, "en"),
+      country: translator.translate(origin.label, "en"),
+      latitude: origin.latitude, longitude: origin.longitude
     },
-    placeTopic(origin.city, "city"),
-    placeTopic(origin.label, "country")
+    { kind: "country", title: translator.translate(origin.label, "en") }
   ];
 }
 
-function readArticle(key) {
+function readFacts(topic) {
   try {
-    const article = JSON.parse(localStorage.getItem(key));
-    if (!article) {
-      return null;
+    const saved = JSON.parse(localStorage.getItem(`${CACHE_PREFIX}${JSON.stringify(topic)}`));
+    if (!saved) {
+      return [];
     }
-    if (!Number.isFinite(article.fetchedAt) || !Array.isArray(article.passages) || !article.passages.length
-      || !["title", "url", "language"].every((key) => typeof article[key] === "string")
-      || !article.passages.every((passage) => typeof passage?.text === "string" && typeof passage.section === "string")) {
-      throw new Error("Invalid saved topic article");
+    if (!Array.isArray(saved) || !saved.every((fact) =>
+      ["id", "text", "title", "sourceUrl", "sourceName"].every((key) => typeof fact[key] === "string")
+      && fact.language === "en"
+      && /^https:\/\/en\.wikipedia\.org\/w\/index\.php\?oldid=\d+$/.test(fact.sourceUrl))) {
+      throw new Error("Invalid saved curiosities");
     }
-    return article;
+    return saved;
   } catch (error) {
-    console.warn("Could not read saved topic article", error);
-    return null;
+    console.warn("Could not read saved curiosities", error);
+    return [];
   }
 }
 
-async function loadArticle(topic, key, storedArticle) {
-  let article;
+function saveFacts(topic, facts) {
   try {
-    article = await requestTopicArticle(topic);
+    localStorage.setItem(`${CACHE_PREFIX}${JSON.stringify(topic)}`, JSON.stringify(facts.slice(-SAVED_FACT_LIMIT)));
   } catch (error) {
-    if (!storedArticle) {
-      throw error;
+    console.warn("Could not save curiosities for offline use", error);
+  }
+}
+
+export async function pickFact(topics, selectionIndex, seen = new Set()) {
+  const round = Math.floor(selectionIndex / topics.length);
+  let repeatedFact;
+  let failed = false;
+  for (let attempt = 0; attempt < topics.length; attempt += 1) {
+    const topic = topics[(selectionIndex + attempt) % topics.length];
+    let facts;
+    let stale = false;
+    try {
+      facts = await requestTopicFacts(topic, round);
+      if (facts.length) {
+        saveFacts(topic, facts);
+      }
+    } catch (error) {
+      console.warn("Could not fetch published curiosities", error);
+      facts = readFacts(topic);
+      stale = true;
+      failed = true;
     }
-    console.warn("Could not refresh topic article; using its saved copy", error);
-    return { ...storedArticle, stale: true };
+    const candidates = facts.map((fact) => ({ ...fact, stale }));
+    const unseen = candidates.find(({ id }) => !seen.has(id));
+    if (unseen) {
+      return unseen;
+    }
+    if (candidates.length) {
+      repeatedFact ??= candidates[round % candidates.length];
+    }
   }
-  const freshArticle = { ...article, fetchedAt: Date.now() };
-  try {
-    localStorage.setItem(key, JSON.stringify(freshArticle));
-  } catch (error) {
-    console.warn("Could not save topic article for offline use", error);
+  if (repeatedFact) {
+    return { ...repeatedFact, exhausted: true };
   }
-  return freshArticle;
-}
-
-async function topicArticle(topic) {
-  const key = `${CACHE_PREFIX}${JSON.stringify(topic)}`;
-  const storedArticle = readArticle(key);
-  if (storedArticle && Date.now() - storedArticle.fetchedAt < REFRESH_INTERVAL_MS) {
-    return storedArticle;
-  }
-  if (!pendingArticles.has(key)) {
-    const pending = loadArticle(topic, key, storedArticle).finally(() => pendingArticles.delete(key));
-    pendingArticles.set(key, pending);
-  }
-  return pendingArticles.get(key);
-}
-
-export async function pickFact(topics, selectionIndex) {
-  const topic = topics[selectionIndex % topics.length];
-  const article = await topicArticle(topic);
-  const passage = article.passages[Math.floor(selectionIndex / topics.length) % article.passages.length];
-  const anchor = passage.section ? `#${encodeURIComponent(passage.section.replaceAll(" ", "_"))}` : "";
-  return {
-    text: passage.text,
-    title: article.title,
-    section: passage.section,
-    language: article.language,
-    sourceUrl: `${article.url}${anchor}`,
-    stale: article.stale ?? false
-  };
+  const error = new Error(failed ? "Curiosity sources are unavailable" : "No published curiosities found for these topics");
+  error.code = failed ? "SOURCE_UNAVAILABLE" : "NO_FACTS";
+  throw error;
 }
