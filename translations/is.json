@@ -19,7 +19,13 @@
     "installIos": "Ýttu á Deila og svo „Bæta á heimaskjá“",
     "installAction": "Setja upp",
     "didYouKnow": "Vissir þú…?",
-    "factSource": "Heimild: Wikipedia",
+    "factSource": "Upprunalegur fróðleiksmoli og höfundar á Wikipedia",
+    "factLoading": "Leita að birtum fróðleiksmolum…",
+    "factUnavailable": "Ekki tókst að sækja efni um þetta viðfangsefni. Opnaðu spjaldið aftur með nettengingu til að prófa annað.",
+    "factOriginalLanguage": "Heimildin birtir þennan fróðleiksmola á {language}.",
+    "factSaved": "Ekki náðist í heimildina; vistaður fróðleiksmoli er sýndur.",
+    "factEmpty": "Engir birtir fróðleiksmolar fundust um þennan fugl, borg eða land. Greinarbútar eru ekki notaðir í staðinn.",
+    "factExhausted": "Þú hefur séð fróðleiksmolana úr þessari leit; ný umferð hefst.",
     "currentLocation": "Núverandi staðsetning: {place}"
   },
   "places": {
@@ -38,38 +44,6 @@
       "name": "Quinde · Fjólueyrakólibrí",
       "ariaLabel": "Quinde, ekvadorskur kólibrífugl sem hoppar norður frá Frakklandi"
     }
-  },
-  "facts": {
-    "goldenPlover": [
-      "Koma fyrstu lóunnar er frétt á Íslandi: þá er vorið komið.",
-      "Íslendingar heyra hana syngja „dýrðin, dýrðin“.",
-      "Margar íslenskar heiðlóur hafa vetursetu á Bretlandi og Írlandi."
-    ],
-    "sparklingVioletear": [
-      "Í Ekvador eru kólibrífuglar kallaðir quindes, orð úr kichwa.",
-      "Þessi tegund er ein sú algengasta í görðum Quito.",
-      "Í Ekvador lifa yfir 130 tegundir kólibrífugla."
-    ],
-    "ceret": [
-      "Á hverju vori koma fyrstu kirsuber Frakklands frá Céret og eru send forseta lýðveldisins.",
-      "Í byrjun 20. aldar dvöldu Picasso, Braque og Juan Gris í Céret og því er bærinn kallaður Mekka kúbismans.",
-      "Djöflabrúin í Céret er frá 14. öld og liggur yfir ána Tech í einum um 45 metra löngum boga."
-    ],
-    "france": [
-      "Frakkland er mest heimsótta land í heimi.",
-      "Með yfirráðasvæðum handan hafsins nær Frakkland yfir 12 tímabelti, fleiri en nokkurt annað land.",
-      "Vegna lögunar sinnar kalla Frakkar landið sitt „sexhyrninginn“."
-    ],
-    "reykjavik": [
-      "Reykjavík er nyrsta höfuðborg sjálfstæðs ríkis í heiminum.",
-      "Nafnið vísar til gufunnar sem steig upp af laugunum við víkina.",
-      "Nær öll hús í Reykjavík eru hituð með jarðvarma."
-    ],
-    "iceland": [
-      "Alþingi var stofnað árið 930 og er eitt elsta þjóðþing heims.",
-      "Á Íslandi eru engar moskítóflugur.",
-      "Meira en helmingur Íslendinga býr á höfuðborgarsvæðinu."
-    ]
   },
   "kickers": {
     "sameSky": "Sami himinn, sama nótt",
