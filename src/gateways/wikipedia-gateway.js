@@ -1,74 +1,139 @@
-const ARTICLE_API_URL = "https://en.wikipedia.org/w/api.php";
-const SENTENCE_CACHE_PREFIX = "article-sentences:";
-const REFRESH_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
-const SENTENCES_PER_ARTICLE = 8;
-const MIN_SENTENCE_LENGTH = 60;
-const MAX_SENTENCE_LENGTH = 220;
-const CONTEXTLESS_OPENING = /^(It|Its|They|Their|This|These|Those|He|She|His|Her|However|Also|In addition|Both)\b/;
-const MARKUP_CHARACTERS = /[()[\]=]/;
-const APPENDIX_HEADING = /\n==\s*(See also|Notes|References|Further reading|External links)\s*==/;
+const API_URL = "https://en.wikipedia.org/w/api.php";
+const ARCHIVE_PREFIX = "Wikipedia:Did you know archive/";
+const REQUEST_TIMEOUT_MS = 8000;
+const MAX_CITY_DISTANCE_KM = 75;
 
-function sentenceCacheKey(article) {
-  return `${SENTENCE_CACHE_PREFIX}${article}`;
-}
-
-function readStoredArticle(article) {
-  const storedArticle = localStorage.getItem(sentenceCacheKey(article));
-  return storedArticle ? JSON.parse(storedArticle) : null;
-}
-
-function subjectKeyword(article) {
-  return article.split(" ").at(-1).toLowerCase();
-}
-
-function isReadableSentence(sentence, keyword) {
-  return sentence.length >= MIN_SENTENCE_LENGTH
-    && sentence.length <= MAX_SENTENCE_LENGTH
-    && sentence.toLowerCase().includes(keyword)
-    && !CONTEXTLESS_OPENING.test(sentence)
-    && !MARKUP_CHARACTERS.test(sentence);
-}
-
-function splitSentences(articleText, keyword) {
-  const sentenceSegmenter = new Intl.Segmenter("en", { granularity: "sentence" });
-  return articleText
-    .split(APPENDIX_HEADING)[0]
-    .split("\n")
-    .filter((line) => line && !line.startsWith("="))
-    .flatMap((paragraph) => Array.from(sentenceSegmenter.segment(paragraph), ({ segment }) => segment.trim()))
-    .filter((sentence) => isReadableSentence(sentence, keyword));
-}
-
-function spreadSelection(sentences, count) {
-  if (sentences.length <= count) {
-    return sentences;
-  }
-  const step = sentences.length / count;
-  const selectedSentences = [];
-  for (let i = 0; i < count; i += 1) {
-    selectedSentences.push(sentences[Math.floor(i * step)]);
-  }
-  return selectedSentences;
-}
-
-async function requestArticleSentences(article) {
-  const response = await fetch(`${ARTICLE_API_URL}?action=query&prop=extracts&explaintext=1&redirects=1&format=json&formatversion=2&origin=*&titles=${encodeURIComponent(article)}`);
+async function wikipedia(parameters) {
+  const query = new URLSearchParams({
+    format: "json", formatversion: "2", origin: "*", ...parameters
+  });
+  const response = await fetch(`${API_URL}?${query}`, {
+    cache: "no-store",
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  });
   if (!response.ok) {
     throw new Error(`Wikipedia request failed with status ${response.status}`);
   }
-  const { query } = await response.json();
-  return spreadSelection(splitSentences(query.pages[0].extract ?? "", subjectKeyword(article)), SENTENCES_PER_ARTICLE);
-}
-
-export function readArticleSentences(article) {
-  return readStoredArticle(article)?.sentences ?? [];
-}
-
-export async function refreshArticleSentences(article) {
-  const storedArticle = readStoredArticle(article);
-  if (storedArticle && Date.now() - storedArticle.fetchedAt < REFRESH_INTERVAL_MS) {
-    return;
+  const result = await response.json();
+  if (result.error) {
+    throw new Error(`Wikipedia rejected the request: ${result.error.code}`);
   }
-  const sentences = await requestArticleSentences(article);
-  localStorage.setItem(sentenceCacheKey(article), JSON.stringify({ fetchedAt: Date.now(), sentences }));
+  if (parameters.action === "query"
+    && !Array.isArray(parameters.list === "search" ? result.query?.search : result.query?.pages)) {
+    throw new Error("Wikipedia returned an invalid query response");
+  }
+  return result;
+}
+
+function cityDistance(topic, coordinate) {
+  const radians = (degrees) => degrees * Math.PI / 180;
+  const lat1 = radians(topic.latitude);
+  const lat2 = radians(coordinate.lat);
+  const haversine = Math.sin((lat2 - lat1) / 2) ** 2
+    + Math.cos(lat1) * Math.cos(lat2) * Math.sin(radians(coordinate.lon - topic.longitude) / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(Math.min(1, haversine)));
+}
+
+function matchesTopic(page, topic) {
+  if (!page || typeof page.title !== "string" || page.missing || page.invalid
+    || Object.hasOwn(page.pageprops ?? {}, "disambiguation")) {
+    return false;
+  }
+  return topic.kind !== "city"
+    || page.coordinates?.some((coordinate) => cityDistance(topic, coordinate) <= MAX_CITY_DISTANCE_KM);
+}
+
+async function resolveTopic(topic) {
+  const parameters = {
+    action: "query", prop: "info|pageprops|coordinates", titles: topic.title,
+    redirects: "1", inprop: "url", coprimary: "primary"
+  };
+  const direct = await wikipedia(parameters);
+  const page = direct.query?.pages?.[0];
+  if (matchesTopic(page, topic)) {
+    return page;
+  }
+  if (topic.kind !== "city") {
+    return null;
+  }
+  const search = await wikipedia({
+    action: "query", list: "search", srsearch: `${topic.title} ${topic.country}`, srlimit: "5"
+  });
+  const titles = search.query?.search?.map(({ title }) => title);
+  if (!titles?.length) {
+    return null;
+  }
+  const candidates = await wikipedia({ ...parameters, titles: titles.join("|") });
+  const normalize = (title) => title.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  const cityName = normalize(topic.title);
+  return candidates.query?.pages?.find((candidate) => {
+    const title = normalize(candidate.title);
+    return (title === cityName || title.startsWith(`${cityName} (`) || title.startsWith(`${cityName},`))
+      && matchesTopic(candidate, topic);
+  }) ?? null;
+}
+
+function linkedTitle(anchor) {
+  const url = new URL(anchor.getAttribute("href"), "https://en.wikipedia.org");
+  if (url.origin !== "https://en.wikipedia.org") {
+    return null;
+  }
+  const title = url.pathname.startsWith("/wiki/")
+    ? decodeURIComponent(url.pathname.slice(6))
+    : url.searchParams.get("title");
+  return title?.replaceAll("_", " ");
+}
+
+export function archiveFacts(html, topicTitle, archive) {
+  const document = new DOMParser().parseFromString(html, "text/html");
+  return Array.from(document.querySelectorAll("li")).flatMap((item) => {
+    if (item.querySelector("li")
+      || !Array.from(item.querySelectorAll("a[href]")).some((anchor) => linkedTitle(anchor) === topicTitle)) {
+      return [];
+    }
+    const text = item.textContent.replace(/\s+/g, " ").trim();
+    if (!/^(?:\.{3}|…)\s*that\b/i.test(text) || !text.endsWith("?")) {
+      return [];
+    }
+    // Keep the entire published hook, including any parenthetical context.
+    return [{
+      id: text,
+      text,
+      title: topicTitle,
+      language: "en",
+      sourceUrl: `https://en.wikipedia.org/w/index.php?oldid=${archive.revid}`,
+      sourceName: "Wikipedia · Did you know?"
+    }];
+  });
+}
+
+export async function requestTopicFacts(topic, round) {
+  const page = await resolveTopic(topic);
+  if (!page) {
+    return [];
+  }
+  const search = async (offset) => wikipedia({
+    action: "query", list: "search", srnamespace: "4",
+    srsearch: `linksto:"${page.title.replaceAll('"', "")}" prefix:"${ARCHIVE_PREFIX}"`,
+    srlimit: "2", sroffset: String(offset), srprop: ""
+  });
+  const offset = (round * 2) % 500;
+  let results = await search(offset);
+  if (!results.query?.search?.length && offset > 0) {
+    results = await search(0);
+  }
+  const facts = [];
+  for (const result of results.query?.search ?? []) {
+    if (!result.title.startsWith(ARCHIVE_PREFIX)) {
+      continue;
+    }
+    const archive = await wikipedia({
+      action: "parse", pageid: String(result.pageid), prop: "text|revid", disableeditsection: "1"
+    });
+    if (typeof archive.parse?.text !== "string" || !Number.isInteger(archive.parse.revid)) {
+      throw new Error("Wikipedia returned an invalid curiosity archive");
+    }
+    facts.push(...archiveFacts(archive.parse.text, page.title, archive.parse));
+  }
+  return facts.filter((fact, index) => facts.findIndex(({ id }) => id === fact.id) === index);
 }
