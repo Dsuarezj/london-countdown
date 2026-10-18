@@ -10,7 +10,9 @@ import { prepareInstallPrompt } from "@/ui/install-prompt.js";
 import { playMeeting } from "@/ui/meeting.js";
 import { mountOriginPins, renderOriginPins } from "@/ui/origin-pins.js";
 import { createTogetherPlayer } from "@/ui/together.js";
-import { calendarDayNumber, wallClockToInstant } from "@/utils/meeting-time.js";
+import { calendarDayNumber } from "@/utils/meeting-time.js";
+import { TripPhase } from "@/utils/enums.js";
+import { createTripTimeline } from "@/utils/trip-timeline.js";
 import { loadStylesheet } from "@/utils/stylesheet.js";
 
 const skyElement = document.getElementById("sky");
@@ -34,12 +36,15 @@ const config = await loadConfig();
 applyThemeTokens(config.theme.tokens);
 showSky(config, { fadeIn: true });
 const { meeting } = config;
-const meetingInstant = wallClockToInstant(meeting.date, meeting.time, meeting.timeZone);
+const timeline = createTripTimeline(config);
+const { meetingInstant, endInstant } = timeline;
+document.body.dataset.tripPhase = timeline.phaseAt(Date.now());
 renderCountdown(meetingInstant - Date.now());
 const translator = await createTranslator(config.languages);
 const infoCard = createInfoCard(config, translator);
 
 const togetherPlayer = createTogetherPlayer(config.together);
+let meetingPlayer;
 
 function remainingMs() {
   return meetingInstant - Date.now();
@@ -50,19 +55,36 @@ function todayNumber() {
 }
 
 function renderTick() {
+  const phase = timeline.phaseAt(Date.now());
+  const phaseChanged = document.body.dataset.tripPhase !== phase;
+  document.body.dataset.tripPhase = phase;
   const remaining = remainingMs();
   renderCountdown(remaining);
-  renderKicker(config, translator, todayNumber());
-  renderThreshold(config, translator, remaining);
-  togetherPlayer.playWhenReady(remaining);
+  renderKicker(config, translator, todayNumber(), phase);
+  if (phase === TripPhase.UPCOMING) {
+    renderThreshold(config, translator, remaining);
+  }
+  if (phaseChanged) {
+    renderMeetingLabel(config, translator, meetingInstant, phase, endInstant);
+    renderCharacterLabels(meetingElement, config.characters, translator, phase);
+    infoCard.render();
+  }
+  meetingPlayer?.setPhase(phase);
+  if (phase === TripPhase.TOGETHER) {
+    togetherPlayer.playWhenReady(remaining);
+  } else if (phase === TripPhase.MEMORIES) {
+    togetherPlayer.stop();
+  }
+  showSky(config, { fadeIn: true });
 }
 
 function renderLanguage() {
   translator.renderStaticStrings();
   languageCodeField.textContent = translator.language().toUpperCase();
-  renderMeetingLabel(config, translator, meetingInstant);
+  const phase = timeline.phaseAt(Date.now());
+  renderMeetingLabel(config, translator, meetingInstant, phase, endInstant);
   renderOriginPins(config.origins, translator);
-  renderCharacterLabels(meetingElement, config.characters, translator);
+  renderCharacterLabels(meetingElement, config.characters, translator, phase);
   infoCard.render();
   renderTick();
 }
@@ -81,9 +103,11 @@ await Promise.all([
   mountCharacters(meetingElement, config),
   loadStylesheet(config.affection.stylesheet)
 ]);
-renderCharacterLabels(meetingElement, config.characters, translator);
-playMeeting(meetingElement, config.affection, () => {
+renderCharacterLabels(meetingElement, config.characters, translator, timeline.phaseAt(Date.now()));
+meetingPlayer = playMeeting(meetingElement, config.affection, () => {
   togetherPlayer.markArrived();
-  togetherPlayer.playWhenReady(remainingMs());
+  if (timeline.phaseAt(Date.now()) === TripPhase.TOGETHER) {
+    togetherPlayer.playWhenReady(remainingMs());
+  }
   offerInstall();
-});
+}, timeline.phaseAt(Date.now()));

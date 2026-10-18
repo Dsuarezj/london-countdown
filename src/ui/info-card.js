@@ -1,4 +1,6 @@
 import { createFactTopics, pickFact } from "@/services/facts.js";
+import { TripPhase } from "@/utils/enums.js";
+import { createTripTimeline } from "@/utils/trip-timeline.js";
 
 const dialog = document.getElementById("infoCard");
 const nameField = document.getElementById("infoCardName");
@@ -10,7 +12,9 @@ const factNoticeField = document.getElementById("infoCardFactNotice");
 const factAttributionField = document.getElementById("infoCardFactAttribution");
 const factSourceField = document.getElementById("infoCardFactSource");
 
-export function createInfoCard({ origins, characters }, translator) {
+export function createInfoCard(config, translator) {
+  const { origins, characters, meeting } = config;
+  const timeline = createTripTimeline(config);
   let selectedSlot;
   let requestNumber = 0;
   const selectionBySlot = new Map();
@@ -80,7 +84,9 @@ export function createInfoCard({ origins, characters }, translator) {
     const origin = origins[selectedSlot];
     const character = characters[origin.character];
     const characterText = translator.translate(character.text);
-    const place = `${translator.translate(origin.city)}, ${translator.translate(origin.label)}`;
+    const place = timeline.phaseAt(Date.now()) === TripPhase.TOGETHER
+      ? translator.translate(meeting.city)
+      : `${translator.translate(origin.city)}, ${translator.translate(origin.label)}`;
 
     dialog.dataset.origin = selectedSlot;
     nameField.textContent = characterText.name;

@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { weatherResponse } from "../weather-fixture.js";
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, baseURL }) => {
   await page.clock.setFixedTime(new Date("2026-10-18T09:15:00Z"));
   await page.addInitScript(() => localStorage.setItem("install-prompt", JSON.stringify({ installed: true })));
-  await page.route("**/*", (route) => new URL(route.request().url()).origin === "http://127.0.0.1:4173"
+  await page.route("**/*", (route) => new URL(route.request().url()).origin === new URL(baseURL).origin
     ? route.fallback()
     : route.abort());
 });

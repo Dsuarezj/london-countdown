@@ -8,7 +8,7 @@
 
 .together__heart {
   position: absolute;
-  top: -8%;
+  top: 0;
   color: var(--tropic-magenta);
   text-shadow: 0 0 12px rgba(255, 79, 147, .55);
   line-height: 1;
@@ -28,7 +28,7 @@
 .together__heart:nth-child(10) { left: 93%; font-size: 1.2rem;  --together-delay: .4s;  --together-duration: 6.4s; }
 
 @keyframes together-heart-fall {
-  0%   { transform: translateY(0) rotate(-12deg); opacity: 0; }
+  0%   { transform: translateY(0) rotate(-12deg); opacity: .85; }
   8%   { opacity: 1; }
   100% { transform: translateY(112vh) rotate(28deg); opacity: 0; }
 }
