@@ -1,4 +1,4 @@
-const CACHE_NAME = "trip-countdown-v33";
+const CACHE_NAME = "trip-countdown-v34";
 const NETWORK_PROBE_TIMEOUT_MS = 350;
 const NETWORK_PROBE_TTL_MS = 5000;
 let networkStatus;
@@ -32,6 +32,7 @@ const APP_SHELL = [
   "./src/utils/stylesheet.js",
   "./src/utils/meeting-time.js",
   "./src/utils/thresholds.js",
+  "./src/utils/trip-timeline.js",
   "./src/services/i18n.js",
   "./src/ui/headline.js",
   "./src/ui/countdown.js",

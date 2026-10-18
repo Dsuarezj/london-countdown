@@ -51,6 +51,12 @@ body {
   height: 100%;
   fill: none;
   pointer-events: none;
+  transition: opacity 1.4s ease;
+}
+
+body[data-trip-phase="together"] .route,
+body[data-trip-phase="memories"] .route {
+  opacity: 0;
 }
 
 .route__line {
@@ -243,6 +249,10 @@ body {
   opacity: .6;
 }
 
+.headline__when #meetingSchedule {
+  opacity: 1;
+}
+
 .headline__when strong {
   font-weight: inherit;
 }
@@ -255,6 +265,41 @@ body {
   max-width: 26rem;
   opacity: 0;
   transition: opacity .4s ease;
+}
+
+.countdown-scene {
+  display: grid;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.countdown-panel,
+.reunion-panel {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .8rem;
+  transition: opacity 1.4s ease, transform 1.4s ease, visibility 1.4s;
+}
+
+.reunion-panel {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(.5rem);
+}
+
+.countdown-scene.is-complete .countdown-panel {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-.5rem);
+}
+
+.countdown-scene.is-complete .reunion-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .countdown[data-ready] {
@@ -299,9 +344,28 @@ body {
   color: var(--tropic-turquoise);
 }
 
+.trip-note {
+  max-width: 25rem;
+  font-size: clamp(.8rem, min(3.6vw, 2.3vh), 1rem);
+  line-height: 1.6;
+  color: rgba(243, 247, 255, .7);
+}
+
+body[data-trip-phase="memories"] .reunion {
+  color: #ffd0dc;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .route__line,
   .pin i {
     animation: none !important;
+  }
+
+  .countdown,
+  .countdown-panel,
+  .reunion-panel,
+  .route {
+    transition: none;
+    transform: none;
   }
 }

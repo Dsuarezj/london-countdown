@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
 import { weatherResponse } from "../weather-fixture.js";
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, baseURL }) => {
   await page.addInitScript(() => localStorage.setItem("install-prompt", JSON.stringify({ installed: true })));
-  await page.route("**/*", (route) => new URL(route.request().url()).origin === "http://127.0.0.1:4173"
+  await page.route("**/*", (route) => new URL(route.request().url()).origin === new URL(baseURL).origin
     ? route.fallback()
     : route.abort());
   await page.route("https://api.open-meteo.com/**", (route) => route.fulfill({ json: weatherResponse() }));

@@ -2,9 +2,10 @@ import { auroraTropics } from "@/backgrounds/aurora-tropics.js";
 import { converging } from "@/backgrounds/converging.js";
 import { meetingCity } from "@/backgrounds/meeting-city.js";
 import { originWeather } from "@/backgrounds/origin-weather.js";
-import { BackgroundId, BackgroundMode } from "@/utils/enums.js";
-import { calendarDayNumber, wallClockToInstant } from "@/utils/meeting-time.js";
+import { BackgroundId, BackgroundMode, TripPhase } from "@/utils/enums.js";
+import { calendarDayNumber } from "@/utils/meeting-time.js";
 import { findActiveThreshold } from "@/utils/thresholds.js";
+import { createTripTimeline } from "@/utils/trip-timeline.js";
 
 const BACKGROUNDS = {
   [BackgroundId.AURORA_TROPICS]: auroraTropics,
@@ -33,13 +34,16 @@ function selectBackgroundId(backgroundsConfig, { remainingMs, isMeetingDay, dayN
   return backgroundsConfig.fixed;
 }
 
-function planSky({ meeting, backgrounds, origins }) {
-  const meetingInstant = wallClockToInstant(meeting.date, meeting.time, meeting.timeZone);
+function planSky(config) {
+  const { meeting, backgrounds, origins } = config;
+  const timeline = createTripTimeline(config);
+  const { meetingInstant } = timeline;
   const todayNumber = calendarDayNumber(Date.now(), meeting.timeZone);
+  const phase = timeline.phaseAt(Date.now());
   return {
-    backgroundId: selectBackgroundId(backgrounds, {
+    backgroundId: phase === TripPhase.MEMORIES ? BackgroundId.CONVERGING : selectBackgroundId(backgrounds, {
       remainingMs: meetingInstant - Date.now(),
-      isMeetingDay: todayNumber === calendarDayNumber(meetingInstant, meeting.timeZone),
+      isMeetingDay: phase === TripPhase.TOGETHER || todayNumber === calendarDayNumber(meetingInstant, meeting.timeZone),
       dayNumber: todayNumber
     }),
     context: { origins, meeting, weatherEnabled: backgrounds.weather }

@@ -1,4 +1,5 @@
 import { loadStylesheet } from "@/utils/stylesheet.js";
+import { TripPhase } from "@/utils/enums.js";
 
 async function createBird(slot, characterId, character) {
   const [markupResponse] = await Promise.all([fetch(character.markup), loadStylesheet(character.stylesheet)]);
@@ -17,8 +18,9 @@ export async function mountCharacters(meetingElement, { origins, characters }) {
   meetingElement.append(...birds);
 }
 
-export function renderCharacterLabels(meetingElement, characters, translator) {
+export function renderCharacterLabels(meetingElement, characters, translator, phase = TripPhase.UPCOMING) {
   for (const bird of meetingElement.querySelectorAll(".bird")) {
-    bird.setAttribute("aria-label", translator.translate(`${characters[bird.dataset.character].text}.ariaLabel`));
+    const text = translator.translate(characters[bird.dataset.character].text);
+    bird.setAttribute("aria-label", phase === TripPhase.UPCOMING ? text.ariaLabel : text.name);
   }
 }
