@@ -24,15 +24,14 @@ index.html            static shell: layout slots, dialog, install prompt, import
 config.json           the control panel
 manifest.webmanifest  PWA name, display, icons
 icons/                SVG + PNG touch icons listed in the manifest and APP_SHELL
-translations/         en.json, es.json, is.json: ui, places, characters, facts, kickers, thresholds
+translations/         en.json, es.json, is.json: ui, places, characters, kickers, thresholds
 src/
   main.js             composition root: loads config, wires modules, owns the language
   gateways/
     weather-gateway.js  Open-Meteo adapter: request -> PlaceSky (phase, condition, rain, snowfall, thunder)
-    wikipedia-gateway.js  English article sentences per topic, refreshed weekly in localStorage
-    translation-gateway.js  MyMemory translation from English, cached per language and text
+    wikipedia-gateway.js  localized articles, geographic disambiguation and complete thematic passages
   services/
-    daily-fact.js     daily "Did you know" deck: local facts + article sentences, one per day
+    facts.js          configured species/city/country -> topic and passage per click, weekly cache
     place-sky.js      last sky per place in localStorage, fresh load with offline fallback
     cached-json.js    loadCachedJson(url): network first, localStorage copy when offline
     config.js         loadConfig, applyThemeTokens
@@ -42,7 +41,7 @@ src/
     headline.js       daily kicker, threshold line under the countdown, city/date/time label
     countdown.js      days/hours/minutes/seconds or the reunion message
     origin-pins.js    pin labels + click -> info card
-    info-card.js      <dialog>: name, scientific name, current location, daily fact (+ Wikipedia source)
+    info-card.js      <dialog>: name, scientific name, current location, fact + topic link
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
     meeting.js        journey -> arrived -> affection beats
     together.js       one-shot reunion overlay (heart rain) after countdown zero
@@ -90,9 +89,8 @@ the only place that knows about all of them.
 | `backgrounds.fixed` / `random.pool` / `countdown[].background` / `meetingDay` | `BackgroundId` values: `"aurora-tropics"`, `"origin-weather"`, `"converging"`, `"meeting-city"`. |
 | `backgrounds.countdown` | `[{ withinHours, background }]`. When the remaining time is inside a window, that background wins over the mode. The smallest matching window wins. |
 | `backgrounds.meetingDay` | Background for the calendar day of the meeting (in the meeting zone). Highest priority. Empty string disables it. |
-| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city` and `label` (translation keys of the city and country), coordinates, `timeZone` (used by the weather background and its offline estimate), `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared) and `topics` (city and country, see below). |
-| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName`, `topic` and `text`: translation key of an object with `name` and `ariaLabel`, shown in the info card. |
-| `topic` / `topics[]` | `{ article, facts }`: `article` is the English Wikipedia title, `facts` the translation key of the cold-start facts. The info card deck interleaves the character topic with the origin topics. |
+| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city` and `label` (translation keys of the city and country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). City and country discovery topics derive from these same keys, not separate article or fact lists. |
+| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName` (also the Wikipedia species lookup) and `text`: translation key of an object with `name` and `ariaLabel`, shown in the info card. |
 | `affection` | `stylesheet`, `beats` (body classes defined in that stylesheet) and `intervalMs`. Beat length comes from `--beat-duration` in the stylesheet. |
 | `together` | Id of the one-shot reunion overlay (`heart-rain`). Empty string disables it. Stylesheet and player live together in `src/ui/together.js`. |
 | `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
@@ -113,8 +111,8 @@ element with `WEATHER_BASE_LAYERS` / `WEATHER_CLOUD_LAYERS` and calls
 placement CSS (direction via `--sky-direction` / `--sun-position`, mirroring, insets).
 
 **New character**: create `characters/<id>/<id>.svg` and `<id>.css`, add it to `config.characters`,
-add its `name` / `ariaLabel` under `characters.<id>` and its cold-start facts under
-`facts.<key>` in every translation file, give it a `topic`, and point an origin at it. The SVG and CSS must respect the rig contract in `ANIMATION.md`
+add its `name` / `ariaLabel` under `characters.<id>` in every translation file,
+set its `scientificName`, and point an origin at it. No fact lists are needed. The SVG and CSS must respect the rig contract in `ANIMATION.md`
 (wing groups, facing direction, journey keyframes ending at `translate(0, 0)`).
 
 **New together animation**: add `{ stylesheet, play }` under that id in `src/ui/together.js`, add
@@ -154,7 +152,11 @@ and top layer come for free, so it never fights the stage's stacking or overflow
 
 Content, top to bottom: character `name`, `scientificName`, current location
 (`ui.currentLocation` with `{place}` → translated `city, country`, no bird name),
-`ui.didYouKnow`, the fact of the day, and `ui.factSource` only when that fact came from Wikipedia.
+`ui.didYouKnow` ("Something to discover"), the article title and section, a complete passage, optional
+source-language/stale-cache notices, and a `ui.factSource` link to the original Wikipedia section
+with its CC BY-SA 4.0 license link.
+Loading and unavailable-content messages are explicit. Request numbering prevents a delayed
+response from overwriting a newer pin or language selection.
 
 - **Phones (default)**: bottom sheet. Full width, `max-height: min(78dvh, 34rem)`, internal scroll
   with `overscroll-behavior: contain`, bottom padding includes the home indicator safe area. A
@@ -195,8 +197,8 @@ window, the worker probes the origin. With no connection it serves the cached co
 when reachable it uses network-first (`cache: "no-store"`) and refreshes the cache. Navigations
 fall back to `index.html`. The precache bypasses the HTTP cache (`cache: "reload"`) and the worker
 is registered with `updateViaCache: "none"`, so a deploy is visible on the next load.
-Cross-origin requests skip the service worker: Open-Meteo (weather), English Wikipedia (article
-sentences) and MyMemory (on-demand translation).
+Cross-origin requests skip the service worker: Open-Meteo (weather) and Wikipedia (discovery
+content). Wikipedia content is cached separately in localStorage; no translation service is used.
 
 `index.html` lists every module with `<link rel="modulepreload">`, so the whole module graph is
 requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.
@@ -209,7 +211,7 @@ come from `config.json` and `translations/*/places`.
 `connection.js` probes the origin the same way the worker does and toggles `#offlineMark` when the
 app is offline. The active language is stored in `trip-language`.
 
-The sky is the one piece that is cache-first. Before any request, `main.js` reads the stored config
+The sky mounts cache-first. Before any request, `main.js` reads the stored config
 (`readCachedConfig`) and mounts the sky from it, so a returning visit opens on the sky it last
 showed. The fresh config then goes through the same `showSky`, which builds a plan (background id
 plus the context it needs) and only remounts when that plan changed.
@@ -223,12 +225,40 @@ painted first and then fades into the first forecast. When the request fails the
 stored sky, or estimates day/night from the place's time zone if nothing was stored. None of this
 runs when `backgrounds.weather` is `false`.
 
-The info card shows one "Did you know" fact per day. Each pin builds a deck from its topics
-(character, city, country): the cold-start facts from `translations/*/facts` plus up to eight
-sentences of each topic's English Wikipedia article (`article-sentences:<title>`, refreshed at
-most once a week). Only sentences that name the topic (last word of the title) and come before the
-appendix sections are kept. Topics are interleaved, so consecutive days move between bird and place, and the
-fact is `deck[dayNumber % deck.length]` with the day counted in the meeting zone. Article sentences
-are translated through MyMemory only when shown and cached per language
-(`translation:<language>:<text>`). With no connection the deck still has the stored sentences and
-translations; if a translation is missing or degenerates into repeated words it falls back to a cold-start fact of the same topic.
+### Dynamic discovery content
+
+Each click to open a pin's info card advances its own selection counter, starting at zero.
+Selections rotate between species, city and country (`selectionIndex % 3`); after each round
+the next complete passage in each article is used. A pin's counter survives switching to the
+other pin but resets on page reload. Language rerenders do not advance it, so the same topic
+and passage index stay selected while reading. There is no daily limit.
+`createFactTopics` derives identities directly from `scientificName`, translated `city`
+and translated `label`. `translate(key, language?)` can resolve the fallback-language name
+without changing the active language. Changing a location requires the usual city/country
+labels, coordinates and time zone, but no additional `topic`, article title or fact translations.
+
+The gateway first resolves the active-language Wikipedia article, following redirects.
+City articles must have coordinates within 75 km of the configured origin; if the direct title
+does not match, a city/country search checks up to five candidates with matching city names
+and coordinates. Disambiguation pages are rejected, not displayed. When the localized article
+is missing or has no suitable passages, the gateway tries the first configured language and
+its language link back to the requested edition. If only the fallback edition is suitable,
+the UI labels the original language rather than silently translating or mixing languages.
+
+Extraction keeps complete paragraphs of 100–800 characters, never cuts a sentence to fit,
+and prefers thematic sections (culture, etymology, behaviour, ecology and traditions) over
+general prose. Short dependent paragraphs may be joined to the immediately preceding paragraph
+within the same section; unresolved pronoun openings, reference sections and list items are
+skipped. The article title and section stay visible alongside the text. This is sourced
+discovery content, not a guarantee of editorial-quality trivia or AI-generated summaries.
+Changing language may select a different passage because Wikipedia editions differ.
+
+Article caches (`topic-article:v1:<topic JSON>`) include the requested and fallback names,
+languages, topic kind, country and city coordinates. They refresh after seven days; failed
+refreshes keep only the matching topic's saved article, with a visible notice. Changing city,
+country or species cannot reuse the old topic's cache. An unseen topic without a connection
+shows an unavailable message rather than unrelated content. Failed requests are not cached
+and reopening advances to the next selection. Concurrent requests for the same topic share one
+in-flight promise.
+
+Run the regression tests with `node --test tests/facts.test.mjs` (Node 22.15+, no dependencies).
