@@ -13,8 +13,10 @@ render them.
 | `config.json` as the control panel | One file edits date, theme tokens, backgrounds, origins, characters, affection beats, kickers and thresholds. It is fetched at start (network-first, cached for offline); only the sky reads the cached copy first (see Offline). |
 | Translations apart from config | Every visible text lives in `translations/<language>.json`. Config never holds words, only translation keys (`"kickers.sameSky"`, `"characters.plover"`), so adding a language is one new file plus its code in `config.languages`. |
 | Registry for code, config for choice | Backgrounds need behaviour (the weather one fetches data), so they are JS modules registered in `src/backgrounds/index.js`. Config only picks ids. Characters need no behaviour, so they are pure files (SVG + CSS) referenced by path from config. |
-| Weather in three layers | `src/gateways/weather-gateway.js` is the only module that knows Open-Meteo: it maps every WMO `weather_code` to `SkyCondition` (`clear`, `partly`, `overcast`, `rain`, `snow`), `is_day` to `SkyPhase`, codes 95/96/99 to `thunder`, and sums `rain + showers` (storms fall as showers). `src/services/place-sky.js` owns the `place-sky` cache and the offline estimate. `src/backgrounds/weather-scene.js` is the only DOM side: it paints a `PlaceSky` on a `.weather` element and is the single place that reads the `backgrounds.weather` toggle. Precipitation is millimetres; the falling layer is on when the value is greater than 0, and `rain` sets `--rain-strength` (0 at 0.2 mm, 1 above 3 mm). Thunder is a flag on top of the rain sky, not its own condition. |
-| Closed options as enums | Fixed string sets live in `Object.freeze` maps (`BackgroundMode`, `BackgroundId`, `NightSky`, `SkyPhase`, `SkyCondition`, plus install routes in `install-prompt.js`). Config still stores the string values; JS compares against the enum. |
+| Weather in three layers | `src/gateways/weather-gateway.js` alone knows Open-Meteo and normalizes observations to `PlaceSky`. `src/services/place-sky.js` owns the versioned `place-sky` cache and daylight estimate. `src/backgrounds/weather-scene.js` alone paints the DOM and handles the `backgrounds.weather` toggle. |
+| Independent weather dimensions (2026-10-18) | Replace the exclusive `SkyCondition` enum with continuous cloud coverage, separate rain and snowfall rates, and an independent thunder flag. Cloud cover does not imply precipitation, nor does rain imply 100% cloud cover. `clear`, `partly` and `overcast` add no independent information to a cloud percentage, so they are not stored or used as rendering controls. Rain and snow have separate layers and can coexist. The WMO code identifies thunder (95/96/97/99), not cloud coverage or invented precipitation. Fog codes 45/48 are no longer relabelled as overcast; a dedicated fog effect is outside this change. |
+| Explicit weather units | Follow [Open-Meteo's documented units](https://open-meteo.com/en/docs): `cloud_cover` is %, `rain` and `showers` are mm, `snowfall` is cm, and `current.interval` is seconds. Request `precipitation_unit=mm` explicitly, validate the returned units and values, then normalize accumulated amounts to hourly rates using `3600 / current.interval`. These are interval-average rates, not instantaneous measurements. Never add snowfall depth to liquid rainfall or label snowfall as mm of water. |
+| Closed options as enums | Fixed string sets live in `Object.freeze` maps (`BackgroundMode`, `BackgroundId`, `NightSky`, `SkyPhase`, plus install routes in `install-prompt.js`). Config still stores the string values; JS compares against the enum. |
 | Install prompt kept small | For 7 days after the first visit it can show on every load. Cancel stores `dismissedOn` for today and hides it until the next calendar day. Install (or already standalone) stops it for good. |
 
 ## 2. Module map
@@ -28,7 +30,7 @@ translations/         en.json, es.json, is.json: ui, places, characters, facts, 
 src/
   main.js             composition root: loads config, wires modules, owns the language
   gateways/
-    weather-gateway.js  Open-Meteo adapter: request -> PlaceSky (phase, condition, rain, snowfall, thunder)
+    weather-gateway.js  Open-Meteo adapter: request -> PlaceSky (phase, cloudCoverPct, rainMmPerHour, snowfallCmPerHour, thunder)
     wikipedia-gateway.js  English article sentences per topic, refreshed weekly in localStorage
     translation-gateway.js  MyMemory translation from English, cached per language and text
   services/
@@ -48,7 +50,7 @@ src/
     together.js       one-shot reunion overlay (heart rain) after countdown zero
     install-prompt.js install prompt (7-day window, dismiss until tomorrow)
   utils/
-    enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase, SkyCondition
+    enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase
     stylesheet.js     loadStylesheet(href) -> Promise
     meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
     thresholds.js     findActiveThreshold(entries, remainingMs), shared by the threshold line and backgrounds
@@ -214,13 +216,18 @@ The sky is the one piece that is cache-first. Before any request, `main.js` read
 showed. The fresh config then goes through the same `showSky`, which builds a plan (background id
 plus the context it needs) and only remounts when that plan changed.
 
-Each place's last sky (`phase`, `condition`, `rain`, `snowfall`, `thunder`) is stored in
-`localStorage` (`place-sky:<lat>,<lon>`) by `place-sky.js`. Weather backgrounds paint that stored
+Each place's last sky (`phase`, `cloudCoverPct`, `rainMmPerHour`, `snowfallCmPerHour`, `thunder`) is stored in
+`localStorage` (`place-sky:<lat>,<lon>`) as `{ version: 2, sky }` by `place-sky.js`. Old unversioned
+entries are discarded, not migrated by guessing cloud coverage or an accumulation interval.
+Malformed entries are discarded with a warning. Weather backgrounds paint that stored
 sky with the markup. The forecast request runs in the background and only writes the dataset again
 when the fresh sky differs, so the layers' `transition` plays for day/night (or weather) changes and
 a revisit during the same sky does not replay them. With no stored sky, the default night markup is
 painted first and then fades into the first forecast. When the request fails the service keeps the
-stored sky, or estimates day/night from the place's time zone if nothing was stored. None of this
+stored sky, or estimates day/night from the place's time zone if nothing was stored. In that
+estimate `cloudCoverPct` is `null` (`data-cloud-cover-pct="unknown"`), with no cloud or precipitation
+effect; it is not a measured 0% observation and is never cached as one. API failures and cache
+fallbacks are logged. With weather disabled, the intentional clear-night preset has 0% clouds. None of this
 runs when `backgrounds.weather` is `false`.
 
 The info card shows one "Did you know" fact per day. Each pin builds a deck from its topics
@@ -232,3 +239,43 @@ fact is `deck[dayNumber % deck.length]` with the day counted in the meeting zone
 are translated through MyMemory only when shown and cached per language
 (`translation:<language>:<text>`). With no connection the deck still has the stored sentences and
 translations; if a translation is missing or degenerates into repeated words it falls back to a cold-start fact of the same topic.
+
+## 7. Weather verification and manual QA
+
+The site still has no build step or runtime dependencies. Test tooling requires Node 22.15+,
+npm and Python 3 (the E2E static server):
+
+```sh
+npm ci
+npm exec playwright install chromium
+npm test
+npm run test:e2e
+```
+
+Unit tests assert normalized weather results, combinations, rejected data, cache round-trips and
+offline behavior, not mock call counts. Playwright opens the real page with deterministic API
+responses and checks computed opacity, precipitation patterns, animation, intensity boundaries,
+independent hemispheres, night skies, city lights, disabled weather, cached fallback and reduced
+motion. It also compares the mixed-storm sky to a checked-in visual baseline. No external weather
+availability or analytics is needed for these tests.
+
+Every E2E case prints `[weather QA]` with the API payload and computed rendering, attaches the
+comparison JSON and a screenshot to `playwright-report/`, and saves screenshots in `test-results/`.
+Open the report with `npm exec playwright show-report`. To intentionally update the visual
+baseline after reviewing a design change, run `npm run test:e2e -- --update-snapshots`.
+
+For manual QA, serve the site (for example `python3 -m http.server 4173 --bind 127.0.0.1`), open
+`http://127.0.0.1:4173/?weatherDebug` and inspect the browser console:
+
+- `[weather] API <lat>,<lon>` prints the actual response values and native units, including the
+  timestamp and accumulation interval.
+- `[weather] Painted <lat>,<lon> (after fade)` prints the applied percentages/hourly rates and
+  computed layer opacities and animations after the browser's active transitions finish (normally 2.4 s).
+- Warnings distinguish API failure, a cached observation, an estimate with unknown cloud cover,
+  and discarded legacy caches. A cached render has no new successful API observation; disabled
+  weather intentionally paints a clear night.
+
+For example, `interval=900`, `cloud_cover=40`, `rain=0.25`, `showers=0.5`, `snowfall=0.5` becomes
+40% coverage, 3 mm/h rain and 2 cm/h snowfall. By day that paints cloud-cover opacity 0.28,
+cloud-veil opacity 0.24, rain opacity 0.88 and snow opacity 0.55, simultaneously. Without the query
+parameter, diagnostic tables and transition inspection are disabled.

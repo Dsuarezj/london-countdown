@@ -41,6 +41,6 @@
   transform: scaleY(-1);
 }
 
-.sky--origin-weather .hemisphere--south :is(.veil, .thunder) {
+.sky--origin-weather .hemisphere--south :is(.cloud-veil, .thunder) {
   scale: 1 -1;
 }
