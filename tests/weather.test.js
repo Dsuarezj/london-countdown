@@ -102,6 +102,11 @@ test("invalid observations and unexpected units fail explicitly", async () => {
   }
 });
 
+test("moderate rain code raises a light 15-minute sample to moderate intensity", async () => {
+  serveWeather({ weather_code: 63, cloud_cover: 100, rain: 0.1 });
+  assert.equal((await requestPlaceSky(place)).rainMmPerHour, 2.5);
+});
+
 test("HTTP failures are not presented as clear weather", async () => {
   mock.method(globalThis, "fetch", async () => new Response(null, { status: 503 }));
   await assert.rejects(requestPlaceSky(place), /503/);
