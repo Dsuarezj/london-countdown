@@ -106,7 +106,7 @@
 /* --- light and cloud coverage --- */
 
 .weather[data-phase="day"] .daylight { opacity: 1; }
-.weather[data-phase="day"] .cloud-cover { opacity: calc(var(--day-cloud-cover) * var(--cloud-cover)); }
+.weather[data-phase="day"] .cloud-cover { opacity: calc((var(--day-cloud-cover) + .25 * var(--rain-strength)) * var(--cloud-cover)); }
 .weather[data-phase="day"] .cloud-veil { opacity: calc(var(--day-cloud-veil) * var(--cloud-cover)); }
 
 .weather[data-phase="night"] .stars { filter: opacity(calc(1 - .72 * var(--cloud-cover))); }
@@ -114,7 +114,7 @@
 
 .weather[data-phase="night"][data-night-sky="aurora"] .aurora-field { opacity: calc(.92 - .58 * var(--cloud-cover)); }
 
-.weather[data-phase="night"] .cloud-cover { opacity: calc(var(--night-cloud-cover) * var(--cloud-cover)); }
+.weather[data-phase="night"] .cloud-cover { opacity: calc((var(--night-cloud-cover) + .25 * var(--rain-strength)) * var(--cloud-cover)); }
 .weather[data-phase="night"] .cloud-veil { opacity: calc(var(--night-cloud-veil) * var(--cloud-cover)); }
 
 /* --- precipitation --- */

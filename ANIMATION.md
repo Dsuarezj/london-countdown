@@ -174,8 +174,8 @@ The `.weather` component (`weather-scene.js` + `weather-scene.css`) stacks
 and reacts to `data-phase`, `data-cloud-cover-pct`, `data-rain-mm-per-hour`,
 `data-snowfall-cm-per-hour` and `data-thunder`:
 
-- **Clouds** use `c = cloudCoverPct / 100` through `--cloud-cover`. Cover opacity is `0.7c` by day
-  and `0.48c` by night; veil opacity is `0.60c` by day and `0.69c` by night. The cover tints the
+- **Clouds** use `c = cloudCoverPct / 100` through `--cloud-cover`. Cover opacity is `(0.7 + 0.25r)c` by day
+  and `(0.48 + 0.25r)c` by night, where `r` is the rain strength (0–1), so rain darkens the sky without hiding the daylight; veil opacity is `0.60c` by day and `0.69c` by night. The cover tints the
   atmosphere and the veil adds drifting texture: complementary layers, not competing weather
   states. These linear opacity curves are an artistic approximation, not a measurement of cloud
   thickness or an exact spatial coverage mask. Rain never forces a higher cloud percentage.

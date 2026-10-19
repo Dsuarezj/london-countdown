@@ -60,9 +60,9 @@ async function recordRendering(scene, current, testInfo) {
 const scenarios = [
   { name: "clear day", current: { cloud_cover: 0 }, cloud: "0", veil: "0", rain: "0", snow: "0", thunder: "0" },
   { name: "overcast without precipitation", current: { cloud_cover: 100, weather_code: 3 }, cloud: "0.7", veil: "0.6", rain: "0", snow: "0", thunder: "0" },
-  { name: "rain with openings in the clouds", current: { cloud_cover: 40, weather_code: 61, rain: 0.25, showers: 0.5 }, cloud: "0.28", veil: "0.24", rain: "0.88", snow: "0", thunder: "0" },
+  { name: "rain with openings in the clouds", current: { cloud_cover: 40, weather_code: 61, rain: 0.25, showers: 0.5 }, cloud: "0.38", veil: "0.24", rain: "0.88", snow: "0", thunder: "0" },
   { name: "snow without rain", current: { cloud_cover: 80, weather_code: 73, snowfall: 0.5 }, cloud: "0.56", veil: "0.48", rain: "0", snow: "0.55", thunder: "0" },
-  { name: "rain, snow and thunder together", current: { cloud_cover: 100, weather_code: 97, rain: 0.75, snowfall: 0.5 }, cloud: "0.7", veil: "0.6", rain: "0.88", snow: "0.55", thunder: "0.55" },
+  { name: "rain, snow and thunder together", current: { cloud_cover: 100, weather_code: 97, rain: 0.75, snowfall: 0.5 }, cloud: "0.95", veil: "0.6", rain: "0.88", snow: "0.55", thunder: "0.55" },
   { name: "rain code with zero precipitation", current: { cloud_cover: 40, weather_code: 61 }, cloud: "0.28", veil: "0.24", rain: "0", snow: "0", thunder: "0" }
 ];
 
@@ -142,7 +142,7 @@ test("a cached observation remains visible when the API is unavailable", async (
   await expect(scene.locator(".rain")).toHaveCSS("opacity", "0.88");
   await page.route("https://api.open-meteo.com/**", (route) => route.fulfill({ status: 503 }));
   await page.reload();
-  await expect(scene.locator(".cloud-cover")).toHaveCSS("opacity", "0.28");
+  await expect(scene.locator(".cloud-cover")).toHaveCSS("opacity", "0.38");
   await expect(scene.locator(".rain")).toHaveCSS("opacity", "0.88");
   await expect(scene.locator(".snow")).toHaveCSS("opacity", "0.55");
   await expect(scene.locator(".thunder")).toHaveCSS("opacity", "0.55");
