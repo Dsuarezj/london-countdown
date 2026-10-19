@@ -182,7 +182,7 @@ and reacts to `data-phase`, `data-cloud-cover-pct`, `data-rain-mm-per-hour`,
 - **Night sky**: stars use `filter: opacity(1 - 0.72c)` and aurora opacity is `0.92 - 0.58c`.
   The nonzero minima intentionally preserve the decorative night sky. City lights remain fully
   visible at night, independent of clouds above them.
-- **Rain / snow**: positive hourly rates enable independent falling layers, so mixed precipitation
+- **Rain / snow**: positive hourly rates enable independent falling layers (snow is a tiled inline-SVG of six-armed dendritic crystals with side branches and a hexagonal core, drawn in two parallax layers), so mixed precipitation
   stays visible. Rain is mm/h; snowfall is cm/h, not liquid-equivalent mm. `--rain-strength` is
   `clamp((rainMmPerHour - 0.2) / 2.8, 0, 1)` and densifies and sharpens the drops. Light positive
   rain remains visible at strength 0 (opacity 0.28); heavy rain saturates at opacity 0.88.
