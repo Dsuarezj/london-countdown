@@ -189,15 +189,15 @@ The `.weather` component (`weather-scene.js` + `weather-scene.css`) stacks
 and reacts to `data-phase`, `data-cloud-cover-pct`, `data-rain-mm-per-hour`,
 `data-snowfall-cm-per-hour` and `data-thunder`:
 
-- **Clouds** use `c = cloudCoverPct / 100` through `--cloud-cover`. Cover opacity is `0.7c` by day
-  and `0.48c` by night; veil opacity is `0.60c` by day and `0.69c` by night. The cover tints the
+- **Clouds** use `c = cloudCoverPct / 100` through `--cloud-cover`. Cover opacity is `(0.7 + 0.25r)c` by day
+  and `(0.48 + 0.25r)c` by night, where `r` is the rain strength (0–1), so rain darkens the sky without hiding the daylight; veil opacity is `0.60c` by day and `0.69c` by night. The cover tints the
   atmosphere and the veil adds drifting texture: complementary layers, not competing weather
   states. These linear opacity curves are an artistic approximation, not a measurement of cloud
   thickness or an exact spatial coverage mask. Rain never forces a higher cloud percentage.
 - **Night sky**: stars use `filter: opacity(1 - 0.72c)` and aurora opacity is `0.92 - 0.58c`.
   The nonzero minima intentionally preserve the decorative night sky. City lights remain fully
   visible at night, independent of clouds above them.
-- **Rain / snow**: positive hourly rates enable independent falling layers, so mixed precipitation
+- **Rain / snow**: positive hourly rates enable independent falling layers (snow is a tiled inline-SVG of six-armed dendritic crystals with side branches and a hexagonal core, drawn in two parallax layers), so mixed precipitation
   stays visible. Rain is mm/h; snowfall is cm/h, not liquid-equivalent mm. `--rain-strength` is
   `clamp((rainMmPerHour - 0.2) / 2.8, 0, 1)` and densifies and sharpens the drops. Light positive
   rain remains visible at strength 0 (opacity 0.28); heavy rain saturates at opacity 0.88.

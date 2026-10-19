@@ -2,6 +2,8 @@ import { SkyPhase } from "@/utils/enums.js";
 
 const FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
 const THUNDERSTORM_CODES = [95, 96, 97, 99];
+// WMO rain intensity lower bounds (mm/h): the 15-minute sample can under-report what the code classifies.
+const MIN_RAIN_MM_PER_HOUR_BY_CODE = { 63: 2.5, 65: 7.6, 81: 2.5, 82: 7.6 };
 const WEATHER_DEBUG = new URLSearchParams(globalThis.location?.search).has("weatherDebug");
 
 export async function requestPlaceSky({ latitude, longitude }) {
@@ -31,7 +33,7 @@ export async function requestPlaceSky({ latitude, longitude }) {
   return {
     phase: current.is_day ? SkyPhase.DAY : SkyPhase.NIGHT,
     cloudCoverPct: current.cloud_cover,
-    rainMmPerHour: (current.rain + current.showers) * intervalsPerHour,
+    rainMmPerHour: Math.max((current.rain + current.showers) * intervalsPerHour, MIN_RAIN_MM_PER_HOUR_BY_CODE[current.weather_code] ?? 0),
     snowfallCmPerHour: current.snowfall * intervalsPerHour,
     thunder: THUNDERSTORM_CODES.includes(current.weather_code)
   };
