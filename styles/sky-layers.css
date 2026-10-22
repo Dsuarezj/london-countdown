@@ -5,39 +5,66 @@
 }
 
 .aurora {
+  --aurora-highlight: color-mix(in srgb, var(--aurora-mint) 72%, #f0ffda);
   position: absolute;
-  inset: -14% -40% auto -40%;
-  height: 56%;
-  filter: blur(30px);
-  opacity: .5;
+  inset: -4% -12% auto;
+  width: 124%;
+  height: 76%;
+  overflow: visible;
+  filter: blur(7px);
+  opacity: .95;
   mix-blend-mode: screen;
   transform-origin: 50% 0;
+  mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+}
+
+.aurora__veil {
+  opacity: .32;
+}
+
+.aurora__folds {
+  transform-origin: 60% 0;
+  animation: aurora-fold 17s ease-in-out infinite;
 }
 
 .aurora--one {
-  background: linear-gradient(100deg, transparent 10%, var(--aurora-mint) 35%, transparent 55%, var(--aurora-teal) 75%, transparent 92%);
+  left: -22%;
+  width: 136%;
   animation: aurora-drift 26s ease-in-out infinite;
 }
 
 .aurora--two {
-  background: linear-gradient(75deg, transparent 18%, var(--aurora-violet) 45%, transparent 70%);
-  height: 44%;
-  opacity: .4;
+  top: -20%;
+  left: -36%;
+  rotate: 12deg;
+  opacity: .42;
+  filter: blur(12px);
   animation: aurora-drift 34s ease-in-out infinite reverse;
 }
 
 .aurora--three {
-  background: linear-gradient(120deg, transparent 25%, var(--aurora-teal) 50%, transparent 68%);
-  height: 34%;
-  opacity: .3;
-  animation: aurora-drift 19s ease-in-out infinite;
+  top: -18%;
+  left: 8%;
+  height: 62%;
+  rotate: -16deg;
+  opacity: .26;
+  filter: blur(16px);
+  animation: aurora-drift 21s ease-in-out -8s infinite;
 }
 
+.aurora--two .aurora__folds { animation-duration: 23s; animation-delay: -9s; }
+.aurora--three .aurora__folds { animation-duration: 19s; animation-delay: -5s; }
+
 @keyframes aurora-drift {
-  0%   { transform: translate3d(-6%, -4%, 0) skewX(-8deg) scaleY(1); }
-  35%  { transform: translate3d(5%, 6%, 0) skewX(10deg) scaleY(1.18); }
-  70%  { transform: translate3d(-3%, 2%, 0) skewX(-4deg) scaleY(.92); }
-  100% { transform: translate3d(-6%, -4%, 0) skewX(-8deg) scaleY(1); }
+  0%, 100% { transform: translate3d(-3%, -2%, 0) skewX(-10deg) scaleY(.96); }
+  35%      { transform: translate3d(3%, 3%, 0) skewX(7deg) scaleY(1.1); }
+  70%      { transform: translate3d(-1%, 1%, 0) skewX(-3deg) scaleY(1.02); }
+}
+
+@keyframes aurora-fold {
+  0%, 100% { transform: skewX(-4deg) scaleX(.97); opacity: .72; }
+  50%      { transform: skewX(5deg) scaleX(1.04); opacity: 1; }
 }
 
 .tropics {
@@ -84,6 +111,20 @@
   inset: auto 0 0 0;
   height: 22%;
   background: linear-gradient(180deg, transparent, rgba(6, 15, 29, .5));
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+  .aurora__curtain {
+    transform-box: view-box;
+    transform-origin: 60% 0;
+    transform: scaleX(1.5);
+  }
+}
+
+@media (max-width: 600px) and (max-aspect-ratio: 3/4) {
+  .aurora__curtain {
+    transform: scaleX(2.6);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
