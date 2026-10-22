@@ -171,19 +171,8 @@ so they never scale or skew with the stretched `viewBox`. They open the info car
 Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared primitives in
 `styles/sky-layers.css`:
 
-1. `.aurora--one/two/three` — feathered SVG veils with broad, irregular folds, mint highlights
-   and cyan/violet fading upward into the night. Filled shapes, not evenly spaced lines, give
-   the light depth without a rigid wireframe or a full-sky green wash. `createAuroraLayers`
-   namespaces the gradients and filters per hemisphere. Static anisotropic SVG noise adds
-   irregular, vertically stretched texture and gently displaces the veils' edges.
-   `aurora-drift` moves the veils on separate
-   26 s / 34 s / 21 s cycles; `aurora-fold` softly shears and brightens their folds.
-   The main veil spans 136% of the viewport, reaching farther left while its secondary veil
-   softly fills that side. Reduced motion keeps both the veils and folds static.
-   On portrait screens up to 600 px wide, the inner curtain is horizontally enlarged around
-   its 60% anchor rather than compressing every panoramic fold into the narrow viewport:
-   1.5x for short portrait screens, 2.6x for aspect ratios up to 3:4. The outer drift and inner
-   fold animations remain independent; landscape and desktop retain their original geometry.
+1. `.aurora--one/two/three` — linear gradients sheared by `aurora-drift` (`skewX` + `scaleY`).
+   Different durations (26 s / 34 s / 19 s) stop them moving in lockstep.
 2. `.tropics` — three radial gradients in the southern half.
 3. `.stars` — one element whose `background-image` is a list of tiny `radial-gradient` dots.
 4. `.horizon` — a dark gradient that grounds the bottom edge.
@@ -194,16 +183,6 @@ Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared p
 | `origin-weather` | One `.weather.hemisphere` per origin (north on top, south at the bottom, mirrored with `--sky-direction: 0deg` and `scale: 1 -1` on clouds and thunder) plus `data-night-sky`. Night keeps aurora and/or stars as a base layer; clouds, rain, snow and thunder fade in on top and only dim that night sky |
 | `converging` | Last days: aurora reaches lower, tropics rise higher, a warm glow where they meet |
 | `meeting-city` | Meeting day: one `.weather` scene for the meeting city. No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
-
-`origin-weather` has its own dark base instead of the tropical pink gradient. The northern
-scene uses cool blue-black with a faint teal atmosphere; France uses navy/indigo with a very
-faint warm glow near the bottom. Two overlapping star tiles with different sizes and offsets
-add small stars without duplicating the same pattern between origins. France has denser,
-brighter tiles plus star-only, schematic Cassiopeia and Cygnus patterns, appropriate for autumn
-evenings at its latitude. The constellation SVGs preserve their proportions on small screens
-and counter-flip the southern star layer so their patterns are not mirrored. These are
-decorative night skies, not time-accurate astronomical star charts. Weather still controls
-daylight and cloud dimming for the entire star field, including the constellations.
 
 The `.weather` component (`weather-scene.js` + `weather-scene.css`) stacks
 `.daylight → .cloud-cover → (background layers) → .cloud-veil → .thunder → .rain → .snow`
