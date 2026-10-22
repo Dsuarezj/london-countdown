@@ -8,9 +8,7 @@
 .sky--origin-weather .hemisphere--north {
   top: 0;
   z-index: 1;
-  background:
-    radial-gradient(ellipse at 65% 20%, rgba(30, 85, 99, .12), transparent 65%),
-    linear-gradient(180deg, #020710 0%, #071729 100%);
+  background: linear-gradient(180deg, #03080f 0%, var(--deep) 100%);
   mask-image: linear-gradient(180deg, #000 50%, rgba(0, 0, 0, .9) 60%, rgba(0, 0, 0, .6) 75%, rgba(0, 0, 0, .25) 88%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, #000 50%, rgba(0, 0, 0, .9) 60%, rgba(0, 0, 0, .6) 75%, rgba(0, 0, 0, .25) 88%, transparent 100%);
 }
@@ -19,9 +17,7 @@
   --sky-direction: 0deg;
   --sun-position: 16% 100%;
   bottom: 0;
-  background:
-    radial-gradient(ellipse at 36% 100%, rgba(158, 134, 104, .06), transparent 58%),
-    linear-gradient(0deg, #11192a 0%, #080e1e 55%, #071222 100%);
+  background: linear-gradient(0deg, #5c1f3c 0%, #2b1430 50%, var(--deep) 100%);
   mask-image: linear-gradient(0deg, #000 85%, transparent 100%);
   -webkit-mask-image: linear-gradient(0deg, #000 85%, transparent 100%);
 }
@@ -45,82 +41,6 @@
   transform: scaleY(-1);
 }
 
-.sky--origin-weather .stars::before,
-.sky--origin-weather .stars::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-repeat: repeat;
-}
-
-.sky--origin-weather .stars::before {
-  background-image:
-    radial-gradient(.8px .8px at 17px 29px, rgba(208, 226, 255, .7) 45%, transparent),
-    radial-gradient(.6px .6px at 83px 101px, rgba(255, 255, 255, .5) 45%, transparent),
-    radial-gradient(1px 1px at 146px 63px, rgba(227, 236, 255, .65) 45%, transparent),
-    radial-gradient(.7px .7px at 55px 187px, rgba(255, 255, 255, .45) 45%, transparent),
-    radial-gradient(.6px .6px at 179px 214px, rgba(196, 218, 255, .6) 45%, transparent);
-  background-size: 197px 239px;
-}
-
-.sky--origin-weather .stars::after {
-  background-image:
-    radial-gradient(.7px .7px at 41px 71px, rgba(255, 255, 255, .5) 45%, transparent),
-    radial-gradient(1.1px 1.1px at 213px 137px, rgba(255, 238, 211, .6) 45%, transparent),
-    radial-gradient(.6px .6px at 127px 252px, rgba(210, 226, 255, .55) 45%, transparent),
-    radial-gradient(.8px .8px at 283px 37px, rgba(255, 255, 255, .65) 45%, transparent);
-  background-size: 311px 293px;
-}
-
-.sky--origin-weather .hemisphere--south .stars::before {
-  background-image:
-    radial-gradient(.9px .9px at 9% 17%, rgba(208, 226, 255, .8) 45%, transparent),
-    radial-gradient(.7px .7px at 38% 63%, rgba(255, 255, 255, .6) 45%, transparent),
-    radial-gradient(1.1px 1.1px at 78% 31%, rgba(227, 236, 255, .8) 45%, transparent),
-    radial-gradient(.8px .8px at 23% 84%, rgba(255, 255, 255, .65) 45%, transparent),
-    radial-gradient(.7px .7px at 91% 72%, rgba(196, 218, 255, .7) 45%, transparent),
-    radial-gradient(.9px .9px at 57% 8%, rgba(255, 238, 217, .7) 45%, transparent),
-    radial-gradient(.6px .6px at 64% 47%, rgba(224, 234, 255, .6) 45%, transparent),
-    radial-gradient(.8px .8px at 52% 94%, rgba(255, 255, 255, .7) 45%, transparent);
-  background-size: 173px 157px;
-  background-position: 67px 97px;
-}
-
-.sky--origin-weather .hemisphere--south .stars::after {
-  background-image:
-    radial-gradient(.8px .8px at 13% 24%, rgba(255, 255, 255, .65) 45%, transparent),
-    radial-gradient(1.2px 1.2px at 69% 47%, rgba(255, 238, 211, .75) 45%, transparent),
-    radial-gradient(.7px .7px at 41% 86%, rgba(210, 226, 255, .7) 45%, transparent),
-    radial-gradient(.9px .9px at 91% 13%, rgba(255, 255, 255, .8) 45%, transparent),
-    radial-gradient(.7px .7px at 29% 56%, rgba(207, 224, 255, .6) 45%, transparent),
-    radial-gradient(.8px .8px at 81% 79%, rgba(255, 255, 255, .65) 45%, transparent);
-  background-size: 257px 229px;
-  background-position: -113px 53px;
-}
-
-.sky--origin-weather .constellation {
-  position: absolute;
-  width: clamp(110px, 22vw, 300px);
-  height: auto;
-  overflow: visible;
-  fill: #e0ebff;
-  filter: drop-shadow(0 0 2px rgba(195, 219, 255, .35));
-  transform: scaleY(-1);
-}
-
-.sky--origin-weather .constellation--cassiopeia {
-  left: 8%;
-  top: 26%;
-}
-
-.sky--origin-weather .constellation--cygnus {
-  right: 12%;
-  top: 0;
-}
-
 .sky--origin-weather .hemisphere--south :is(.cloud-veil, .thunder) {
   scale: 1 -1;
-}
-.sky--origin-weather {
-  background: linear-gradient(180deg, #020713 0%, #071222 48%, #090f20 76%, #10182a 100%);
 }

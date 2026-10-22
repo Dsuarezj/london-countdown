@@ -1,6 +1,10 @@
 .sky--converging .aurora {
-  margin-top: 4%;
-  height: 86%;
+  inset: 2% -40% auto -40%;
+  height: 62%;
+}
+
+.sky--converging .aurora--two {
+  height: 54%;
 }
 
 .sky--converging .tropics {
