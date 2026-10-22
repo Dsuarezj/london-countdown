@@ -171,7 +171,7 @@ so they never scale or skew with the stretched `viewBox`. They open the info car
 Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared primitives in
 `styles/sky-layers.css`:
 
-1. `.aurora--one/two/three` — linear gradients sheared by `aurora-drift` (`skewX` + `scaleY`).
+1. `.aurora--one/two/three` — gradients sheared by `aurora-drift` (`skewX` + `scaleY`). The `origin-weather` background uses softly blurred elliptical bands instead of vertical gradients, keeping the same three elements and animation timings.
    Different durations (26 s / 34 s / 19 s) stop them moving in lockstep.
 2. `.tropics` — three radial gradients in the southern half.
 3. `.stars` — one element whose `background-image` is a list of tiny `radial-gradient` dots.

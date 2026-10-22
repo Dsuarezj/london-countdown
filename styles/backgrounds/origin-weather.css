@@ -23,12 +23,26 @@
 }
 
 .sky--origin-weather .aurora {
-  filter: blur(22px);
-  opacity: .3;
+  inset: 0 -20% auto;
+  filter: blur(12px);
+  opacity: .38;
 }
 
 .sky--origin-weather .aurora--one {
-  background: linear-gradient(100deg, transparent 10%, rgba(95, 242, 191, .5) 35%, transparent 55%, rgba(47, 212, 212, .42) 75%, transparent 92%);
+  height: 34%;
+  background: radial-gradient(ellipse 90% 100% at 45% -18%, transparent 48%, rgba(95, 242, 191, .12) 57%, rgba(95, 242, 191, .65) 68%, transparent 74%);
+}
+
+.sky--origin-weather .aurora--two {
+  height: 30%;
+  opacity: .18;
+  background: radial-gradient(ellipse 85% 100% at 65% -12%, transparent 48%, rgba(139, 107, 255, .45) 64%, transparent 73%);
+}
+
+.sky--origin-weather .aurora--three {
+  height: 40%;
+  opacity: .22;
+  background: radial-gradient(ellipse 100% 100% at 25% -20%, transparent 48%, rgba(47, 212, 212, .5) 66%, transparent 73%);
 }
 
 .sky--origin-weather .aurora-field {

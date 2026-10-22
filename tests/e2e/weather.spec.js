@@ -98,6 +98,23 @@ for (const scenario of scenarios) {
   });
 }
 
+test("clear mobile nights keep curved aurora ribbons animated without a cloud veil", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const current = { cloud_cover: 0, is_day: 0 };
+  const scene = await showWeather(page, current);
+  await expect(scene.locator(".cloud-cover")).toHaveCSS("opacity", "0");
+  await expect(scene.locator(".cloud-veil")).toHaveCSS("opacity", "0");
+  await expect(scene.locator(".aurora-field")).toHaveCSS("opacity", "0.92");
+  await expect(scene.locator(".stars")).toHaveCSS("filter", "opacity(1)");
+  for (const [index, duration] of ["26s", "34s", "19s"].entries()) {
+    const ribbon = scene.locator(".aurora").nth(index);
+    await expect(ribbon).toHaveCSS("background-image", /radial-gradient/);
+    await expect(ribbon).toHaveCSS("animation-name", "aurora-drift");
+    await expect(ribbon).toHaveCSS("animation-duration", duration);
+  }
+  await recordRendering(scene, current, testInfo);
+});
+
 test("night clouds dim the aurora and stars independently from precipitation", async ({ page }, testInfo) => {
   const current = { cloud_cover: 100, is_day: 0 };
   const scene = await showWeather(page, current);
