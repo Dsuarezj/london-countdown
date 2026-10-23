@@ -18,14 +18,6 @@
     "installInvite": "Keep the countdown on your home screen",
     "installIos": "Tap Share, then “Add to Home Screen”",
     "installAction": "Install",
-    "didYouKnow": "Did you know…?",
-    "factSource": "Original curiosity and contributors on Wikipedia",
-    "factLoading": "Looking up published curiosities…",
-    "factUnavailable": "Content could not be loaded for this topic. Reopen the card to try another with a connection.",
-    "factOriginalLanguage": "The source publishes this curiosity in {language}.",
-    "factSaved": "The source could not be reached; showing a saved curiosity.",
-    "factEmpty": "No published curiosities were found about this bird, city or country. Article fragments are not used as substitutes.",
-    "factExhausted": "You have seen the curiosities found in this search; starting another round.",
     "currentLocation": "Current location: {place}"
   },
   "places": {

@@ -31,9 +31,7 @@ src/
   main.js             composition root: loads config, wires modules, owns the language
   gateways/
     weather-gateway.js  Open-Meteo adapter: request -> PlaceSky (phase, cloudCoverPct, rainMmPerHour, snowfallCmPerHour, thunder)
-    wikipedia-gateway.js  topic resolution and complete published Did you know archive hooks
   services/
-    facts.js          live published curiosities per click, seen-item selection and offline backup
     place-sky.js      last sky per place in localStorage, fresh load with offline fallback
     cached-json.js    loadCachedJson(url): network first, localStorage copy when offline
     config.js         loadConfig, applyThemeTokens
@@ -43,7 +41,7 @@ src/
     headline.js       daily kicker, threshold line under the countdown, city/date/time label
     countdown.js      days/hours/minutes/seconds or the reunion message
     origin-pins.js    pin labels + click -> info card
-    info-card.js      <dialog>: name, scientific name, current location, fact + topic link
+    info-card.js      <dialog>: current location from config and the trip phase
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
     meeting.js        journey -> arrived -> affection beats
     together.js       one-shot reunion overlay (heart rain) after countdown zero
@@ -93,8 +91,8 @@ the only place that knows about all of them.
 | `backgrounds.fixed` / `random.pool` / `countdown[].background` / `meetingDay` | `BackgroundId` values: `"aurora-tropics"`, `"origin-weather"`, `"converging"`, `"meeting-city"`. |
 | `backgrounds.countdown` | `[{ withinHours, background }]`. When the remaining time is inside a window, that background wins over the mode. The smallest matching window wins. |
 | `backgrounds.meetingDay` | Background for the calendar day of the meeting (in the meeting zone). Highest priority. Empty string disables it. |
-| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city` and `label` (translation keys of the city and country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). City and country discovery topics derive from these same keys, not separate article or fact lists. |
-| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path), `scientificName` (also the Wikipedia species lookup) and `text`: translation key of an object with `name` and `ariaLabel`, shown in the info card. |
+| `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city` and `label` (translation keys of the city and country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). |
+| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path) and `text`: translation key of an object with `name` and `ariaLabel`, used for the bird's accessible label. |
 | `affection` | `stylesheet`, `beats` (body classes defined in that stylesheet) and `intervalMs`. Beat length comes from `--beat-duration` in the stylesheet. |
 | `together` | Id of the one-shot reunion overlay (`heart-rain`). Empty string disables it. Stylesheet and player live together in `src/ui/together.js`. |
 | `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
@@ -131,7 +129,7 @@ placement CSS (direction via `--sky-direction` / `--sun-position`, mirroring, in
 
 **New character**: create `characters/<id>/<id>.svg` and `<id>.css`, add it to `config.characters`,
 add its `name` / `ariaLabel` under `characters.<id>` in every translation file,
-set its `scientificName`, and point an origin at it. No fact lists are needed. The SVG and CSS must respect the rig contract in `ANIMATION.md`
+and point an origin at it. The SVG and CSS must respect the rig contract in `ANIMATION.md`
 (wing groups, facing direction, journey keyframes ending at `translate(0, 0)`).
 
 **New together animation**: add `{ stylesheet, play }` under that id in `src/ui/together.js`, add
@@ -169,13 +167,11 @@ JavaScript, and nothing measures the viewport.
 The card is a native `<dialog>` opened with `showModal()`: focus trap, Escape to close, backdrop
 and top layer come for free, so it never fights the stage's stacking or overflow rules.
 
-Content, top to bottom: character `name`, `scientificName`, current location
-(`ui.currentLocation` with `{place}` → translated `city, country`, no bird name),
-`ui.didYouKnow`, the matched topic and source name, a complete published curiosity, optional
-source-language/offline/repetition notices, and a `ui.factSource` link to the original archive revision
-with its CC BY-SA 4.0 license link.
-Loading and unavailable-content messages are explicit. Request numbering prevents a delayed
-response from overwriting a newer pin or language selection.
+The only content is the current location (`ui.currentLocation` with `{place}`):
+translated `city, country` from the selected origin before and after the trip, or the meeting
+city during the stay. The location heading also provides the dialog's accessible name.
+Rendering is synchronous and uses only config and the app dictionaries, with no external requests
+or card-specific storage. The open card updates on language and trip-phase changes.
 
 - **Phones (default)**: bottom sheet. Full width, `max-height: min(78dvh, 34rem)`, internal scroll
   with `overscroll-behavior: contain`, bottom padding includes the home indicator safe area. A
@@ -216,8 +212,7 @@ window, the worker probes the origin. With no connection it serves the cached co
 when reachable it uses network-first (`cache: "no-store"`) and refreshes the cache. Navigations
 fall back to `index.html`. The precache bypasses the HTTP cache (`cache: "reload"`) and the worker
 is registered with `updateViaCache: "none"`, so a deploy is visible on the next load.
-Cross-origin requests skip the service worker: Open-Meteo (weather) and Wikipedia (discovery
-content). Wikipedia content is cached separately in localStorage; no translation service is used.
+Cross-origin requests, including Open-Meteo weather requests, skip the service worker.
 
 `index.html` lists every module with `<link rel="modulepreload">`, so the whole module graph is
 requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.
@@ -248,53 +243,6 @@ estimate `cloudCoverPct` is `null` (`data-cloud-cover-pct="unknown"`), with no c
 effect; it is not a measured 0% observation and is never cached as one. API failures and cache
 fallbacks are logged. With weather disabled, the intentional clear-night preset has 0% clouds. None of this
 runs when `backgrounds.weather` is `false`.
-
-### Live published curiosities
-
-The content source is the English Wikipedia
-[Did you know archive](https://en.wikipedia.org/wiki/Wikipedia:Did_you_know_archive), not
-encyclopedia article paragraphs or a local fact deck. DYK hooks are complete, editor-written
-curiosities whose claims are sourced in their linked articles. The gateway preserves the whole
-published hook (including parentheticals), only flattening HTML formatting/whitespace. It does
-not cut sentences, summarise prose, translate automatically, or fall back to article extracts.
-The archive revision and CC BY-SA 4.0 links provide source/contributor attribution and licensing.
-
-`createFactTopics` derives the species from `scientificName`, and city/country from the existing
-English place labels (`translate(key, "en")`), irrespective of the UI language. English labels
-must remain available for this source. No additional topic titles, fact lists, credentials or
-backend are needed. As before, changing location means updating its labels, coordinates and
-time zone. City resolution follows redirects and requires coordinates within 75 km of the
-configured location. A mismatched city title can search five city/country candidates with
-matching names and coordinates; disambiguation pages are never accepted.
-
-Every pin opening issues fresh, bounded, `cache: "no-store"` API requests. Selection starts
-with species, city or country (`selectionIndex % 3`), resolves its canonical English title,
-searches up to two monthly DYK archives using `linksto:"<title>"`, and parses their HTML with
-a detached DOMParser. Only complete hook list items that link to that exact article are kept;
-navigation, unrelated items, incomplete hooks and nested lists are rejected. Search offsets
-advance by two archives per round (within the first 500 results), restarting when an offset
-has no results. Offline/rate-limit/HTTP/API errors are distinguished from an empty search.
-
-A pin remembers seen hook texts during this page visit and selects an unseen result. If the
-current topic has no matches or all returned hooks were seen, it tries the pin's other topics.
-The source does not cover every city or species: related country content may be shown, but
-unrelated topics and generic paragraphs are never substituted. No matching hooks shows an
-explicit empty state; exhausting the returned results can repeat a hook with a visible notice.
-The search is bounded, not an exhaustive crawl of all archives. Counters/history reset on reload.
-Changing the UI language keeps the currently displayed hook without a new request; the
-English source language is explicitly labelled in Spanish and Icelandic.
-
-`published-facts:v1:<topic JSON>` saves at most 20 results from the latest successful batch
-per exact topic, including its kind, English title, country and city coordinates. Saved content
-is used **only when a source request fails**, never as the normal online data source or to
-replace a successful empty search. This also prevents a moved bird from inheriting the previous
-city's backup. Failed requests aren't saved; unavailable/malformed storage is logged.
-The former `topic-article:v1:` paragraph caches are no longer read.
-
-`npm test` includes the curiosity service/gateway regression tests. Browser tests exercise the
-real HTML parser, fresh source requests, per-click changes, language rerenders, changed
-locations, attribution, missing coverage and offline backup:
-`npm run test:e2e -- tests/e2e/facts.spec.js`.
 
 ## 7. Weather verification and manual QA
 

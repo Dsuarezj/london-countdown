@@ -18,14 +18,6 @@
     "installInvite": "Hafðu niðurtalninguna á heimaskjánum",
     "installIos": "Ýttu á Deila og svo „Bæta á heimaskjá“",
     "installAction": "Setja upp",
-    "didYouKnow": "Vissir þú…?",
-    "factSource": "Upprunalegur fróðleiksmoli og höfundar á Wikipedia",
-    "factLoading": "Leita að birtum fróðleiksmolum…",
-    "factUnavailable": "Ekki tókst að sækja efni um þetta viðfangsefni. Opnaðu spjaldið aftur með nettengingu til að prófa annað.",
-    "factOriginalLanguage": "Heimildin birtir þennan fróðleiksmola á {language}.",
-    "factSaved": "Ekki náðist í heimildina; vistaður fróðleiksmoli er sýndur.",
-    "factEmpty": "Engir birtir fróðleiksmolar fundust um þennan fugl, borg eða land. Greinarbútar eru ekki notaðir í staðinn.",
-    "factExhausted": "Þú hefur séð fróðleiksmolana úr þessari leit; ný umferð hefst.",
     "currentLocation": "Núverandi staðsetning: {place}"
   },
   "places": {
