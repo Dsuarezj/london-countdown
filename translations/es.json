@@ -18,7 +18,10 @@
     "installInvite": "Guarda la cuenta atrás en tu pantalla de inicio",
     "installIos": "Toca Compartir y luego “Añadir a pantalla de inicio”",
     "installAction": "Instalar",
-    "currentLocation": "Ubicación actual: {place}"
+    "currentLocation": "Ubicación actual: {place}",
+    "didYouKnow": "¿Sabías que…?",
+    "factLoading": "Cargando curiosidades…",
+    "factUnavailable": "El catálogo de curiosidades no está disponible o no corresponde a esta configuración."
   },
   "places": {
     "london": "Londres",

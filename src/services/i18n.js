@@ -26,12 +26,12 @@ function resolveInitialLanguage(languages) {
 }
 
 export async function createTranslator(languages) {
-  const dictionaries = Object.fromEntries(await Promise.all(languages.map(loadDictionary)));
+  const dictionaries = Object.fromEntries(await Promise.all([...new Set(["en", ...languages])].map(loadDictionary)));
   const fallbackLanguage = languages[0];
   let activeLanguage = resolveInitialLanguage(languages);
 
-  function translate(key) {
-    return readPath(dictionaries[activeLanguage], key) ?? readPath(dictionaries[fallbackLanguage], key);
+  function translate(key, language = activeLanguage) {
+    return readPath(dictionaries[language], key) ?? readPath(dictionaries[fallbackLanguage], key);
   }
 
   return {

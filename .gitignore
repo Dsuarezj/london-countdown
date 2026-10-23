@@ -4,3 +4,8 @@ _site/
 node_modules/
 test-results/
 playwright-report/
+.env
+.env.*
+!.env.template
+facts.json
+facts.json.tmp

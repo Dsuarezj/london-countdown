@@ -6,6 +6,7 @@
     "node": ">=22.15"
   },
   "scripts": {
+    "generate:facts": "node --env-file-if-exists=.env scripts/generate-facts.js",
     "test": "node --import ./tests/register-imports.js --test tests/*.test.js",
     "test:e2e": "playwright test"
   },

@@ -18,7 +18,10 @@
     "installInvite": "Hafðu niðurtalninguna á heimaskjánum",
     "installIos": "Ýttu á Deila og svo „Bæta á heimaskjá“",
     "installAction": "Setja upp",
-    "currentLocation": "Núverandi staðsetning: {place}"
+    "currentLocation": "Núverandi staðsetning: {place}",
+    "didYouKnow": "Vissir þú…?",
+    "factLoading": "Hleð fróðleiksmolum…",
+    "factUnavailable": "Fróðleikssafnið er ekki tiltækt eða passar ekki við þessa uppsetningu."
   },
   "places": {
     "london": "London",

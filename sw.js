@@ -1,4 +1,4 @@
-const CACHE_NAME = "trip-countdown-v37";
+const CACHE_NAME = "trip-countdown-v39";
 const NETWORK_PROBE_TIMEOUT_MS = 350;
 const NETWORK_PROBE_TTL_MS = 5000;
 let networkStatus;
@@ -7,6 +7,7 @@ const APP_SHELL = [
   "./",
   "./index.html",
   "./config.json",
+  "./facts.json",
   "./translations/en.json",
   "./translations/es.json",
   "./translations/is.json",
@@ -29,11 +30,13 @@ const APP_SHELL = [
   "./src/services/cached-json.js",
   "./src/services/config.js",
   "./src/utils/enums.js",
+  "./src/utils/fact-catalog.js",
   "./src/utils/stylesheet.js",
   "./src/utils/meeting-time.js",
   "./src/utils/thresholds.js",
   "./src/utils/trip-timeline.js",
   "./src/services/i18n.js",
+  "./src/services/facts.js",
   "./src/ui/headline.js",
   "./src/ui/countdown.js",
   "./src/services/connection.js",
