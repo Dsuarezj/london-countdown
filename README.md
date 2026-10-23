@@ -1,7 +1,7 @@
 # London countdown
 
-Una cuenta atrás para un encuentro, con aves animadas, el tiempo de cada ciudad y curiosidades
-relacionadas con las ubicaciones. Es una aplicación web estática y una PWA: no necesita backend,
+Una cuenta atrás para un encuentro, con aves animadas, el tiempo de cada ciudad y tarjetas
+con la ubicación actual. Es una aplicación web estática y una PWA: no necesita backend,
 compilación ni claves de API.
 
 ## Ejecutar en local
@@ -32,25 +32,25 @@ Edita `config.json` y recarga la página:
 - `origins.north` y `origins.south`: ciudad, país (`label`), coordenadas, zona horaria y ave
   (`character`) de cada origen.
 - `backgrounds`: fondo y activación del tiempo real mediante `weather`.
-- `characters`: archivos SVG/CSS, nombre científico y clave de los textos de cada ave.
+- `characters`: archivos SVG/CSS y clave de los textos de cada ave.
 - `affection`, `together`, `kickers` y `thresholds`: animaciones y mensajes de la cuenta atrás.
 
 Los nombres visibles se resuelven con claves como `places.london` en
 `translations/en.json`, `translations/es.json` y `translations/is.json`. Para añadir un lugar,
 añade su nombre en esos archivos y usa la misma clave en la configuración. Actualiza también
-sus coordenadas y zona horaria. Mantén el nombre en inglés: se usa para buscar las curiosidades.
+sus coordenadas y zona horaria.
 
-El botón del globo cambia el idioma. Cada clic en un pin abre su ficha y busca otra curiosidad.
+El botón del globo cambia el idioma. Cada clic en un pin abre una tarjeta solo con la ubicación
+actual: la ciudad y el país de origen antes y después del viaje, o la ciudad del encuentro
+durante la estancia. Abrir la tarjeta no consulta servicios externos.
 
 ## Conexión y modo sin conexión
 
-El tiempo se consulta en **Open-Meteo** y las curiosidades en el archivo **Did you know? de
-Wikipedia en inglés**. Estas funciones necesitan Internet para obtener contenido nuevo.
-Las curiosidades conservan su idioma original y enlazan a su fuente.
+El tiempo se consulta en **Open-Meteo** y necesita Internet para obtener datos nuevos.
 
 Después de una primera carga con conexión, el service worker guarda los recursos de la app.
-Si falla la red, se utilizan los datos previamente guardados cuando están disponibles; sin
-una curiosidad guardada para los temas configurados, la ficha muestra un aviso.
+Si falla la red, se utilizan los datos previamente guardados cuando están disponibles.
+Las tarjetas de ubicación utilizan la configuración y los textos de la app, también sin conexión.
 
 La PWA y el service worker requieren **HTTPS** o un entorno local como `localhost`/`127.0.0.1`.
 Si necesitas probar desde cero o ves contenido antiguo, elimina los datos del sitio y su
@@ -77,13 +77,6 @@ npm run test:e2e
 Playwright inicia automáticamente el servidor local en el puerto `4173`. No necesitas
 arrancarlo antes. Las pruebas usan respuestas de API controladas, no dependen de la
 disponibilidad de los servicios externos.
-
-Para ejecutar solo las pruebas de curiosidades:
-
-```sh
-node --import ./tests/register-imports.js --test tests/facts.test.js
-npm run test:e2e -- tests/e2e/facts.spec.js
-```
 
 Para abrir el informe de las pruebas de navegador:
 

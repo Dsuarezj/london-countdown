@@ -52,13 +52,11 @@
     "plover": {
       "markup": "characters/plover/plover.svg",
       "stylesheet": "characters/plover/plover.css",
-      "scientificName": "Pluvialis apricaria",
       "text": "characters.plover"
     },
     "hummingbird": {
       "markup": "characters/hummingbird/hummingbird.svg",
       "stylesheet": "characters/hummingbird/hummingbird.css",
-      "scientificName": "Colibri coruscans",
       "text": "characters.hummingbird"
     }
   },

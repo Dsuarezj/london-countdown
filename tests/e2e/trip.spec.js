@@ -67,7 +67,7 @@ test("opening during the stay skips travel and shows hearts before affection", a
   await expect(page.locator("#meetingSchedule")).toBeHidden();
   await expect(page.locator("#tripNote")).toHaveText("Ahora el tiempo se cuenta en momentos juntas.");
   await page.locator(".pin--north").click();
-  await expect(page.locator("#infoCardArrival")).toHaveText("Ubicación actual: Londres");
+  await expect(page.locator("#infoCardLocation")).toHaveText("Ubicación actual: Londres");
 });
 
 test("Sunday at 10 changes to a lasting memory scene without another celebration", async ({ page }) => {
