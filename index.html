@@ -33,6 +33,7 @@
 <link rel="modulepreload" href="src/services/cached-json.js">
 <link rel="modulepreload" href="src/services/config.js">
 <link rel="modulepreload" href="src/services/connection.js">
+<link rel="modulepreload" href="src/services/facts.js">
 <link rel="modulepreload" href="src/services/i18n.js">
 <link rel="modulepreload" href="src/services/place-sky.js">
 <link rel="modulepreload" href="src/ui/characters.js">
@@ -44,6 +45,7 @@
 <link rel="modulepreload" href="src/ui/together.js">
 <link rel="modulepreload" href="src/ui/origin-pins.js">
 <link rel="modulepreload" href="src/utils/enums.js">
+<link rel="modulepreload" href="src/utils/fact-catalog.js">
 <link rel="modulepreload" href="src/utils/meeting-time.js">
 <link rel="modulepreload" href="src/utils/stylesheet.js">
 <link rel="modulepreload" href="src/utils/thresholds.js">
@@ -123,6 +125,10 @@
       <button class="info-card__close" type="submit" data-i18n-aria="ui.close">×</button>
     </form>
     <h2 class="info-card__location" id="infoCardLocation"></h2>
+    <p class="info-card__fact-title" data-i18n="ui.didYouKnow"></p>
+    <p class="info-card__fact-context" id="infoCardFactContext" hidden></p>
+    <p class="info-card__fact" id="infoCardFact" role="status"></p>
+    <p class="info-card__fact-sources" id="infoCardFactSources" hidden></p>
   </div>
 </dialog>
 

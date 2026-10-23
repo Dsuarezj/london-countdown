@@ -65,6 +65,44 @@
   color: var(--card-accent);
 }
 
+.info-card__fact-title {
+  margin-top: 1.3rem;
+  font-size: .62rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--card-accent);
+}
+
+.info-card__fact-context {
+  margin-top: .45rem;
+  font-size: .8rem;
+  color: var(--card-accent);
+}
+
+.info-card__fact {
+  margin-top: .45rem;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.info-card__fact-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .8rem;
+  margin-top: .6rem;
+  font-size: .7rem;
+}
+
+.info-card__fact-sources[hidden] {
+  display: none;
+}
+
+.info-card__fact-sources a {
+  overflow-wrap: anywhere;
+  color: var(--card-accent);
+  text-underline-offset: .2em;
+}
+
 @keyframes sheet-rise {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }

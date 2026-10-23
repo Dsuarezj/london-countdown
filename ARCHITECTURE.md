@@ -1,6 +1,7 @@
 # Architecture
 
-A static PWA with no build step: HTML, CSS and native ES modules served as-is by GitHub Pages.
+A static PWA with no compilation: HTML, CSS and native ES modules served as-is by GitHub Pages.
+Before each deployment, a Node script generates a translated curiosity catalog with Gemini.
 Choices live in `config.json`, words live in `translations/<language>.json`; code only knows how to
 render them.
 
@@ -24,6 +25,9 @@ render them.
 ```
 index.html            static shell: layout slots, dialog, install prompt, import map
 config.json           the control panel
+facts.json            generated, gitignored catalog shipped with the site and cached offline
+scripts/
+  generate-facts.js   Gemini Interactions API, per-topic generation, validation and atomic output
 manifest.webmanifest  PWA name, display, icons
 icons/                SVG + PNG touch icons listed in the manifest and APP_SHELL
 translations/         en.json, es.json, is.json: ui, places, characters, kickers, thresholds
@@ -32,6 +36,7 @@ src/
   gateways/
     weather-gateway.js  Open-Meteo adapter: request -> PlaceSky (phase, cloudCoverPct, rainMmPerHour, snowfallCmPerHour, thunder)
   services/
+    facts.js          matching catalog, persistent seen IDs and city/country/species rotation
     place-sky.js      last sky per place in localStorage, fresh load with offline fallback
     cached-json.js    loadCachedJson(url): network first, localStorage copy when offline
     config.js         loadConfig, applyThemeTokens
@@ -41,12 +46,13 @@ src/
     headline.js       daily kicker, threshold line under the countdown, city/date/time label
     countdown.js      days/hours/minutes/seconds or the reunion message
     origin-pins.js    pin labels + click -> info card
-    info-card.js      <dialog>: current location from config and the trip phase
+    info-card.js      <dialog>: current location and the next translated curiosity with sources
     characters.js     mounts each origin's character (SVG + CSS) into the meeting row
     meeting.js        journey -> arrived -> affection beats
     together.js       one-shot reunion overlay (heart rain) after countdown zero
     install-prompt.js install prompt (7-day window, dismiss until tomorrow)
   utils/
+    fact-catalog.js   shared topic identity, text normalization and catalog validation
     enums.js          closed option sets: BackgroundMode, BackgroundId, NightSky, SkyPhase
     stylesheet.js     loadStylesheet(href) -> Promise
     meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
@@ -92,7 +98,7 @@ the only place that knows about all of them.
 | `backgrounds.countdown` | `[{ withinHours, background }]`. When the remaining time is inside a window, that background wins over the mode. The smallest matching window wins. |
 | `backgrounds.meetingDay` | Background for the calendar day of the meeting (in the meeting zone). Highest priority. Empty string disables it. |
 | `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city` and `label` (translation keys of the city and country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). |
-| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path) and `text`: translation key of an object with `name` and `ariaLabel`, used for the bird's accessible label. |
+| `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path) and `text`: translation key of an object with `name` and `ariaLabel`, used for the bird's accessible label. Optional `scientificName` disambiguates the species for curiosity generation alongside its English common name. |
 | `affection` | `stylesheet`, `beats` (body classes defined in that stylesheet) and `intervalMs`. Beat length comes from `--beat-duration` in the stylesheet. |
 | `together` | Id of the one-shot reunion overlay (`heart-rain`). Empty string disables it. Stylesheet and player live together in `src/ui/together.js`. |
 | `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
@@ -167,11 +173,17 @@ JavaScript, and nothing measures the viewport.
 The card is a native `<dialog>` opened with `showModal()`: focus trap, Escape to close, backdrop
 and top layer come for free, so it never fights the stage's stacking or overflow rules.
 
-The only content is the current location (`ui.currentLocation` with `{place}`):
+The heading is the current location (`ui.currentLocation` with `{place}`):
 translated `city, country` from the selected origin before and after the trip, or the meeting
 city during the stay. The location heading also provides the dialog's accessible name.
-Rendering is synchronous and uses only config and the app dictionaries, with no external requests
-or card-specific storage. The open card updates on language and trip-phase changes.
+Below it, the card displays a generated curiosity, its topic and source links.
+The catalog loads once from same-origin `facts.json`; opening a pin makes no external API calls.
+Until it loads, the card displays a loading message. A missing, invalid or mismatched catalog
+displays an explicit unavailable message, never content for another configured place.
+Each opening advances the city/country/species rotation. Empty topics invalidate the entire
+catalog rather than being skipped.
+Language and trip-phase rerenders preserve the selected curiosity; only its translation or
+the location heading changes. Topics remain those of the origins throughout the trip.
 
 - **Phones (default)**: bottom sheet. Full width, `max-height: min(78dvh, 34rem)`, internal scroll
   with `overscroll-behavior: contain`, bottom padding includes the home indicator safe area. A
@@ -213,6 +225,9 @@ when reachable it uses network-first (`cache: "no-store"`) and refreshes the cac
 fall back to `index.html`. The precache bypasses the HTTP cache (`cache: "reload"`) and the worker
 is registered with `updateViaCache: "none"`, so a deploy is visible on the next load.
 Cross-origin requests, including Open-Meteo weather requests, skip the service worker.
+`facts.json` is precached with the shell, not duplicated in localStorage. Topic descriptors
+(including English names, city country and coordinates) must match the current config and
+dictionaries before any curiosity is displayed.
 
 `index.html` lists every module with `<link rel="modulepreload">`, so the whole module graph is
 requested in parallel instead of one import level at a time. Keep it in sync with `APP_SHELL`.
@@ -243,6 +258,34 @@ estimate `cloudCoverPct` is `null` (`data-cloud-cover-pct="unknown"`), with no c
 effect; it is not a measured 0% observation and is never cached as one. API failures and cache
 fallbacks are logged. With weather disabled, the intentional clear-night preset has 0% clouds. None of this
 runs when `backgrounds.weather` is `false`.
+
+### Generated curiosities
+
+`npm run generate:facts` reads `GEMINI_API_KEY` from the environment or a local `.env`.
+It uses Node's native fetch and the Gemini Interactions API (`gemini-3.5-flash-lite`), without
+an SDK, browsing tools or runtime browser credentials. `fact-catalog.js` derives city,
+country and species topics from the config and English dictionary. Shared topics are generated
+once; conflicting subjects with the same key stop generation.
+
+Each request requires 1–100 concrete facts, each with all configured translations, an English
+original and public HTTPS source URLs. Species include their common name and optional
+scientific name, identifying the same animal. A topic with no facts stops generation and
+deployment; the browser also rejects such catalogs. Quality takes priority over count. The generated
+claims and references are trusted, not independently verified. The generator removes normalized
+English text duplicates and assigns SHA-256 IDs from topic identity and English text, not
+translations. Semantic paraphrases may still duplicate a claim.
+
+All topics must finish successfully and pass validation before the script atomically replaces
+`facts.json`. API failures, timeouts, incomplete responses and invalid content exit nonzero.
+GitHub Actions runs this before preparing/uploading the Pages artifact, without automatic
+retries or old-catalog fallback. A failed run leaves the previously deployed site untouched.
+The generated file and `.env` are gitignored; `.env.template` contains only the variable name.
+
+The browser stores topic-scoped seen IDs, the last ID and each pin's topic cursor in
+`trip-facts:v1`. IDs absent from a new catalog are pruned; unchanged IDs retain their history.
+Topic identity changes isolate the new location's history. Each topic cycles only after its
+unseen entries are exhausted, avoiding an immediate repeat of its last item when possible.
+Unavailable or malformed storage is logged; in-memory rotation remains usable for that visit.
 
 ## 7. Weather verification and manual QA
 

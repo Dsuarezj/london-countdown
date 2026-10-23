@@ -18,7 +18,10 @@
     "installInvite": "Keep the countdown on your home screen",
     "installIos": "Tap Share, then “Add to Home Screen”",
     "installAction": "Install",
-    "currentLocation": "Current location: {place}"
+    "currentLocation": "Current location: {place}",
+    "didYouKnow": "Did you know…?",
+    "factLoading": "Loading curiosities…",
+    "factUnavailable": "The curiosity catalog is unavailable or does not match this configuration."
   },
   "places": {
     "london": "London",
