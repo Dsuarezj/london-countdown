@@ -26,9 +26,9 @@
   "places": {
     "london": "Londres",
     "reykjavik": "Reikiavik",
-    "ceret": "Céret",
+    "barcelona": "Barcelona",
     "iceland": "Islandia",
-    "france": "Francia"
+    "spain": "España"
   },
   "characters": {
     "plover": {
@@ -37,7 +37,7 @@
     },
     "hummingbird": {
       "name": "Quinde · Colibrí rutilante",
-      "ariaLabel": "Quinde, un colibrí ecuatoriano que llega a saltos desde Francia"
+      "ariaLabel": "Quinde, un colibrí ecuatoriano que llega a saltos desde España"
     }
   },
   "kickers": {

@@ -40,11 +40,11 @@
     },
     "south": {
       "character": "hummingbird",
-      "city": "places.ceret",
-      "label": "places.france",
-      "latitude": 42.4853,
-      "longitude": 2.7486,
-      "timeZone": "Europe/Paris",
+      "city": "places.barcelona",
+      "label": "places.spain",
+      "latitude": 41.3874,
+      "longitude": 2.1686,
+      "timeZone": "Europe/Madrid",
       "nightSky": "stars"
     }
   },
