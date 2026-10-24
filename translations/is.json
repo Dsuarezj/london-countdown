@@ -26,9 +26,9 @@
   "places": {
     "london": "London",
     "reykjavik": "Reykjavík",
-    "ceret": "Céret",
+    "barcelona": "Barcelona",
     "iceland": "Ísland",
-    "france": "Frakkland"
+    "spain": "Spánn"
   },
   "characters": {
     "plover": {
@@ -37,7 +37,7 @@
     },
     "hummingbird": {
       "name": "Quinde · Fjólueyrakólibrí",
-      "ariaLabel": "Quinde, ekvadorskur kólibrífugl sem hoppar norður frá Frakklandi"
+      "ariaLabel": "Quinde, ekvadorskur kólibrífugl sem hoppar norður frá Spáni"
     }
   },
   "kickers": {

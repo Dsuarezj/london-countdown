@@ -26,9 +26,9 @@
   "places": {
     "london": "London",
     "reykjavik": "Reykjavík",
-    "ceret": "Céret",
+    "barcelona": "Barcelona",
     "iceland": "Iceland",
-    "france": "France"
+    "spain": "Spain"
   },
   "characters": {
     "plover": {
@@ -37,7 +37,7 @@
     },
     "hummingbird": {
       "name": "Quinde · Sparkling violetear",
-      "ariaLabel": "Quinde, an Ecuadorian hummingbird hopping up from France"
+      "ariaLabel": "Quinde, an Ecuadorian hummingbird hopping up from Spain"
     }
   },
   "kickers": {
