@@ -40,10 +40,10 @@
     },
     "south": {
       "character": "hummingbird",
-      "city": "places.torremolinos",
+      "city": "places.barcelona",
       "label": "places.spain",
-      "latitude": 36.621,
-      "longitude": -4.508,
+      "latitude": 41.3874,
+      "longitude": 2.1686,
       "timeZone": "Europe/Madrid",
       "nightSky": "stars"
     }
