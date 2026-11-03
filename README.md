@@ -4,6 +4,8 @@ Una cuenta atrás para un encuentro, con aves animadas, el tiempo de cada ciudad
 con la ubicación actual y curiosidades. Es una aplicación web estática y una PWA, sin backend
 ni compilación. Gemini genera el catálogo antes de publicar; el navegador no necesita claves.
 
+**Live site (GitHub Pages):** https://dsuarezj.github.io/london-countdown/
+
 ## Ejecutar en local
 
 Necesitas **Node.js 22.15 o superior** para generar el catálogo, **Python 3** y un navegador
