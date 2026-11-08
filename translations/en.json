@@ -54,10 +54,10 @@
     "spareKey": "There's a key with our name on it"
   },
   "thresholds": {
-    "countingDays": "The wait now fits in a pocket calendar",
-    "lastWeek": "One week: what seemed far away now has a shore",
-    "lastNights": "No more \"it's still a long way off\"",
-    "lastDay": "Less than a day. Tomorrow, the hug is real",
-    "lastHour": "Last hour. All that's left is arriving"
+    "countingDays": "The fun already has a date and a place.",
+    "lastWeek": "The trip is set. Only arriving is left.",
+    "lastNights": "In the end, the birds meet.",
+    "lastDay": "The room is already waiting for us.",
+    "lastHour": "Only arriving is left."
   }
 }

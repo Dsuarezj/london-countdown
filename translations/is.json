@@ -54,10 +54,10 @@
     "spareKey": "Það er lykill með nafninu okkar"
   },
   "thresholds": {
-    "countingDays": "Biðin passar nú í vasadagatal",
-    "lastWeek": "Ein vika: það sem virtist fjarri á nú strönd",
-    "lastNights": "Búið með „það er langt í þetta“",
-    "lastDay": "Minna en dagur. Á morgun er faðmlagið raunverulegt",
-    "lastHour": "Síðasta klukkustundin. Allt annað er koma"
+    "countingDays": "Skemmtunin á sér þegar dag og stað.",
+    "lastWeek": "Ferðin er ákveðin. Nú er bara eftir að koma.",
+    "lastNights": "Að lokum hittast fuglarnir.",
+    "lastDay": "Herbergið bíður okkar nú þegar.",
+    "lastHour": "Nú er bara eftir að koma."
   }
 }

@@ -54,10 +54,10 @@
     "spareKey": "Hay una llave con nuestro nombre"
   },
   "thresholds": {
-    "countingDays": "La espera ya cabe en un calendario de bolsillo",
-    "lastWeek": "Una semana: lo que parecía lejos ya tiene orilla",
-    "lastNights": "Se acabó lo de \"falta mucho\"",
-    "lastDay": "Menos de un día. Mañana, el abrazo es de verdad",
-    "lastHour": "Última hora. Lo demás ya es llegada"
+    "countingDays": "Lo divertido ya tiene fecha y lugar.",
+    "lastWeek": "El viaje ya está. Solo falta llegar.",
+    "lastNights": "Al final, las aves se encuentran.",
+    "lastDay": "La habitación ya nos espera.",
+    "lastHour": "Solo falta llegar."
   }
 }
