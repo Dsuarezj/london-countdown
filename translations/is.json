@@ -54,10 +54,10 @@
     "spareKey": "Það er lykill með nafninu okkar"
   },
   "thresholds": {
-    "countingDays": "Nú mælum við í dögum",
-    "lastWeek": "Ein vika. Ævintýrið er farið að heyrast",
-    "lastNights": "Nokkrar nætur eftir til að halda jafnvægi",
-    "lastDay": "Minna en dagur. Næstum er búið",
-    "lastHour": "Síðasta klukkustundin. Fundurinn nálgast"
+    "countingDays": "Biðin passar nú í vasadagatal",
+    "lastWeek": "Ein vika: það sem virtist fjarri á nú strönd",
+    "lastNights": "Búið með „það er langt í þetta“",
+    "lastDay": "Minna en dagur. Á morgun er faðmlagið raunverulegt",
+    "lastHour": "Síðasta klukkustundin. Allt annað er koma"
   }
 }
