@@ -13,7 +13,7 @@ async function showWeather(page, current, { background = "origin-weather" } = {}
   await page.route("**/config.json", async (route) => {
     const response = await route.fetch();
     const config = await response.json();
-    config.backgrounds = { ...config.backgrounds, fixed: background, countdown: [], meetingDay: "", weather: true };
+    config.backgrounds = { ...config.backgrounds, fixed: background, meetingDay: "", weather: true };
     await route.fulfill({ json: config });
   });
   await page.route("https://api.open-meteo.com/**", (route) => {
@@ -173,7 +173,7 @@ test("disabled weather stays on a clear night even with a cached storm", async (
   await page.route("**/config.json", async (route) => {
     const response = await route.fetch();
     const config = await response.json();
-    config.backgrounds = { ...config.backgrounds, fixed: "origin-weather", countdown: [], meetingDay: "", weather: false };
+    config.backgrounds = { ...config.backgrounds, fixed: "origin-weather", meetingDay: "", weather: false };
     await route.fulfill({ json: config });
   });
   await page.reload();

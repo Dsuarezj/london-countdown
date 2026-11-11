@@ -1,4 +1,4 @@
-const CACHE_NAME = "trip-countdown-v39";
+const CACHE_NAME = "trip-countdown-v40";
 const NETWORK_PROBE_TIMEOUT_MS = 350;
 const NETWORK_PROBE_TTL_MS = 5000;
 let networkStatus;
@@ -20,7 +20,6 @@ const APP_SHELL = [
   "./styles/info-card.css",
   "./styles/install-prompt.css",
   "./styles/backgrounds/origin-weather.css",
-  "./styles/backgrounds/converging.css",
   "./styles/backgrounds/meeting-city.css",
   "./characters/plover/plover.svg",
   "./characters/plover/plover.css",
@@ -53,7 +52,6 @@ const APP_SHELL = [
   "./src/backgrounds/index.js",
   "./src/backgrounds/aurora-tropics.js",
   "./src/backgrounds/origin-weather.js",
-  "./src/backgrounds/converging.js",
   "./src/backgrounds/meeting-city.js",
   "./icons/icon.svg",
   "./icons/icon-180.png",

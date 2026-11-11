@@ -1,16 +1,13 @@
 import { auroraTropics } from "@/backgrounds/aurora-tropics.js";
-import { converging } from "@/backgrounds/converging.js";
 import { meetingCity } from "@/backgrounds/meeting-city.js";
 import { originWeather } from "@/backgrounds/origin-weather.js";
 import { BackgroundId, BackgroundMode, TripPhase } from "@/utils/enums.js";
 import { calendarDayNumber } from "@/utils/meeting-time.js";
-import { findActiveThreshold } from "@/utils/thresholds.js";
 import { createTripTimeline } from "@/utils/trip-timeline.js";
 
 const BACKGROUNDS = {
   [BackgroundId.AURORA_TROPICS]: auroraTropics,
   [BackgroundId.ORIGIN_WEATHER]: originWeather,
-  [BackgroundId.CONVERGING]: converging,
   [BackgroundId.MEETING_CITY]: meetingCity
 };
 
@@ -19,13 +16,9 @@ function seededIndex(seed, length) {
   return Math.floor((noise - Math.floor(noise)) * length);
 }
 
-function selectBackgroundId(backgroundsConfig, { remainingMs, isMeetingDay, dayNumber }) {
+function selectBackgroundId(backgroundsConfig, { isMeetingDay, dayNumber }) {
   if (isMeetingDay && backgroundsConfig.meetingDay) {
     return backgroundsConfig.meetingDay;
-  }
-  const countdownBackground = findActiveThreshold(backgroundsConfig.countdown, remainingMs);
-  if (countdownBackground) {
-    return countdownBackground.background;
   }
   if (backgroundsConfig.mode === BackgroundMode.RANDOM) {
     const { pool, everyDays } = backgroundsConfig.random;
@@ -42,7 +35,6 @@ function planSky(config) {
   const phase = timeline.phaseAt(Date.now());
   return {
     backgroundId: phase === TripPhase.MEMORIES ? BackgroundId.ORIGIN_WEATHER : selectBackgroundId(backgrounds, {
-      remainingMs: meetingInstant - Date.now(),
       isMeetingDay: phase === TripPhase.TOGETHER || todayNumber === calendarDayNumber(meetingInstant, meeting.timeZone),
       dayNumber: todayNumber
     }),

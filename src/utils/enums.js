@@ -6,7 +6,6 @@ export const BackgroundMode = Object.freeze({
 export const BackgroundId = Object.freeze({
   AURORA_TROPICS: "aurora-tropics",
   ORIGIN_WEATHER: "origin-weather",
-  CONVERGING: "converging",
   MEETING_CITY: "meeting-city"
 });
 
