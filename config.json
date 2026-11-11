@@ -23,9 +23,6 @@
       "pool": ["aurora-tropics", "origin-weather"],
       "everyDays": 1
     },
-    "countdown": [
-      { "withinHours": 72, "background": "converging" }
-    ],
     "meetingDay": "meeting-city"
   },
   "origins": {

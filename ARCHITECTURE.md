@@ -57,13 +57,12 @@ src/
     stylesheet.js     loadStylesheet(href) -> Promise
     meeting-time.js   time zone math (wall clock -> instant, day numbers, remaining split)
     trip-timeline.js  optional trip end and upcoming / together / memories boundaries
-    thresholds.js     findActiveThreshold(entries, remainingMs), shared by the threshold line and backgrounds
+    thresholds.js     findActiveThreshold(entries, remainingMs), used by the threshold line
   backgrounds/
     index.js          registry and createSky: picks the background from config and mounts it once per plan
     aurora-tropics.js the original sky (shared layers in sky-layers.css; no own stylesheet)
     weather-scene.js  weather layers markup + followWeather: the weather toggle, cached sky, then fresh sky
     origin-weather.js time and weather of each origin city
-    converging.js     last days: both skies drift towards the centre
     meeting-city.js   meeting day: meeting city time and weather, both skies swirling together
 styles/
   base.css            tokens, layout, topbar, pins, headline, countdown
@@ -94,8 +93,7 @@ the only place that knows about all of them.
 | `theme.tokens` | Overrides for the CSS custom properties defined in `styles/base.css` `:root` (`--night`, `--deep`, `--aurora-mint`, `--aurora-teal`, `--aurora-violet`, `--tropic-magenta`, `--tropic-orange`, `--tropic-turquoise`, `--ink`, `--surface`). Defaults stay in CSS so the first paint is right before config loads. |
 | `backgrounds.weather` | `true` follows the live weather (day/night, clouds, rain, snow, thunder). `false` makes no weather request and does not read or write `place-sky`: every sky stays on a clear night (aurora or stars from `nightSky`). |
 | `backgrounds.mode` | `BackgroundMode`: `"fixed"` uses `backgrounds.fixed`; `"random"` picks from `backgrounds.random.pool`, stable for `everyDays` days. See `src/utils/enums.js`. |
-| `backgrounds.fixed` / `random.pool` / `countdown[].background` / `meetingDay` | `BackgroundId` values: `"aurora-tropics"`, `"origin-weather"`, `"converging"`, `"meeting-city"`. |
-| `backgrounds.countdown` | `[{ withinHours, background }]`. When the remaining time is inside a window, that background wins over the mode. The smallest matching window wins. |
+| `backgrounds.fixed` / `random.pool` / `meetingDay` | `BackgroundId` values: `"aurora-tropics"`, `"origin-weather"`, `"meeting-city"`. |
 | `backgrounds.meetingDay` | Background for the calendar day of the meeting (in the meeting zone). Highest priority. Empty string disables it. |
 | `origins.north` / `origins.south` | Slot name is the key. Each origin has a `character` id, `city` and `label` (translation keys of the city and country), coordinates, `timeZone` (used by the weather background and its offline estimate) and `nightSky` (`NightSky`: `"aurora"` or `"stars"`; days are shared). |
 | `characters.<id>` | `markup` (SVG path), `stylesheet` (CSS path) and `text`: translation key of an object with `name` and `ariaLabel`, used for the bird's accessible label. Optional `scientificName` disambiguates the species for curiosity generation alongside its English common name. |
@@ -104,7 +102,7 @@ the only place that knows about all of them.
 | `kickers` | Up to ten translation keys. One per day above the city: `dayNumber % kickers.length`, where the day is counted in the meeting zone. |
 | `thresholds` | `[{ withinHours, text }]` with `text` as a translation key. Inside a window a small line appears under the countdown (15, 7, 3, 1 days and the last hour). |
 
-Background priority before the meeting: `meetingDay` → `countdown` window → `mode`.
+Background priority before the meeting: `meetingDay` → `mode`.
 During the entire stay, `meetingDay` is used when enabled, not just on the first calendar day.
 After `meeting.end`, the memory scene uses `origin-weather`, keeping each origin's local sky and weather. The main tick
 re-evaluates both phase and sky, so neither midnight nor the end requires a reload.

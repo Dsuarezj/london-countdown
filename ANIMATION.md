@@ -181,7 +181,6 @@ Every background is mounted into `.sky` and scoped by `.sky--<id>`. The shared p
 | --- | --- |
 | `aurora-tropics` | The original: aurora north, tropical glow south |
 | `origin-weather` | One `.weather.hemisphere` per origin (north on top, south at the bottom, mirrored with `--sky-direction: 0deg` and `scale: 1 -1` on clouds and thunder) plus `data-night-sky`. Night keeps aurora and/or stars as a base layer; clouds, rain, snow and thunder fade in on top and only dim that night sky |
-| `converging` | Last days: aurora reaches lower, tropics rise higher, a warm glow where they meet |
 | `meeting-city` | Meeting day: one `.weather` scene for the meeting city. No aurora or tropics: only the city sky and a full-width `.confluence` band where both skies fuse. Inside it two square conic gradients (north colours, south colours) rotate 180° apart; an elliptical mask shows only the central band, blurred, so it reads as two currents mixing |
 
 The `.weather` component (`weather-scene.js` + `weather-scene.css`) stacks
